@@ -5,20 +5,7 @@ import autoBind from "react-autobind";
 import ShallowCompare from "react/lib/shallowCompare";
 import classNames from "classnames";
 export {ShallowCompare};
-import {HasSealedProps, BaseProps, FindDOM, Sealed} from "./General";
-
-function ToJSON(obj) { return JSON.stringify(obj); }
-function FromJSON(json) { return JSON.parse(json); }
-
-function RemoveDuplicates(items: any) {
-	var result = [];
-	for (let item of items) {
-		if (result.indexOf(item) == -1) {
-			result.push(item);
-		}
-	}
-	return result;
-}
+import {HasSealedProps, BaseProps, FindDOM, Sealed, ToJSON, RemoveDuplicates} from "./General";
 
 export enum RenderSource {
 	Mount, // first render, after creation

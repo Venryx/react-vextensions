@@ -6,6 +6,10 @@ export { ShallowCompare };
 declare global  {
     function E<E1, E2, E3, E4, E5, E6, E7, E8>(e1?: E1, e2?: E2, e3?: E3, e4?: E4, e5?: E5, e6?: E6, e7?: E7, e8?: E8): E1 & E2 & E3 & E4 & E5 & E6 & E7 & E8;
 }
+export declare function E<E1, E2, E3, E4, E5, E6, E7, E8>(e1?: E1, e2?: E2, e3?: E3, e4?: E4, e5?: E5, e6?: E6, e7?: E7, e8?: E8): E1 & E2 & E3 & E4 & E5 & E6 & E7 & E8;
+export declare function ToJSON(obj: any): string;
+export declare function FromJSON(json: any): any;
+export declare function RemoveDuplicates(items: any): any[];
 export declare function FindDOM(comp: any): HTMLElement;
 export declare function FindReact(dom: any): BaseComponent<any, any>;
 export declare function GetInnerComp(wrapperComp: React.Component<any, any>): any;

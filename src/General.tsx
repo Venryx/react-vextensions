@@ -11,12 +11,25 @@ function G(entries) {
 	Object.assign(window, entries);
 }
 G({E}); declare global {	function E<E1,E2,E3,E4,E5,E6,E7,E8>(e1?:E1,e2?:E2,e3?:E3,e4?:E4,e5?:E5,e6?:E6,e7?:E7,e8?:E8):E1&E2&E3&E4&E5&E6&E7&E8; }
-									function E<E1,E2,E3,E4,E5,E6,E7,E8>(e1?:E1,e2?:E2,e3?:E3,e4?:E4,e5?:E5,e6?:E6,e7?:E7,e8?:E8):E1&E2&E3&E4&E5&E6&E7&E8 {
+export							function E<E1,E2,E3,E4,E5,E6,E7,E8>(e1?:E1,e2?:E2,e3?:E3,e4?:E4,e5?:E5,e6?:E6,e7?:E7,e8?:E8):E1&E2&E3&E4&E5&E6&E7&E8 {
 	var result = {} as any;
 	for (var extend of arguments)
 		result.Extend(extend);
 	return result;
 	//return StyleSheet.create(result);
+}
+
+export function ToJSON(obj) { return JSON.stringify(obj); }
+export function FromJSON(json) { return JSON.parse(json); }
+
+export function RemoveDuplicates(items: any) {
+	var result = [];
+	for (let item of items) {
+		if (result.indexOf(item) == -1) {
+			result.push(item);
+		}
+	}
+	return result;
 }
 
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");
@@ -109,7 +122,10 @@ export function ApplyBasicStyles(target: React.ComponentClass<any>) {
 		let result = oldRender.call(this) as JSX.Element;
 
 		let props = this.props;
-		result.props.className = classNames({selectable: props.sel, clickThrough: props.ct}, result.props.className);
+		let className = classNames({selectable: props.sel, clickThrough: props.ct}, result.props.className);
+		if (className) {
+			result.props.className = className;
+		}
 		result.props.style = E(BasicStyles(props), result.props.style);
 		RemoveBasePropKeys(result.props);
 		

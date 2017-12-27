@@ -1,5 +1,5 @@
 {
-  "name": "vreact",
+  "name": "react-vextensions",
   "version": "0.0.1",
   "description": "Extensions for ReactJS, by Venryx.",
   "main": "dist/index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Venryx/vreact.git"
+    "url": "git+https://github.com/Venryx/react-vextensions.git"
   },
   "keywords": [
     "react"
@@ -22,9 +22,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Venryx/vreact/issues"
+    "url": "https://github.com/Venryx/react-vextensions/issues"
   },
-  "homepage": "https://github.com/Venryx/vreact",
+  "homepage": "https://github.com/Venryx/react-vextensions",
   "peerDependencies": {
     "react": "^15.3.0",
     "react-dom": "^15.3.0"

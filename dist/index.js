@@ -173,6 +173,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 	exports.basePropFullKeys = exports.ShallowCompare = undefined;
+	exports.E = E;
+	exports.ToJSON = ToJSON;
+	exports.FromJSON = FromJSON;
+	exports.RemoveDuplicates = RemoveDuplicates;
 	exports.FindDOM = FindDOM;
 	exports.FindReact = FindReact;
 	exports.GetInnerComp = GetInnerComp;
@@ -241,6 +245,43 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return result;
 	    //return StyleSheet.create(result);
+	}
+	function ToJSON(obj) {
+	    return JSON.stringify(obj);
+	}
+	function FromJSON(json) {
+	    return JSON.parse(json);
+	}
+	function RemoveDuplicates(items) {
+	    var result = [];
+	    var _iteratorNormalCompletion2 = true;
+	    var _didIteratorError2 = false;
+	    var _iteratorError2 = undefined;
+
+	    try {
+	        for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	            var item = _step2.value;
+
+	            if (result.indexOf(item) == -1) {
+	                result.push(item);
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                _iterator2.return();
+	            }
+	        } finally {
+	            if (_didIteratorError2) {
+	                throw _iteratorError2;
+	            }
+	        }
+	    }
+
+	    return result;
 	}
 	//var ReactInstanceMap = require("react/lib/ReactInstanceMap");
 	G({ ShallowCompare: _shallowCompare2.default });
@@ -313,7 +354,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    target.prototype.render = function () {
 	        var result = oldRender.call(this);
 	        var props = this.props;
-	        result.props.className = (0, _classnames2.default)({ selectable: props.sel, clickThrough: props.ct }, result.props.className);
+	        var className = (0, _classnames2.default)({ selectable: props.sel, clickThrough: props.ct }, result.props.className);
+	        if (className) {
+	            result.props.className = className;
+	        }
 	        result.props.style = E(BasicStyles(props), result.props.style);
 	        RemoveBasePropKeys(result.props);
 	        return result;
@@ -376,37 +420,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (ShallowChanged(objA.Excluding.apply(objA, propsToCompareMoreDeeply), objB.Excluding.apply(objB, propsToCompareMoreDeeply))) {
 	            return true;
 	        }
-	        var _iteratorNormalCompletion2 = true;
-	        var _didIteratorError2 = false;
-	        var _iteratorError2 = undefined;
+	        var _iteratorNormalCompletion3 = true;
+	        var _didIteratorError3 = false;
+	        var _iteratorError3 = undefined;
 
 	        try {
-	            for (var _iterator2 = propsToCompareMoreDeeply[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	                var key = _step2.value;
+	            for (var _iterator3 = propsToCompareMoreDeeply[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	                var key = _step3.value;
 
 	                // for "children", shallow-compare at two levels deeper
 	                if (key == "children") {
-	                    var _iteratorNormalCompletion3 = true;
-	                    var _didIteratorError3 = false;
-	                    var _iteratorError3 = undefined;
+	                    var _iteratorNormalCompletion4 = true;
+	                    var _didIteratorError4 = false;
+	                    var _iteratorError4 = undefined;
 
 	                    try {
-	                        for (var _iterator3 = (objA.children || {}).VKeys().concat((objB.children || {}).VKeys())[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-	                            var childKey = _step3.value;
+	                        for (var _iterator4 = (objA.children || {}).VKeys().concat((objB.children || {}).VKeys())[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+	                            var childKey = _step4.value;
 
 	                            if (ShallowChanged(objA.children[childKey], objB.children[childKey])) return true;
 	                        }
 	                    } catch (err) {
-	                        _didIteratorError3 = true;
-	                        _iteratorError3 = err;
+	                        _didIteratorError4 = true;
+	                        _iteratorError4 = err;
 	                    } finally {
 	                        try {
-	                            if (!_iteratorNormalCompletion3 && _iterator3.return) {
-	                                _iterator3.return();
+	                            if (!_iteratorNormalCompletion4 && _iterator4.return) {
+	                                _iterator4.return();
 	                            }
 	                        } finally {
-	                            if (_didIteratorError3) {
-	                                throw _iteratorError3;
+	                            if (_didIteratorError4) {
+	                                throw _iteratorError4;
 	                            }
 	                        }
 	                    }
@@ -415,16 +459,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 	        } catch (err) {
-	            _didIteratorError2 = true;
-	            _iteratorError2 = err;
+	            _didIteratorError3 = true;
+	            _iteratorError3 = err;
 	        } finally {
 	            try {
-	                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	                    _iterator2.return();
+	                if (!_iteratorNormalCompletion3 && _iterator3.return) {
+	                    _iterator3.return();
 	                }
 	            } finally {
-	                if (_didIteratorError2) {
-	                    throw _iteratorError2;
+	                if (_didIteratorError3) {
+	                    throw _iteratorError3;
 	                }
 	            }
 	        }
@@ -703,44 +747,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
 	exports.ShallowCompare = _shallowCompare2.default;
-
-	function ToJSON(obj) {
-	    return JSON.stringify(obj);
-	}
-	function FromJSON(json) {
-	    return JSON.parse(json);
-	}
-	function RemoveDuplicates(items) {
-	    var result = [];
-	    var _iteratorNormalCompletion = true;
-	    var _didIteratorError = false;
-	    var _iteratorError = undefined;
-
-	    try {
-	        for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	            var item = _step.value;
-
-	            if (result.indexOf(item) == -1) {
-	                result.push(item);
-	            }
-	        }
-	    } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	    } finally {
-	        try {
-	            if (!_iteratorNormalCompletion && _iterator.return) {
-	                _iterator.return();
-	            }
-	        } finally {
-	            if (_didIteratorError) {
-	                throw _iteratorError;
-	            }
-	        }
-	    }
-
-	    return result;
-	}
 	var RenderSource = exports.RenderSource = undefined;
 	(function (RenderSource) {
 	    RenderSource[RenderSource["Mount"] = 0] = "Mount";
@@ -797,7 +803,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function GetPropsChanged() {
 	            var _this2 = this;
 
-	            var keys = RemoveDuplicates(Object.keys(this.props).concat(Object.keys(this.GetPropsChanged_lastProps)));
+	            var keys = (0, _General.RemoveDuplicates)(Object.keys(this.props).concat(Object.keys(this.GetPropsChanged_lastProps)));
 	            var result = keys.filter(function (key) {
 	                return !Object.is(_this2.props[key], _this2.GetPropsChanged_lastProps[key]);
 	            });
@@ -809,7 +815,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function GetPropsChanged_Data() {
 	            var _this3 = this;
 
-	            return ToJSON(this.GetPropsChanged().reduce(function (result, key) {
+	            return (0, _General.ToJSON)(this.GetPropsChanged().reduce(function (result, key) {
 	                return result[key] = _this3.props[key];
 	            }, {}));
 	        }
@@ -818,7 +824,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function GetStateChanged() {
 	            var _this4 = this;
 
-	            var keys = RemoveDuplicates(Object.keys(this.state).concat(Object.keys(this.GetStateChanged_lastState)));
+	            var keys = (0, _General.RemoveDuplicates)(Object.keys(this.state).concat(Object.keys(this.GetStateChanged_lastState)));
 	            var result = keys.filter(function (key) {
 	                return !Object.is(_this4.state[key], _this4.GetStateChanged_lastState[key]);
 	            });
@@ -830,7 +836,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function GetStateChanged_Data() {
 	            var _this5 = this;
 
-	            return ToJSON(this.GetStateChanged().reduce(function (result, key) {
+	            return (0, _General.ToJSON)(this.GetStateChanged().reduce(function (result, key) {
 	                return result[key] = _this5.state[key];
 	            }, {}));
 	        }
@@ -913,18 +919,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return result[a] = _this9.state[a];
 	                }, {});
 	                if (deepCompare) {
-	                    if (ToJSON(newState) == ToJSON(oldState_forNewStateKeys)) return [];
+	                    if ((0, _General.ToJSON)(newState) == (0, _General.ToJSON)(oldState_forNewStateKeys)) return [];
 	                } else {
 	                    //if (ShallowEquals(newState, oldState_forNewStateKeys)) return [];
 	                    // use a looser comparison (we want a missing prop to be equivalent to null and undefined)
 	                    var same = true;
-	                    var _iteratorNormalCompletion2 = true;
-	                    var _didIteratorError2 = false;
-	                    var _iteratorError2 = undefined;
+	                    var _iteratorNormalCompletion = true;
+	                    var _didIteratorError = false;
+	                    var _iteratorError = undefined;
 
 	                    try {
-	                        for (var _iterator2 = RemoveDuplicates(Object.keys(this.state).concat(Object.keys(newState)))[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	                            var key = _step2.value;
+	                        for (var _iterator = (0, _General.RemoveDuplicates)(Object.keys(this.state).concat(Object.keys(newState)))[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                            var key = _step.value;
 
 	                            var valA = this.state[key];
 	                            var valB = newState[key];
@@ -935,16 +941,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            }
 	                        }
 	                    } catch (err) {
-	                        _didIteratorError2 = true;
-	                        _iteratorError2 = err;
+	                        _didIteratorError = true;
+	                        _iteratorError = err;
 	                    } finally {
 	                        try {
-	                            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	                                _iterator2.return();
+	                            if (!_iteratorNormalCompletion && _iterator.return) {
+	                                _iterator.return();
 	                            }
 	                        } finally {
-	                            if (_didIteratorError2) {
-	                                throw _iteratorError2;
+	                            if (_didIteratorError) {
+	                                throw _iteratorError;
 	                            }
 	                        }
 	                    }
@@ -968,13 +974,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                funcs[_key - 1] = arguments[_key];
 	            }
 
-	            var _iteratorNormalCompletion3 = true;
-	            var _didIteratorError3 = false;
-	            var _iteratorError3 = undefined;
+	            var _iteratorNormalCompletion2 = true;
+	            var _didIteratorError2 = false;
+	            var _iteratorError2 = undefined;
 
 	            try {
-	                for (var _iterator3 = funcs[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-	                    var func = _step3.value;
+	                for (var _iterator2 = funcs[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	                    var func = _step2.value;
 
 	                    if (typeof func == "string") func = func.Func(this.Update);
 	                    // if actual function, add it (else, ignore entry--it must have been a failed conditional)
@@ -983,6 +989,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        host.extraMethod = func;
 	                        this.changeListeners.push({ host: host, func: func });
 	                    }
+	                }
+	            } catch (err) {
+	                _didIteratorError2 = true;
+	                _iteratorError2 = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                        _iterator2.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError2) {
+	                        throw _iteratorError2;
+	                    }
+	                }
+	            }
+	        }
+	    }, {
+	        key: "RemoveChangeListeners",
+	        value: function RemoveChangeListeners() {
+	            //this.changeListeners = this.changeListeners || []; // temp fix for odd "is null" issue
+	            var _iteratorNormalCompletion3 = true;
+	            var _didIteratorError3 = false;
+	            var _iteratorError3 = undefined;
+
+	            try {
+	                for (var _iterator3 = this.changeListeners[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	                    var changeListener = _step3.value;
+
+	                    changeListener.host.removeExtraMethod = changeListener.func;
 	                }
 	            } catch (err) {
 	                _didIteratorError3 = true;
@@ -998,20 +1033,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }
 	                }
 	            }
+
+	            this.changeListeners = [];
 	        }
 	    }, {
-	        key: "RemoveChangeListeners",
-	        value: function RemoveChangeListeners() {
-	            //this.changeListeners = this.changeListeners || []; // temp fix for odd "is null" issue
+	        key: "RemoveChangeListenersFor",
+	        value: function RemoveChangeListenersFor(host) {
+	            var changeListenersToRemove = this.changeListeners.filter(function (a) {
+	                return a.host == host;
+	            });
 	            var _iteratorNormalCompletion4 = true;
 	            var _didIteratorError4 = false;
 	            var _iteratorError4 = undefined;
 
 	            try {
-	                for (var _iterator4 = this.changeListeners[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-	                    var changeListener = _step4.value;
+	                for (var _iterator4 = changeListenersToRemove[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+	                    var listener = _step4.value;
 
-	                    changeListener.host.removeExtraMethod = changeListener.func;
+	                    listener.host.removeExtraMethod = listener.func;
+	                    this.changeListeners.splice(this.changeListeners.indexOf(listener), 1);
 	                }
 	            } catch (err) {
 	                _didIteratorError4 = true;
@@ -1024,40 +1064,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                } finally {
 	                    if (_didIteratorError4) {
 	                        throw _iteratorError4;
-	                    }
-	                }
-	            }
-
-	            this.changeListeners = [];
-	        }
-	    }, {
-	        key: "RemoveChangeListenersFor",
-	        value: function RemoveChangeListenersFor(host) {
-	            var changeListenersToRemove = this.changeListeners.filter(function (a) {
-	                return a.host == host;
-	            });
-	            var _iteratorNormalCompletion5 = true;
-	            var _didIteratorError5 = false;
-	            var _iteratorError5 = undefined;
-
-	            try {
-	                for (var _iterator5 = changeListenersToRemove[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-	                    var listener = _step5.value;
-
-	                    listener.host.removeExtraMethod = listener.func;
-	                    this.changeListeners.splice(this.changeListeners.indexOf(listener), 1);
-	                }
-	            } catch (err) {
-	                _didIteratorError5 = true;
-	                _iteratorError5 = err;
-	            } finally {
-	                try {
-	                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
-	                        _iterator5.return();
-	                    }
-	                } finally {
-	                    if (_didIteratorError5) {
-	                        throw _iteratorError5;
 	                    }
 	                }
 	            }
