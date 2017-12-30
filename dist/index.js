@@ -69,98 +69,26 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _General = __webpack_require__(2);
 
-	Object.defineProperty(exports, "FindDOM", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.FindDOM;
-	  }
-	});
-	Object.defineProperty(exports, "FindReact", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.FindReact;
-	  }
-	});
-	Object.defineProperty(exports, "GetInnerComp", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.GetInnerComp;
-	  }
-	});
-	Object.defineProperty(exports, "BasicStyles", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.BasicStyles;
-	  }
-	});
-	Object.defineProperty(exports, "ApplyBasicStyles", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.ApplyBasicStyles;
-	  }
-	});
-	Object.defineProperty(exports, "SimpleShouldUpdate", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.SimpleShouldUpdate;
-	  }
-	});
-	Object.defineProperty(exports, "SimpleShouldUpdate_Overridable", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.SimpleShouldUpdate_Overridable;
-	  }
-	});
-	Object.defineProperty(exports, "Instant", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.Instant;
-	  }
-	});
-	Object.defineProperty(exports, "ShallowEquals", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.ShallowEquals;
-	  }
-	});
-	Object.defineProperty(exports, "ShallowChanged", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.ShallowChanged;
-	  }
-	});
-	Object.defineProperty(exports, "AddGlobalElement", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.AddGlobalElement;
-	  }
-	});
-	Object.defineProperty(exports, "AddGlobalStyle", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.AddGlobalStyle;
-	  }
-	});
-	Object.defineProperty(exports, "HasSealedProps", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.HasSealedProps;
-	  }
-	});
-	Object.defineProperty(exports, "Sealed", {
-	  enumerable: true,
-	  get: function get() {
-	    return _General.Sealed;
-	  }
+	Object.keys(_General).forEach(function (key) {
+	  if (key === "default" || key === "__esModule") return;
+	  Object.defineProperty(exports, key, {
+	    enumerable: true,
+	    get: function get() {
+	      return _General[key];
+	    }
+	  });
 	});
 
 	var _BaseComponent = __webpack_require__(8);
 
-	Object.defineProperty(exports, "BaseComponent", {
-	  enumerable: true,
-	  get: function get() {
-	    return _BaseComponent.BaseComponent;
-	  }
+	Object.keys(_BaseComponent).forEach(function (key) {
+	  if (key === "default" || key === "__esModule") return;
+	  Object.defineProperty(exports, key, {
+	    enumerable: true,
+	    get: function get() {
+	      return _BaseComponent[key];
+	    }
+	  });
 	});
 
 /***/ },
