@@ -1,8 +1,6 @@
 /// <reference types="react" />
 import React from "react";
 import { Component } from "react";
-import ShallowCompare from "react/lib/shallowCompare";
-export { ShallowCompare };
 import { BaseProps } from "./General";
 export declare enum RenderSource {
     Mount = 0,

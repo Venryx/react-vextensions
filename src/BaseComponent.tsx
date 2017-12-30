@@ -4,7 +4,6 @@ import ReactDOM from "react-dom";
 import autoBind from "react-autobind";
 import ShallowCompare from "react/lib/shallowCompare";
 import classNames from "classnames";
-export {ShallowCompare};
 import {HasSealedProps, BaseProps, FindDOM, Sealed, ToJSON, RemoveDuplicates} from "./General";
 
 export enum RenderSource {

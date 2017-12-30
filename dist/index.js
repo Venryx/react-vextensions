@@ -638,7 +638,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.BaseComponent = exports.RenderSource = exports.ShallowCompare = undefined;
+	exports.BaseComponent = exports.RenderSource = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -651,10 +651,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _reactAutobind = __webpack_require__(9);
 
 	var _reactAutobind2 = _interopRequireDefault(_reactAutobind);
-
-	var _shallowCompare = __webpack_require__(5);
-
-	var _shallowCompare2 = _interopRequireDefault(_shallowCompare);
 
 	var _General = __webpack_require__(2);
 
@@ -674,7 +670,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
 	    }return c > 3 && r && Object.defineProperty(target, key, r), r;
 	};
-	exports.ShallowCompare = _shallowCompare2.default;
 	var RenderSource = exports.RenderSource = undefined;
 	(function (RenderSource) {
 	    RenderSource[RenderSource["Mount"] = 0] = "Mount";
