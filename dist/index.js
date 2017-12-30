@@ -739,7 +739,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var _this3 = this;
 
 	            return (0, _General.ToJSON)(this.GetPropsChanged().reduce(function (result, key) {
-	                return result[key] = _this3.props[key];
+	                return result[key] = _this3.props[key], result;
 	            }, {}));
 	        }
 	    }, {
@@ -760,7 +760,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var _this5 = this;
 
 	            return (0, _General.ToJSON)(this.GetStateChanged().reduce(function (result, key) {
-	                return result[key] = _this5.state[key];
+	                return result[key] = _this5.state[key], result;
 	            }, {}));
 	        }
 	    }, {
@@ -838,8 +838,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if (cancelIfStateSame) {
 	                // we only care about new-state's keys -- setState() leaves unmentioned keys untouched
-	                var oldState_forNewStateKeys = Object.keys(newState).reduce(function (result, a) {
-	                    return result[a] = _this9.state[a];
+	                var oldState_forNewStateKeys = Object.keys(newState).reduce(function (result, key) {
+	                    return result[key] = _this9.state[key], result;
 	                }, {});
 	                if (deepCompare) {
 	                    if ((0, _General.ToJSON)(newState) == (0, _General.ToJSON)(oldState_forNewStateKeys)) return [];

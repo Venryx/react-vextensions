@@ -71,7 +71,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 		return result;
 	}
 	GetPropsChanged_Data() {
-		return ToJSON(this.GetPropsChanged().reduce((result, key)=>result[key] = this.props[key], {}));
+		return ToJSON(this.GetPropsChanged().reduce((result, key)=>(result[key] = this.props[key], result), {}));
 	}
 	private GetStateChanged_lastState = {};
 	GetStateChanged() {
@@ -81,7 +81,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 		return result;
 	}
 	GetStateChanged_Data() {
-		return ToJSON(this.GetStateChanged().reduce((result, key)=>result[key] = this.state[key], {}));
+		return ToJSON(this.GetStateChanged().reduce((result, key)=>(result[key] = this.state[key], result), {}));
 	}
 
 	forceUpdate(_: ()=>"Do not call this. Call Update() instead.") {
@@ -127,7 +127,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	SetState(newState: Partial<S>, callback?: ()=>any, cancelIfStateSame = true, deepCompare = false) {
 		if (cancelIfStateSame) {
 			// we only care about new-state's keys -- setState() leaves unmentioned keys untouched
-			let oldState_forNewStateKeys = Object.keys(newState).reduce((result, a)=>result[a] = this.state[a], {});
+			let oldState_forNewStateKeys = Object.keys(newState).reduce((result, key)=>(result[key] = this.state[key], result), {});
 			if (deepCompare) {
 				if (ToJSON(newState) == ToJSON(oldState_forNewStateKeys)) return [];
 			} else {
