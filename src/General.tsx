@@ -126,7 +126,7 @@ export function ApplyBasicStyles(target: React.ComponentClass<any>) {
 		if (className) {
 			result.props.className = className;
 		}
-		result.props.style = E(BasicStyles(props), result.props.style);
+		result.props.style = E(result.props.style, BasicStyles(props));
 		RemoveBasePropKeys(result.props);
 		
 		return result;
