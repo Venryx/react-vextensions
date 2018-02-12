@@ -284,7 +284,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 		return BaseComponent as new(..._)=>BaseComponent<Props, State>;
 	};
 }*/
-export function BaseComponentWithConnect<PassedProps, ConnectProps, State>(connectFunc: (state?, props?: PassedProps)=>ConnectProps, initialState: State) {
+export function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State) {
 	class BaseComponentEnhanced extends BaseComponent<any, any> {
 		constructor(props) {
 			super(props);

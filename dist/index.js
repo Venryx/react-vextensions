@@ -644,7 +644,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-	exports.BaseComponentWithConnect = BaseComponentWithConnect;
+	exports.BaseComponentWithConnector = BaseComponentWithConnector;
 
 	var _react = __webpack_require__(3);
 
@@ -1135,7 +1135,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	}*/
 
-	function BaseComponentWithConnect(connectFunc, initialState) {
+	function BaseComponentWithConnector(connector, initialState) {
 	    var BaseComponentEnhanced = function (_BaseComponent) {
 	        _inherits(BaseComponentEnhanced, _BaseComponent);
 

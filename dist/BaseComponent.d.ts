@@ -57,4 +57,4 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     PreRender(): void;
     PostRender(source?: RenderSource): void;
 }
-export declare function BaseComponentWithConnect<PassedProps, ConnectProps, State>(connectFunc: (state?, props?: PassedProps) => ConnectProps, initialState: State): new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State>;
+export declare function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?, props?: PassedProps) => ConnectProps, initialState: State): new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State>;
