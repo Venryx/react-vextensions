@@ -278,3 +278,21 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	}*/
 }
 //G({Component2: Component, BaseComponent: Component});
+
+/*export function BaseComponentWithConnect<Props>(connectFunc: (state?: RootState, props?)=>Props) {
+	return function InnerFunc<State>() {
+		return BaseComponent as new(..._)=>BaseComponent<Props, State>;
+	};
+}*/
+export function BaseComponentWithConnect<PassedProps, ConnectProps, State>(connectFunc: (state?, props?: PassedProps)=>ConnectProps, initialState: State) {
+	class BaseComponentEnhanced extends BaseComponent<any, any> {
+		constructor(props) {
+			super(props);
+			this.state = initialState;
+			if (this.constructor["defaultState"]) {
+				throw new Error(`Cannot specify "${this.constructor.name}.defaultState". (initial-state is already set using BaseComponentWithConnect function)`)
+			}
+		}
+	}
+	return BaseComponentEnhanced as any as new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>;
+}

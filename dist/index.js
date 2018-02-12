@@ -644,6 +644,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+	exports.BaseComponentWithConnect = BaseComponentWithConnect;
+
 	var _react = __webpack_require__(3);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -1126,9 +1128,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	__decorate([_General.Sealed], BaseComponent.prototype, "componentDidUpdate", null);
 	exports.BaseComponent = BaseComponent = BaseComponent_1 = __decorate([_General.HasSealedProps], BaseComponent);
 	exports.BaseComponent = BaseComponent;
-
-	var BaseComponent_1;
 	//G({Component2: Component, BaseComponent: Component});
+	/*export function BaseComponentWithConnect<Props>(connectFunc: (state?: RootState, props?)=>Props) {
+	    return function InnerFunc<State>() {
+	        return BaseComponent as new(..._)=>BaseComponent<Props, State>;
+	    };
+	}*/
+
+	function BaseComponentWithConnect(connectFunc, initialState) {
+	    var BaseComponentEnhanced = function (_BaseComponent) {
+	        _inherits(BaseComponentEnhanced, _BaseComponent);
+
+	        function BaseComponentEnhanced(props) {
+	            _classCallCheck(this, BaseComponentEnhanced);
+
+	            var _this11 = _possibleConstructorReturn(this, (BaseComponentEnhanced.__proto__ || Object.getPrototypeOf(BaseComponentEnhanced)).call(this, props));
+
+	            _this11.state = initialState;
+	            if (_this11.constructor["defaultState"]) {
+	                throw new Error("Cannot specify \"" + _this11.constructor.name + ".defaultState\". (initial-state is already set using BaseComponentWithConnect function)");
+	            }
+	            return _this11;
+	        }
+
+	        return BaseComponentEnhanced;
+	    }(BaseComponent);
+
+	    return BaseComponentEnhanced;
+	}
+	var BaseComponent_1;
 
 /***/ },
 /* 9 */
