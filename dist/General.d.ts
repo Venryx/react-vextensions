@@ -12,9 +12,9 @@ export declare function ToJSON(obj: any): string;
 export declare function FromJSON(json: any): any;
 export declare function RemoveDuplicates(items: any): any[];
 declare global  {
-    function GetDOM(comp: Component<any, any>): Element[];
+    function GetDOM(comp: Component<any, any>): Element;
 }
-export declare function GetDOM(comp: Component<any, any>): HTMLElement;
+export declare function GetDOM(comp: Component<any, any>): Element;
 export declare function FindReact(dom: any): BaseComponent<any, any>;
 export declare function GetInnerComp(wrapperComp: React.Component<any, any>): any;
 export declare type numberOrSuch = number | string;

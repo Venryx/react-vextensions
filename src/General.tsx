@@ -36,8 +36,8 @@ export function RemoveDuplicates(items: any) {
 G({ShallowCompare});
 G({React, Text});
 
-declare global { function GetDOM(comp: Component<any, any>): Element[]; } G({GetDOM});
-export function GetDOM(comp: Component<any, any>) { return ReactDOM.findDOMNode(comp) as HTMLElement; };
+declare global { function GetDOM(comp: Component<any, any>): Element; } G({GetDOM});
+export function GetDOM(comp: Component<any, any>) { return ReactDOM.findDOMNode(comp) as Element; };
 /*declare var $;
 export function GetDOM_(comp) { return $(GetDOM(comp)) as JQuery; };
 G({GetDOM_});*/

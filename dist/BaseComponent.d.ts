@@ -12,7 +12,7 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     constructor(props: any);
     defaultState: Partial<S>;
     refs: any;
-    readonly DOM: HTMLElement;
+    readonly DOM: Element;
     readonly FlattenedChildren: React.ReactChild[];
     private GetPropsChanged_lastProps;
     GetPropsChanged(): any[];
