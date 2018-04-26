@@ -245,11 +245,11 @@ function RemoveDuplicates(items) {
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");
 G({ ShallowCompare: _shallowCompare2.default });
 G({ React: _react2.default, Text: Text });
+G({ GetDOM: GetDOM });
 function GetDOM(comp) {
     return _reactDom2.default.findDOMNode(comp);
 }
 ;
-G({ GetDOM: GetDOM });
 /*declare var $;
 export function GetDOM_(comp) { return $(GetDOM(comp)) as JQuery; };
 G({GetDOM_});*/
