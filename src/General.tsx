@@ -36,11 +36,11 @@ export function RemoveDuplicates(items: any) {
 G({ShallowCompare});
 G({React, Text});
 
-export function FindDOM(comp) { return ReactDOM.findDOMNode(comp) as HTMLElement; };
-G({FindDOM});
+export function GetDOM(comp) { return ReactDOM.findDOMNode(comp) as HTMLElement; };
+G({GetDOM});
 /*declare var $;
-export function FindDOM_(comp) { return $(FindDOM(comp)) as JQuery; };
-G({FindDOM_});*/
+export function GetDOM_(comp) { return $(GetDOM(comp)) as JQuery; };
+G({GetDOM_});*/
 export function FindReact(dom) {
     for (var key in dom)
         if (key.startsWith("__reactInternalInstance$")) {
@@ -55,7 +55,7 @@ export function FindReact(dom) {
 G({FindReact});
 // needed for wrapper-components that don't provide way of accessing inner-component
 export function GetInnerComp(wrapperComp: React.Component<any, any>) {
-	return FindReact(FindDOM(wrapperComp)) as any;
+	return FindReact(GetDOM(wrapperComp)) as any;
 }
 G({GetInnerComp});
 

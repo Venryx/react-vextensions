@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import autoBind from "react-autobind";
 import ShallowCompare from "react/lib/shallowCompare";
 import classNames from "classnames";
-import {HasSealedProps, BaseProps, FindDOM, Sealed, ToJSON, RemoveDuplicates} from "./General";
+import {HasSealedProps, BaseProps, GetDOM, Sealed, ToJSON, RemoveDuplicates} from "./General";
 
 export enum RenderSource {
 	Mount, // first render, after creation
@@ -51,7 +51,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	refs;
 	//timers = [] as Timer[];
 
-	get DOM() { return this.mounted ? FindDOM(this) : null; }
+	get DOM() { return this.mounted ? GetDOM(this) : null; }
 	//get DOM_() { return this.mounted ? $(this.DOM) : null; }
 	// needed for wrapper-components that don't provide way of accessing inner-component
 	//get InnerComp() { return FindReact(this.DOM); }
@@ -205,7 +205,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	@Sealed componentDidMount(...args) {
 		this.ComponentDidMount(...args);
 		this.ComponentDidMountOrUpdate(this.ComponentDidMountOrUpdate_lastProps, this.ComponentDidMountOrUpdate_lastState);
-		this.ComponentDidMountOrUpdate_lastProps = this.props;
+		this.ComponentDidMountOrUpdate_lastProps = this.props as any;
 		this.ComponentDidMountOrUpdate_lastState = this.state;
 		/*let {Ref} = this.props;
 		if (Ref) Ref(this);*/
@@ -237,7 +237,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	@Sealed componentDidUpdate(...args) {
 	    this.ComponentDidUpdate(...args);
 		this.ComponentDidMountOrUpdate(this.ComponentDidMountOrUpdate_lastProps, this.ComponentDidMountOrUpdate_lastState);
-		this.ComponentDidMountOrUpdate_lastProps = this.props;
+		this.ComponentDidMountOrUpdate_lastProps = this.props as any;
 		this.ComponentDidMountOrUpdate_lastState = this.state;
 		this.CallPostRender();
 	}
