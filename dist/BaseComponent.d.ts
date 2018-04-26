@@ -20,7 +20,7 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     private GetStateChanged_lastState;
     GetStateChanged(): any[];
     GetStateChanged_Data(): string;
-    forceUpdate(_: () => "Do not call this. Call Update() instead."): void;
+    forceUpdate(): void;
     Update(postUpdate?: any): void;
     Clear(postClear?: any): void;
     ClearThenUpdate(): void;

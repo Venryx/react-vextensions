@@ -794,10 +794,13 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
                 return result[key] = _this5.state[key], result;
             }, {}));
         }
+        //forceUpdate(_: ()=>"Do not call this. Call Update() instead.") {
+
     }, {
         key: "forceUpdate",
-        value: function forceUpdate(_) {
+        value: function forceUpdate() {
             //throw new Error("Do not call this. Call Update() instead.");
+            console.warn("Do not call this. Call Update() instead.");
         }
     }, {
         key: "Update",

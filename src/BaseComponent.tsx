@@ -84,8 +84,10 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 		return ToJSON(this.GetStateChanged().reduce((result, key)=>(result[key] = this.state[key], result), {}));
 	}
 
-	forceUpdate(_: ()=>"Do not call this. Call Update() instead.") {
+	//forceUpdate(_: ()=>"Do not call this. Call Update() instead.") {
+	forceUpdate() {
 		//throw new Error("Do not call this. Call Update() instead.");
+		console.warn("Do not call this. Call Update() instead.");
 	}
 	Update(postUpdate?) {
 		//if (!this.Mounted) return;
