@@ -915,9 +915,13 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
                     if (same) return [];
                 }
             }
+            var componentClass = this.constructor;
+            if (componentClass.ValidateState) {
+                componentClass.ValidateState(newState);
+            }
             this.lastRender_source = RenderSource.SetState;
             //this.setState(newState as S, callback);
-            _react.Component.prototype.setState.apply(this, arguments);
+            _react.Component.prototype.setState.call(this, newState);
         }
     }, {
         key: "AddChangeListeners",

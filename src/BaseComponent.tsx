@@ -149,10 +149,15 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 				if (same) return [];
 			}
 		}
+
+		let componentClass = this.constructor as any;
+		if (componentClass.ValidateState) {
+			componentClass.ValidateState(newState);
+		}
 		
 		this.lastRender_source = RenderSource.SetState;
 		//this.setState(newState as S, callback);
-		Component.prototype.setState.apply(this, arguments);
+		Component.prototype.setState.call(this, newState);
 	}
 
 	changeListeners = [];
