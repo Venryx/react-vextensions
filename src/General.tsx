@@ -55,6 +55,8 @@ export function FindReact(dom) {
 G({FindReact});
 // needed for wrapper-components that don't provide way of accessing inner-component
 export function GetInnerComp(wrapperComp: React.Component<any, any>) {
+	// if you use `connect([...], {withRef: true})`, a function will be available at wrapper.getWrappedInstance(); use that if available
+	if (wrapperComp && wrapperComp["getWrappedInstance"]) return wrapperComp["getWrappedInstance"]();
 	return FindReact(GetDOM(wrapperComp)) as any;
 }
 G({GetInnerComp});
