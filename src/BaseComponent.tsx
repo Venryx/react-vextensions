@@ -234,15 +234,16 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	
 	ComponentWillReceiveProps(newProps: any[]): void {};
 	@Sealed componentWillReceiveProps(newProps) {
-		if (this.autoRemoveChangeListeners)
+		if (this.autoRemoveChangeListeners) {
 			this.RemoveChangeListeners();
+		}
 		this.ComponentWillReceiveProps(newProps);
 		this.ComponentWillMountOrReceiveProps(newProps, false);
 		this.lastRender_source = RenderSource.PropChange;
 	}
 	ComponentDidUpdate(...args: any[]): void {};
 	@Sealed componentDidUpdate(...args) {
-	    this.ComponentDidUpdate(...args);
+	   this.ComponentDidUpdate(...args);
 		this.ComponentDidMountOrUpdate(this.ComponentDidMountOrUpdate_lastProps, this.ComponentDidMountOrUpdate_lastState);
 		this.ComponentDidMountOrUpdate_lastProps = this.props as any;
 		this.ComponentDidMountOrUpdate_lastState = this.state;
@@ -292,7 +293,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	};
 }*/
 export function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State) {
-	class BaseComponentEnhanced extends BaseComponent<any, any> {
+	class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State> {
 		constructor(props) {
 			super(props);
 			this.state = initialState;
@@ -301,5 +302,6 @@ export function BaseComponentWithConnector<PassedProps, ConnectProps, State>(con
 			}
 		}
 	}
+	//return BaseComponentEnhanced;
 	return BaseComponentEnhanced as any as new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>;
 }

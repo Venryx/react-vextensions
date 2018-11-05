@@ -1,17 +1,17 @@
-/// <reference types="react" />
 import React from "react";
 import { Component } from "react";
 import ShallowCompare from "react/lib/shallowCompare";
 import { BaseComponent } from "./BaseComponent";
 export { ShallowCompare };
-declare global  {
+declare global {
     function E<E1, E2, E3, E4, E5, E6, E7, E8>(e1?: E1, e2?: E2, e3?: E3, e4?: E4, e5?: E5, e6?: E6, e7?: E7, e8?: E8): E1 & E2 & E3 & E4 & E5 & E6 & E7 & E8;
 }
 export declare function E<E1, E2, E3, E4, E5, E6, E7, E8>(e1?: E1, e2?: E2, e3?: E3, e4?: E4, e5?: E5, e6?: E6, e7?: E7, e8?: E8): E1 & E2 & E3 & E4 & E5 & E6 & E7 & E8;
 export declare function ToJSON(obj: any): string;
 export declare function FromJSON(json: any): any;
+export declare function AsMultiline(str: string, desiredIndent?: number): string;
 export declare function RemoveDuplicates(items: any): any[];
-declare global  {
+declare global {
     function GetDOM(comp: Component<any, any>): Element;
 }
 export declare function GetDOM(comp: Component<any, any>): Element;
@@ -70,8 +70,8 @@ export declare function SimpleShouldUpdate_Overridable(target: any): void;
 export declare function Instant(target: any, name: any): void;
 export declare function ShallowEquals(objA: any, objB: any): boolean;
 export declare function ShallowChanged(objA: any, objB: any, ...propsToCompareMoreDeeply: string[]): boolean;
-export declare function AddGlobalElement(html: any): void;
-export declare function AddGlobalStyle(str: any): void;
+export declare function AddGlobalElement(html: string, asMultiline?: boolean): void;
+export declare function AddGlobalStyle(str: string, asMultiline?: boolean): void;
 /** Tunnels into Radium wrapper-class, and retrieves the original class, letting you access its static props. */
 export declare function HasSealedProps(target: Object): void;
 export declare function Sealed(target: Object, key: string): void;

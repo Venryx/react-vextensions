@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import React from "react";
 import { Component } from "react";
 import { BaseProps } from "./General";
@@ -6,7 +5,7 @@ export declare enum RenderSource {
     Mount = 0,
     PropChange = 1,
     SetState = 2,
-    Update = 3,
+    Update = 3
 }
 export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     constructor(props: any);
@@ -38,10 +37,10 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     componentWillMount(): void;
     ComponentDidMount(...args: any[]): void;
     ComponentDidMountOrUpdate(lastProps?: Readonly<P & BaseProps & {
-        children?;
+        children?: any;
     }>, lastState?: S): void;
     ComponentDidMountOrUpdate_lastProps: Readonly<P & BaseProps & {
-        children?;
+        children?: any;
     }>;
     ComponentDidMountOrUpdate_lastState: S;
     mounted: boolean;
@@ -53,8 +52,8 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     ComponentDidUpdate(...args: any[]): void;
     componentDidUpdate(...args: any[]): void;
     lastRender_source: RenderSource;
-    private CallPostRender();
+    private CallPostRender;
     PreRender(): void;
     PostRender(source?: RenderSource): void;
 }
-export declare function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?, props?: PassedProps) => ConnectProps, initialState: State): new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State>;
+export declare function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?: any, props?: PassedProps) => ConnectProps, initialState: State): new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State>;

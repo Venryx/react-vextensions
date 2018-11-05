@@ -22,6 +22,20 @@ export							function E<E1,E2,E3,E4,E5,E6,E7,E8>(e1?:E1,e2?:E2,e3?:E3,e4?:E4,e5?
 export function ToJSON(obj) { return JSON.stringify(obj); }
 export function FromJSON(json) { return JSON.parse(json); }
 
+export function AsMultiline(str: string, desiredIndent: number = null) {
+	let result = str.substring(str.indexOf("\n") + 1, str.lastIndexOf("\n"));
+	if (desiredIndent != null) {
+		let firstLineIndent = (result.match(/^\t+/) || [""])[0].length;
+		if (firstLineIndent) {
+			let lines = result.split("\n");
+			// remove X tabs from start of each line (where X is firstLineIndent)
+			lines = lines.map(line=>line.replace(new RegExp(`^\t{0,${firstLineIndent}}`), ""));
+			result = lines.join("\n");
+		}
+	}
+	return result;
+};
+
 export function RemoveDuplicates(items: any) {
 	var result = [];
 	for (let item of items) {
@@ -214,27 +228,33 @@ export function ShallowChanged(objA, objB, ...propsToCompareMoreDeeply: string[]
 //require("./GlobalStyles");
 
 let loaded = false;
-export function AddGlobalElement(html) {
-	/*$(()=> {
-        $(html).appendTo("#hidden_early");
-    });*/
+export function AddGlobalElement(html: string, asMultiline = true) {
+	if (asMultiline) {
+		html = AsMultiline(html, 0);
+	}
 	let proceed = ()=> {
 		loaded = true;
-		let nodeType = html.trim().substring(1, html.trim().IndexOfAny(" ", ">"));
+		//let nodeType = html.trim().substring(1, html.trim().IndexOfAny(" ", ">"));
+		//let nodeType = html.match(`<([a-zA-Z-]+)`)[1];
+		let nodeType = html.match(`<([^ >]+)`)[1];
 		let element = document.createElement(nodeType);
 		document.querySelector("#hidden_early").appendChild(element);
 		element.outerHTML = html;
 	};
-	if (loaded)
+	if (loaded) {
 		proceed();
-	else
+	} else {
 		window.addEventListener("load", proceed);
+	}
 };
-export function AddGlobalStyle(str) {
-    AddGlobalElement(`
-<style>
-${str}
-</style>
+export function AddGlobalStyle(str: string, asMultiline = true) {
+	if (asMultiline) {
+		str = AsMultiline(str, 0);
+	}
+	AddGlobalElement(`
+		<style>
+		${str}
+		</style>
 	`);
 };
 
