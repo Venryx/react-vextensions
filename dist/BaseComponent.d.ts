@@ -1,5 +1,4 @@
-import React from "react";
-import { Component } from "react";
+import React, { Component } from "react";
 import { BaseProps } from "./General";
 export declare enum RenderSource {
     Mount = 0,

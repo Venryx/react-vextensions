@@ -1,10 +1,6 @@
-import React from "react";
-import {Component} from "react";
-import ReactDOM from "react-dom";
+import React, { Component } from "react";
 import autoBind from "react-autobind";
-import ShallowCompare from "react/lib/shallowCompare";
-import classNames from "classnames";
-import {HasSealedProps, BaseProps, GetDOM, Sealed, ToJSON, RemoveDuplicates} from "./General";
+import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, ToJSON } from "./General";
 
 export enum RenderSource {
 	Mount, // first render, after creation
