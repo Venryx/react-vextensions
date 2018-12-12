@@ -1,17 +1,10 @@
 import React from "react";
 import {Component} from "react";
 import ReactDOM from "react-dom";
-import autoBind from "react-autobind";
-import ShallowCompare from "react/lib/shallowCompare";
 import {BaseComponent} from "./BaseComponent";
 import classNames from "classnames";
-export {ShallowCompare};
 
-function G(entries) {
-	Object.assign(window, entries);
-}
-G({E}); declare global {	function E<E1,E2,E3,E4,E5,E6,E7,E8>(e1?:E1,e2?:E2,e3?:E3,e4?:E4,e5?:E5,e6?:E6,e7?:E7,e8?:E8):E1&E2&E3&E4&E5&E6&E7&E8; }
-export							function E<E1,E2,E3,E4,E5,E6,E7,E8>(e1?:E1,e2?:E2,e3?:E3,e4?:E4,e5?:E5,e6?:E6,e7?:E7,e8?:E8):E1&E2&E3&E4&E5&E6&E7&E8 {
+export function E<E1,E2,E3,E4,E5,E6,E7,E8>(e1?:E1,e2?:E2,e3?:E3,e4?:E4,e5?:E5,e6?:E6,e7?:E7,e8?:E8):E1&E2&E3&E4&E5&E6&E7&E8 {
 	var result = {} as any;
 	for (var extend of arguments)
 		result.Extend(extend);
@@ -47,14 +40,8 @@ export function RemoveDuplicates(items: any) {
 }
 
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");
-G({ShallowCompare});
-G({React, Text});
 
-declare global { function GetDOM(comp: Component<any, any>): Element; } G({GetDOM});
 export function GetDOM(comp: Component<any, any>) { return ReactDOM.findDOMNode(comp) as Element; };
-/*declare var $;
-export function GetDOM_(comp) { return $(GetDOM(comp)) as JQuery; };
-G({GetDOM_});*/
 export function FindReact(dom) {
     for (var key in dom)
         if (key.startsWith("__reactInternalInstance$")) {
@@ -66,14 +53,12 @@ export function FindReact(dom) {
         }
     return null;
 }
-G({FindReact});
 // needed for wrapper-components that don't provide way of accessing inner-component
 export function GetInnerComp(wrapperComp: React.Component<any, any>) {
 	// if you use `connect([...], {withRef: true})`, a function will be available at wrapper.getWrappedInstance(); use that if available
 	if (wrapperComp && wrapperComp["getWrappedInstance"]) return wrapperComp["getWrappedInstance"]();
 	return FindReact(GetDOM(wrapperComp)) as any;
 }
-G({GetInnerComp});
 
 export type numberOrSuch = number | string;
 export interface BaseProps {
@@ -160,9 +145,9 @@ export function ApplyBasicStyles(target: React.ComponentClass<any>) {
 
 export function SimpleShouldUpdate(target) {
 	target.prototype.shouldComponentUpdate = function(newProps, newState) {
-		/*if (ShallowCompare(this, newProps, newState))
+		/*if (ShallowChanged(this, newProps, newState))
 			Log("Changed: " + this.props.Props().Where(a=>a.value !== newProps[a.name]).Select(a=>a.name) + ";" + g.ToJSON(this.props) + ";" + g.ToJSON(newProps));*/
-	    return ShallowCompare(this, newProps, newState);
+	    return ShallowChanged(this, newProps, newState);
 	}
 }
 //export function SimpleShouldUpdate_Overridable(target: Component<{shouldUpdate: (newProps: React.Props<any>, newState: any)=>boolean}, {}>) {
@@ -173,7 +158,7 @@ export function SimpleShouldUpdate_Overridable(target) {
 			return shouldUpdate;
 		if (typeof shouldUpdate == "function")
 			return shouldUpdate(newProps, newState);
-	    return ShallowCompare(this, newProps, newState);
+	    return ShallowChanged(this, newProps, newState);
 	}
 }
 
@@ -203,7 +188,6 @@ export function ShallowEquals(objA, objB) {
 
 	return true;
 }
-G({ShallowChanged});
 export function ShallowChanged(objA, objB, ...propsToCompareMoreDeeply: string[]) {
 	if (propsToCompareMoreDeeply.length) {
 		if (ShallowChanged(objA.Excluding(...propsToCompareMoreDeeply), objB.Excluding(...propsToCompareMoreDeeply))) {

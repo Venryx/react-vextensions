@@ -124,7 +124,7 @@ Object.keys(_General).forEach(function (key) {
   });
 });
 
-var _PseudoStyleHelper = __webpack_require__(8);
+var _PseudoStyleHelper = __webpack_require__(5);
 
 Object.keys(_PseudoStyleHelper).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -136,7 +136,7 @@ Object.keys(_PseudoStyleHelper).forEach(function (key) {
   });
 });
 
-var _BaseComponent = __webpack_require__(30);
+var _BaseComponent = __webpack_require__(27);
 
 Object.keys(_BaseComponent).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -158,7 +158,7 @@ Object.keys(_BaseComponent).forEach(function (key) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.basePropFullKeys = exports.ShallowCompare = undefined;
+exports.basePropFullKeys = undefined;
 exports.E = E;
 exports.ToJSON = ToJSON;
 exports.FromJSON = FromJSON;
@@ -179,30 +179,16 @@ exports.AddGlobalStyle = AddGlobalStyle;
 exports.HasSealedProps = HasSealedProps;
 exports.Sealed = Sealed;
 
-var _react = __webpack_require__(3);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactDom = __webpack_require__(4);
+var _reactDom = __webpack_require__(3);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _shallowCompare = __webpack_require__(5);
-
-var _shallowCompare2 = _interopRequireDefault(_shallowCompare);
-
-var _classnames = __webpack_require__(7);
+var _classnames = __webpack_require__(4);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.ShallowCompare = _shallowCompare2.default;
-
-function G(entries) {
-    Object.assign(window, entries);
-}
-G({ E: E });
 function E(e1, e2, e3, e4, e5, e6, e7, e8) {
     var result = {};
     var _iteratorNormalCompletion = true;
@@ -289,16 +275,10 @@ function RemoveDuplicates(items) {
     return result;
 }
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");
-G({ ShallowCompare: _shallowCompare2.default });
-G({ React: _react2.default, Text: Text });
-G({ GetDOM: GetDOM });
 function GetDOM(comp) {
     return _reactDom2.default.findDOMNode(comp);
 }
 ;
-/*declare var $;
-export function GetDOM_(comp) { return $(GetDOM(comp)) as JQuery; };
-G({GetDOM_});*/
 function FindReact(dom) {
     for (var key in dom) {
         if (key.startsWith("__reactInternalInstance$")) {
@@ -310,14 +290,12 @@ function FindReact(dom) {
         }
     }return null;
 }
-G({ FindReact: FindReact });
 // needed for wrapper-components that don't provide way of accessing inner-component
 function GetInnerComp(wrapperComp) {
     // if you use `connect([...], {withRef: true})`, a function will be available at wrapper.getWrappedInstance(); use that if available
     if (wrapperComp && wrapperComp["getWrappedInstance"]) return wrapperComp["getWrappedInstance"]();
     return FindReact(GetDOM(wrapperComp));
 }
-G({ GetInnerComp: GetInnerComp });
 var basePropFullKeys = exports.basePropFullKeys = {
     m: "margin", ml: "marginLeft", mr: "marginRight", mt: "marginTop", mb: "marginBottom",
     mlr: null, mtb: null,
@@ -381,9 +359,9 @@ function ApplyBasicStyles(target) {
 }*/
 function SimpleShouldUpdate(target) {
     target.prototype.shouldComponentUpdate = function (newProps, newState) {
-        /*if (ShallowCompare(this, newProps, newState))
+        /*if (ShallowChanged(this, newProps, newState))
             Log("Changed: " + this.props.Props().Where(a=>a.value !== newProps[a.name]).Select(a=>a.name) + ";" + g.ToJSON(this.props) + ";" + g.ToJSON(newProps));*/
-        return (0, _shallowCompare2.default)(this, newProps, newState);
+        return ShallowChanged(this, newProps, newState);
     };
 }
 //export function SimpleShouldUpdate_Overridable(target: Component<{shouldUpdate: (newProps: React.Props<any>, newState: any)=>boolean}, {}>) {
@@ -393,7 +371,7 @@ function SimpleShouldUpdate_Overridable(target) {
 
         if (typeof shouldUpdate == "boolean") return shouldUpdate;
         if (typeof shouldUpdate == "function") return shouldUpdate(newProps, newState);
-        return (0, _shallowCompare2.default)(this, newProps, newState);
+        return ShallowChanged(this, newProps, newState);
     };
 }
 // for PostRender() func
@@ -417,7 +395,6 @@ function ShallowEquals(objA, objB) {
     }
     return true;
 }
-G({ ShallowChanged: ShallowChanged });
 function ShallowChanged(objA, objB) {
     for (var _len = arguments.length, propsToCompareMoreDeeply = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
         propsToCompareMoreDeeply[_key - 2] = arguments[_key];
@@ -558,115 +535,10 @@ function Sealed(target, key) {
 /* 3 */
 /***/ (function(module, exports) {
 
-module.exports = require("react");
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
 module.exports = require("react-dom");
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
-
-
-var shallowEqual = __webpack_require__(6);
-
-/**
- * Does a shallow comparison for props and state.
- * See ReactComponentWithPureRenderMixin
- * See also https://facebook.github.io/react/docs/shallow-compare.html
- */
-function shallowCompare(instance, nextProps, nextState) {
-  return !shallowEqual(instance.props, nextProps) || !shallowEqual(instance.state, nextState);
-}
-
-module.exports = shallowCompare;
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * Copyright (c) 2013-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @typechecks
- * 
- */
-
-/*eslint-disable no-self-compare */
-
-
-
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-/**
- * inlined Object.is polyfill to avoid requiring consumers ship their own
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
- */
-function is(x, y) {
-  // SameValue algorithm
-  if (x === y) {
-    // Steps 1-5, 7-10
-    // Steps 6.b-6.e: +0 != -0
-    // Added the nonzero y check to make Flow happy, but it is redundant
-    return x !== 0 || y !== 0 || 1 / x === 1 / y;
-  } else {
-    // Step 6.a: NaN == NaN
-    return x !== x && y !== y;
-  }
-}
-
-/**
- * Performs equality by iterating through keys on an object and returning false
- * when any key has values which are not strictly equal between the arguments.
- * Returns true when the values of all keys are strictly equal.
- */
-function shallowEqual(objA, objB) {
-  if (is(objA, objB)) {
-    return true;
-  }
-
-  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
-    return false;
-  }
-
-  var keysA = Object.keys(objA);
-  var keysB = Object.keys(objB);
-
-  if (keysA.length !== keysB.length) {
-    return false;
-  }
-
-  // Test for A's keys different from B.
-  for (var i = 0; i < keysA.length; i++) {
-    if (!hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-module.exports = shallowEqual;
-
-/***/ }),
-/* 7 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -723,7 +595,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 
 /***/ }),
-/* 8 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -734,7 +606,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.CreateGlobalPseudoStyleAndReturnClassName = CreateGlobalPseudoStyleAndReturnClassName;
 
-var _CSSPropertyOperations = __webpack_require__(9);
+var _CSSPropertyOperations = __webpack_require__(6);
 
 var _General = __webpack_require__(2);
 
@@ -752,7 +624,7 @@ function CreateGlobalPseudoStyleAndReturnClassName(pseudoStyleType, style) {
 }
 
 /***/ }),
-/* 9 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -766,15 +638,15 @@ function CreateGlobalPseudoStyleAndReturnClassName(pseudoStyleType, style) {
 
 
 
-var CSSProperty = __webpack_require__(10);
-var ExecutionEnvironment = __webpack_require__(11);
-var ReactInstrumentation = __webpack_require__(12);
+var CSSProperty = __webpack_require__(7);
+var ExecutionEnvironment = __webpack_require__(8);
+var ReactInstrumentation = __webpack_require__(9);
 
-var camelizeStyleName = __webpack_require__(24);
-var dangerousStyleValue = __webpack_require__(26);
-var hyphenateStyleName = __webpack_require__(27);
-var memoizeStringOnly = __webpack_require__(29);
-var warning = __webpack_require__(15);
+var camelizeStyleName = __webpack_require__(21);
+var dangerousStyleValue = __webpack_require__(23);
+var hyphenateStyleName = __webpack_require__(24);
+var memoizeStringOnly = __webpack_require__(26);
+var warning = __webpack_require__(12);
 
 var processStyleName = memoizeStringOnly(function (styleName) {
   return hyphenateStyleName(styleName);
@@ -970,7 +842,7 @@ var CSSPropertyOperations = {
 module.exports = CSSPropertyOperations;
 
 /***/ }),
-/* 10 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1128,7 +1000,7 @@ var CSSProperty = {
 module.exports = CSSProperty;
 
 /***/ }),
-/* 11 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1167,7 +1039,7 @@ var ExecutionEnvironment = {
 module.exports = ExecutionEnvironment;
 
 /***/ }),
-/* 12 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1187,14 +1059,14 @@ module.exports = ExecutionEnvironment;
 var debugTool = null;
 
 if (true) {
-  var ReactDebugTool = __webpack_require__(13);
+  var ReactDebugTool = __webpack_require__(10);
   debugTool = ReactDebugTool;
 }
 
 module.exports = { debugTool: debugTool };
 
 /***/ }),
-/* 13 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1209,13 +1081,13 @@ module.exports = { debugTool: debugTool };
 
 
 
-var ReactInvalidSetStateWarningHook = __webpack_require__(14);
-var ReactHostOperationHistoryHook = __webpack_require__(17);
-var ReactComponentTreeHook = __webpack_require__(18);
-var ExecutionEnvironment = __webpack_require__(11);
+var ReactInvalidSetStateWarningHook = __webpack_require__(11);
+var ReactHostOperationHistoryHook = __webpack_require__(14);
+var ReactComponentTreeHook = __webpack_require__(15);
+var ExecutionEnvironment = __webpack_require__(8);
 
-var performanceNow = __webpack_require__(22);
-var warning = __webpack_require__(15);
+var performanceNow = __webpack_require__(19);
+var warning = __webpack_require__(12);
 
 var hooks = [];
 var didHookThrowForEvent = {};
@@ -1558,7 +1430,7 @@ if (/[?&]react_perf\b/.test(url)) {
 module.exports = ReactDebugTool;
 
 /***/ }),
-/* 14 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1573,7 +1445,7 @@ module.exports = ReactDebugTool;
 
 
 
-var warning = __webpack_require__(15);
+var warning = __webpack_require__(12);
 
 if (true) {
   var processingChildContext = false;
@@ -1598,7 +1470,7 @@ var ReactInvalidSetStateWarningHook = {
 module.exports = ReactInvalidSetStateWarningHook;
 
 /***/ }),
-/* 15 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1612,7 +1484,7 @@ module.exports = ReactInvalidSetStateWarningHook;
 
 
 
-var emptyFunction = __webpack_require__(16);
+var emptyFunction = __webpack_require__(13);
 
 /**
  * Similar to invariant but only logs a warning if the condition is not met.
@@ -1666,7 +1538,7 @@ if (true) {
 module.exports = warning;
 
 /***/ }),
-/* 16 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1708,7 +1580,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 module.exports = emptyFunction;
 
 /***/ }),
-/* 17 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1745,7 +1617,7 @@ var ReactHostOperationHistoryHook = {
 module.exports = ReactHostOperationHistoryHook;
 
 /***/ }),
-/* 18 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1760,12 +1632,12 @@ module.exports = ReactHostOperationHistoryHook;
 
 
 
-var _prodInvariant = __webpack_require__(19);
+var _prodInvariant = __webpack_require__(16);
 
-var ReactCurrentOwner = __webpack_require__(20);
+var ReactCurrentOwner = __webpack_require__(17);
 
-var invariant = __webpack_require__(21);
-var warning = __webpack_require__(15);
+var invariant = __webpack_require__(18);
+var warning = __webpack_require__(12);
 
 function isNative(fn) {
   // Based on isNative() from Lodash
@@ -2127,7 +1999,7 @@ var ReactComponentTreeHook = {
 module.exports = ReactComponentTreeHook;
 
 /***/ }),
-/* 19 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2169,7 +2041,7 @@ function reactProdInvariant(code) {
 module.exports = reactProdInvariant;
 
 /***/ }),
-/* 20 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2201,7 +2073,7 @@ var ReactCurrentOwner = {
 module.exports = ReactCurrentOwner;
 
 /***/ }),
-/* 21 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2260,7 +2132,7 @@ function invariant(condition, format, a, b, c, d, e, f) {
 module.exports = invariant;
 
 /***/ }),
-/* 22 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2275,7 +2147,7 @@ module.exports = invariant;
  * @typechecks
  */
 
-var performance = __webpack_require__(23);
+var performance = __webpack_require__(20);
 
 var performanceNow;
 
@@ -2297,7 +2169,7 @@ if (performance.now) {
 module.exports = performanceNow;
 
 /***/ }),
-/* 23 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2312,7 +2184,7 @@ module.exports = performanceNow;
 
 
 
-var ExecutionEnvironment = __webpack_require__(11);
+var ExecutionEnvironment = __webpack_require__(8);
 
 var performance;
 
@@ -2323,7 +2195,7 @@ if (ExecutionEnvironment.canUseDOM) {
 module.exports = performance || {};
 
 /***/ }),
-/* 24 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2338,7 +2210,7 @@ module.exports = performance || {};
 
 
 
-var camelize = __webpack_require__(25);
+var camelize = __webpack_require__(22);
 
 var msPattern = /^-ms-/;
 
@@ -2366,7 +2238,7 @@ function camelizeStyleName(string) {
 module.exports = camelizeStyleName;
 
 /***/ }),
-/* 25 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2401,7 +2273,7 @@ function camelize(string) {
 module.exports = camelize;
 
 /***/ }),
-/* 26 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2415,8 +2287,8 @@ module.exports = camelize;
 
 
 
-var CSSProperty = __webpack_require__(10);
-var warning = __webpack_require__(15);
+var CSSProperty = __webpack_require__(7);
+var warning = __webpack_require__(12);
 
 var isUnitlessNumber = CSSProperty.isUnitlessNumber;
 var styleWarnings = {};
@@ -2483,7 +2355,7 @@ function dangerousStyleValue(name, value, component, isCustomProperty) {
 module.exports = dangerousStyleValue;
 
 /***/ }),
-/* 27 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2498,7 +2370,7 @@ module.exports = dangerousStyleValue;
 
 
 
-var hyphenate = __webpack_require__(28);
+var hyphenate = __webpack_require__(25);
 
 var msPattern = /^ms-/;
 
@@ -2525,7 +2397,7 @@ function hyphenateStyleName(string) {
 module.exports = hyphenateStyleName;
 
 /***/ }),
-/* 28 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2561,7 +2433,7 @@ function hyphenate(string) {
 module.exports = hyphenate;
 
 /***/ }),
-/* 29 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2594,7 +2466,7 @@ function memoizeStringOnly(callback) {
 module.exports = memoizeStringOnly;
 
 /***/ }),
-/* 30 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2611,11 +2483,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 exports.BaseComponentWithConnector = BaseComponentWithConnector;
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(28);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactAutobind = __webpack_require__(31);
+var _reactAutobind = __webpack_require__(29);
 
 var _reactAutobind2 = _interopRequireDefault(_reactAutobind);
 
@@ -3103,7 +2975,6 @@ __decorate([_General.Sealed], BaseComponent.prototype, "componentWillReceiveProp
 __decorate([_General.Sealed], BaseComponent.prototype, "componentDidUpdate", null);
 exports.BaseComponent = BaseComponent = BaseComponent_1 = __decorate([_General.HasSealedProps], BaseComponent);
 exports.BaseComponent = BaseComponent;
-//G({Component2: Component, BaseComponent: Component});
 /*export function BaseComponentWithConnect<Props>(connectFunc: (state?: RootState, props?)=>Props) {
     return function InnerFunc<State>() {
         return BaseComponent as new(..._)=>BaseComponent<Props, State>;
@@ -3135,14 +3006,20 @@ function BaseComponentWithConnector(connector, initialState) {
 }
 
 /***/ }),
-/* 31 */
+/* 28 */
+/***/ (function(module, exports) {
+
+module.exports = require("react");
+
+/***/ }),
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(32);
+module.exports = __webpack_require__(30);
 
 
 /***/ }),
-/* 32 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

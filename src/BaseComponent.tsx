@@ -281,7 +281,6 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	    return ReactInstanceMap.get(this) != null;
 	}*/
 }
-//G({Component2: Component, BaseComponent: Component});
 
 /*export function BaseComponentWithConnect<Props>(connectFunc: (state?: RootState, props?)=>Props) {
 	return function InnerFunc<State>() {

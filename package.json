@@ -1,6 +1,6 @@
 {
   "name": "react-vextensions",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Extensions for ReactJS, by Venryx.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
