@@ -282,17 +282,25 @@ function GetDOM(comp) {
 function FindReact(dom) {
     for (var key in dom) {
         if (key.startsWith("__reactInternalInstance$")) {
-            var compInternals = dom[key]._currentElement;
-            var compWrapper = compInternals._owner;
-            var comp = compWrapper._instance;
-            //return comp as React.Component<any, any>;
-            return comp;
+            var fiberNode = dom[key];
+            if (fiberNode.return) {
+                // react 16+
+                return fiberNode.return.stateNode;
+            } else {
+                // react <16
+                var compInternals = fiberNode._currentElement;
+                var compWrapper = compInternals._owner;
+                var comp = compWrapper._instance;
+                //return comp as React.Component<any, any>;
+                return comp;
+            }
         }
-    }return null;
+    }
+    return null;
 }
 // needed for wrapper-components that don't provide way of accessing inner-component
 function GetInnerComp(wrapperComp) {
-    // if you use `connect([...], {withRef: true})`, a function will be available at wrapper.getWrappedInstance(); use that if available
+    // in old react-redux versions, if you use `connect([...], {withRef: true})`, a function will be available at wrapper.getWrappedInstance(); use that if available
     if (wrapperComp && wrapperComp["getWrappedInstance"]) return wrapperComp["getWrappedInstance"]();
     return FindReact(GetDOM(wrapperComp));
 }
