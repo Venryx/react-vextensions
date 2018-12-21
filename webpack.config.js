@@ -18,12 +18,17 @@ module.exports = {
 		//root: "src",
 		extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
 	},
-	externals: {
-		// use external version of React (ie, don't bundle react, since any app using this library will already have it available)
-		//"react": "React",
-		"react": "commonjs react",
- 		"react-dom": "commonjs react-dom",
-    },
+	externals: [
+		 (context, request, callback)=> {
+			/*const externalLibs = ["react", "react-dom", "react-dom/server"];
+			if (externalLibs.indexOf(request) != -1) {*/
+			const externalLibs = ["react", "react-dom"];
+			if (externalLibs.some(lib=>request.match(new RegExp(`^${lib}(/|$)`)))) {
+				return callback(null, "commonjs " + request);
+			}
+			callback();
+		},
+	],
     /*module: {
         noParse: ["react"]
     },*/
