@@ -43,21 +43,17 @@ export function RemoveDuplicates(items: any) {
 
 export function GetDOM(comp: Component<any, any>) { return ReactDOM.findDOMNode(comp) as Element; };
 export function FindReact(dom) {
-	for (var key in dom) {
-		if (key.startsWith("__reactInternalInstance$")) {
-			let fiberNode = dom[key];
-			if (fiberNode.return) { // react 16+
-				return fiberNode.return.stateNode;
-			} else { // react <16
-				var compInternals = fiberNode._currentElement;
-				var compWrapper = compInternals._owner;
-				var comp = compWrapper._instance;
-				//return comp as React.Component<any, any>;
-				return comp as BaseComponent<any, any>;
-			}
-		}
+	let key = Object.keys(dom).find(key=>key.startsWith("__reactInternalInstance$"));
+	let internalInstance = dom[key];
+	if (internalInstance == null) return null;
+
+	if (internalInstance.return) { // react 16+
+		//return internalInstance._debugOwner ? internalInstance._debugOwner.stateNode : null;
+		return internalInstance.return.stateNode;
+	} else { // react <16
+		//return internalInstance._currentElement._owner._instance as React.Component<any, any>;
+		return internalInstance._currentElement._owner._instance as BaseComponent<any, any>;
 	}
-	return null;
 }
 // needed for wrapper-components that don't provide way of accessing inner-component
 export function GetInnerComp(wrapperComp: React.Component<any, any>) {
