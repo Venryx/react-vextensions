@@ -630,7 +630,7 @@ var classBasedStyleKeys = {};
 var pseudoStyleTypes = exports.pseudoStyleTypes = ["hover"];
 function ConvertStyleObjectToCSSString(styleObj) {
     var str = _server2.default.renderToString(_react2.default.createElement("div", { style: styleObj }));
-    var styleStr = str.match(/style="(.+?)" data-reactroot/)[1];
+    var styleStr = str.match(/style="(.+?)" data-reactroot/)[1] + ";"; // add final semicolon; new versions of React leave it out for some reason
     return styleStr;
 }
 /**
