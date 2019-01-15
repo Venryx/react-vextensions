@@ -958,7 +958,7 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
             }
             this.lastRender_source = RenderSource.SetState;
             //this.setState(newState as S, callback);
-            _react.Component.prototype.setState.call(this, newState);
+            _react.Component.prototype.setState.call(this, newState, callback);
         }
     }, {
         key: "AddChangeListeners",

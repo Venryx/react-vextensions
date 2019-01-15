@@ -153,7 +153,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 		
 		this.lastRender_source = RenderSource.SetState;
 		//this.setState(newState as S, callback);
-		Component.prototype.setState.call(this, newState);
+		Component.prototype.setState.call(this, newState, callback);
 	}
 
 	changeListeners = [];
