@@ -287,8 +287,7 @@ function FindReact(dom) {
     if (internalInstance == null) return null;
     if (internalInstance.return) {
         // react 16+
-        //return internalInstance._debugOwner ? internalInstance._debugOwner.stateNode : null;
-        return internalInstance.return.stateNode;
+        return internalInstance._debugOwner ? internalInstance._debugOwner.stateNode : internalInstance.return.stateNode;
     } else {
         // react <16
         //return internalInstance._currentElement._owner._instance as React.Component<any, any>;
