@@ -278,8 +278,8 @@ function RemoveDuplicates(items) {
 function GetDOM(comp) {
     return _reactDom2.default.findDOMNode(comp);
 }
-;
 function FindReact(dom) {
+    if (dom == null) return null;
     var key = Object.keys(dom).find(function (key) {
         return key.startsWith("__reactInternalInstance$");
     });

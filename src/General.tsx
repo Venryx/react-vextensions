@@ -41,8 +41,11 @@ export function RemoveDuplicates(items: any) {
 
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");
 
-export function GetDOM(comp: Component<any, any>) { return ReactDOM.findDOMNode(comp) as Element; };
+export function GetDOM(comp: Component<any, any>) {
+	return ReactDOM.findDOMNode(comp) as Element;
+}
 export function FindReact(dom) {
+	if (dom == null) return null;
 	let key = Object.keys(dom).find(key=>key.startsWith("__reactInternalInstance$"));
 	let internalInstance = dom[key];
 	if (internalInstance == null) return null;
