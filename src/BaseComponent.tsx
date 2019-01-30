@@ -122,17 +122,18 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 		throw new Error("Do not call this. Call SetState() instead.");
 	}*/
 	setState(): "Do not call this. Call SetState() instead." { return null as any; }
-	SetState(newState: Partial<S>, callback?: ()=>any, cancelIfStateSame = true, deepCompare = false) {
+	SetState(newState: Partial<S>, callback?: ()=>any, cancelIfStateSame = true, jsonCompare = false) {
 		if (cancelIfStateSame) {
-			// we only care about new-state's keys -- setState() leaves unmentioned keys untouched
-			let oldState_forNewStateKeys = Object.keys(newState).reduce((result, key)=>(result[key] = this.state[key], result), {});
-			if (deepCompare) {
+			if (jsonCompare) {
+				// we only care about new-state's keys -- setState() leaves unmentioned keys untouched
+				let oldState_forNewStateKeys = Object.keys(newState).reduce((result, key)=>(result[key] = this.state[key], result), {});
 				if (ToJSON(newState) == ToJSON(oldState_forNewStateKeys)) return [];
 			} else {
 				//if (ShallowEquals(newState, oldState_forNewStateKeys)) return [];
 				// use a looser comparison (we want a missing prop to be equivalent to null and undefined)
 				let same = true;
-				for (let key of RemoveDuplicates(Object.keys(this.state).concat(Object.keys(newState)))) {
+				//for (let key of RemoveDuplicates(Object.keys(this.state).concat(Object.keys(newState)))) {
+				for (let key of Object.keys(newState)) {
 					let valA = this.state[key as any];
 					let valB = newState[key as any];
 					if (valA == null && valB == null) continue;
@@ -148,7 +149,8 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 
 		let componentClass = this.constructor as any;
 		if (componentClass.ValidateState) {
-			componentClass.ValidateState(newState);
+			let newState_merged = Object.assign({}, this.state, newState);
+			componentClass.ValidateState(newState_merged);
 		}
 		
 		this.lastRender_source = RenderSource.SetState;

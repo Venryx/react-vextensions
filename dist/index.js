@@ -904,25 +904,26 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
             var _this9 = this;
 
             var cancelIfStateSame = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-            var deepCompare = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+            var jsonCompare = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
             if (cancelIfStateSame) {
-                // we only care about new-state's keys -- setState() leaves unmentioned keys untouched
-                var oldState_forNewStateKeys = Object.keys(newState).reduce(function (result, key) {
-                    return result[key] = _this9.state[key], result;
-                }, {});
-                if (deepCompare) {
+                if (jsonCompare) {
+                    // we only care about new-state's keys -- setState() leaves unmentioned keys untouched
+                    var oldState_forNewStateKeys = Object.keys(newState).reduce(function (result, key) {
+                        return result[key] = _this9.state[key], result;
+                    }, {});
                     if ((0, _General.ToJSON)(newState) == (0, _General.ToJSON)(oldState_forNewStateKeys)) return [];
                 } else {
                     //if (ShallowEquals(newState, oldState_forNewStateKeys)) return [];
                     // use a looser comparison (we want a missing prop to be equivalent to null and undefined)
                     var same = true;
+                    //for (let key of RemoveDuplicates(Object.keys(this.state).concat(Object.keys(newState)))) {
                     var _iteratorNormalCompletion = true;
                     var _didIteratorError = false;
                     var _iteratorError = undefined;
 
                     try {
-                        for (var _iterator = (0, _General.RemoveDuplicates)(Object.keys(this.state).concat(Object.keys(newState)))[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        for (var _iterator = Object.keys(newState)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                             var key = _step.value;
 
                             var valA = this.state[key];
@@ -953,7 +954,8 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
             }
             var componentClass = this.constructor;
             if (componentClass.ValidateState) {
-                componentClass.ValidateState(newState);
+                var newState_merged = Object.assign({}, this.state, newState);
+                componentClass.ValidateState(newState_merged);
             }
             this.lastRender_source = RenderSource.SetState;
             //this.setState(newState as S, callback);

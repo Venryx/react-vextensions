@@ -25,7 +25,7 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     /** Shortcut for "()=>(this.forceUpdate(), this.ComponentWillMountOrReceiveProps(props))". */
     UpdateAndReceive(props: any): () => void;
     setState(): "Do not call this. Call SetState() instead.";
-    SetState(newState: Partial<S>, callback?: () => any, cancelIfStateSame?: boolean, deepCompare?: boolean): any[];
+    SetState(newState: Partial<S>, callback?: () => any, cancelIfStateSame?: boolean, jsonCompare?: boolean): any[];
     changeListeners: any[];
     AddChangeListeners(host: any, ...funcs: any[]): void;
     RemoveChangeListeners(): void;
