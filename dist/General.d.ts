@@ -66,3 +66,4 @@ export declare function AddGlobalStyle(str: string, asMultiline?: boolean): void
 /** Tunnels into Radium wrapper-class, and retrieves the original class, letting you access its static props. */
 export declare function HasSealedProps(target: Object): void;
 export declare function Sealed(target: Object, key: string): void;
+export declare function FilterOutUnrecognizedProps(props: Object, elementType: string): {};

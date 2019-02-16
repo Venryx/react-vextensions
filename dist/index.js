@@ -178,6 +178,7 @@ exports.AddGlobalElement = AddGlobalElement;
 exports.AddGlobalStyle = AddGlobalStyle;
 exports.HasSealedProps = HasSealedProps;
 exports.Sealed = Sealed;
+exports.FilterOutUnrecognizedProps = FilterOutUnrecognizedProps;
 
 var _reactDom = __webpack_require__(3);
 
@@ -533,6 +534,23 @@ function HasSealedProps(target) {
 }
 function Sealed(target, key) {
     target[key].sealed = true;
+}
+var reactSpecialProps = ["key", "children", "dangerouslySetInnerHTML"];
+var elementTypeInstances = {};
+function FilterOutUnrecognizedProps(props, elementType) {
+    //if (process.env.NODE_ENV !== 'development') { return props; }
+    if (elementTypeInstances[elementType] == null) {
+        elementTypeInstances[elementType] = document.createElement(elementType);
+    }
+    var testerElement = elementTypeInstances[elementType];
+    // filter out any keys which don't exist in React's special-props or the tester
+    var filteredProps = {};
+    Object.keys(props).filter(function (propName) {
+        return propName in testerElement || propName.toLowerCase() in testerElement || reactSpecialProps.indexOf(propName) != -1;
+    }).forEach(function (propName) {
+        return filteredProps[propName] = props[propName];
+    });
+    return filteredProps;
 }
 
 /***/ }),
