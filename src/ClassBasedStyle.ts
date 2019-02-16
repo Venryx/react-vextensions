@@ -10,7 +10,10 @@ export const pseudoStyleTypes = ["hover"] as PseudoStyleTypes[];
 
 export function ConvertStyleObjectToCSSString(styleObj) {
 	let str = ReactDOMServer.renderToString(React.createElement("div", {style: styleObj})) as string;
-	let styleStr = str.match(/style="(.+?)" data-reactroot/)[1] + ";"; // add final semicolon; new versions of React leave it out for some reason
+	let styleStrMatch = str.match(/style="(.+?)" data-reactroot/);
+	if (styleStrMatch == null) return null;
+	
+	let styleStr = styleStrMatch[1] + ";"; // add final semicolon; new versions of React leave it out for some reason
 	return styleStr;
 }
 

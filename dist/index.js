@@ -538,6 +538,8 @@ function Sealed(target, key) {
 var reactSpecialProps = ["key", "children", "dangerouslySetInnerHTML"];
 var elementTypeInstances = {};
 function FilterOutUnrecognizedProps(props, elementType) {
+    var allowDataProps = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
     //if (process.env.NODE_ENV !== 'development') { return props; }
     if (elementTypeInstances[elementType] == null) {
         elementTypeInstances[elementType] = document.createElement(elementType);
@@ -546,7 +548,7 @@ function FilterOutUnrecognizedProps(props, elementType) {
     // filter out any keys which don't exist in React's special-props or the tester
     var filteredProps = {};
     Object.keys(props).filter(function (propName) {
-        return propName in testerElement || propName.toLowerCase() in testerElement || reactSpecialProps.indexOf(propName) != -1;
+        return propName in testerElement || propName.toLowerCase() in testerElement || reactSpecialProps.indexOf(propName) != -1 || allowDataProps && propName.startsWith("data-");
     }).forEach(function (propName) {
         return filteredProps[propName] = props[propName];
     });
@@ -647,7 +649,9 @@ var classBasedStyleKeys = {};
 var pseudoStyleTypes = exports.pseudoStyleTypes = ["hover"];
 function ConvertStyleObjectToCSSString(styleObj) {
     var str = _server2.default.renderToString(_react2.default.createElement("div", { style: styleObj }));
-    var styleStr = str.match(/style="(.+?)" data-reactroot/)[1] + ";"; // add final semicolon; new versions of React leave it out for some reason
+    var styleStrMatch = str.match(/style="(.+?)" data-reactroot/);
+    if (styleStrMatch == null) return null;
+    var styleStr = styleStrMatch[1] + ";"; // add final semicolon; new versions of React leave it out for some reason
     return styleStr;
 }
 /**

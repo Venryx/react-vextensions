@@ -294,7 +294,7 @@ const reactSpecialProps = [
 	"dangerouslySetInnerHTML",
 ];
 const elementTypeInstances = {};
-export function FilterOutUnrecognizedProps(props: Object, elementType: string) {
+export function FilterOutUnrecognizedProps(props: Object, elementType: string, allowDataProps = true) {
 	//if (process.env.NODE_ENV !== 'development') { return props; }
 	if (elementTypeInstances[elementType] == null) {
 		elementTypeInstances[elementType] = document.createElement(elementType);
@@ -304,7 +304,7 @@ export function FilterOutUnrecognizedProps(props: Object, elementType: string) {
 	// filter out any keys which don't exist in React's special-props or the tester
 	const filteredProps = {};
 	Object.keys(props).filter(propName=> 
-		 (propName in testerElement) || (propName.toLowerCase() in testerElement) || reactSpecialProps.indexOf(propName) != -1
+		 (propName in testerElement) || (propName.toLowerCase() in testerElement) || reactSpecialProps.indexOf(propName) != -1 || (allowDataProps && propName.startsWith("data-"))
 	).forEach(propName=>filteredProps[propName] = props[propName]);
 	return filteredProps;
 }
