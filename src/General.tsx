@@ -42,7 +42,7 @@ export function RemoveDuplicates(items: any) {
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");
 
 export function GetDOM(comp: Component<any, any>) {
-	if (comp["mounted"] === false) return null; // mounted is a prop on BaseComponents
+	if (comp == null || comp["mounted"] === false) return null; // mounted is a prop on BaseComponents
 	return ReactDOM.findDOMNode(comp) as Element;
 }
 export function FindReact(dom) {

@@ -277,6 +277,7 @@ function RemoveDuplicates(items) {
 }
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");
 function GetDOM(comp) {
+    if (comp == null || comp["mounted"] === false) return null; // mounted is a prop on BaseComponents
     return _reactDom2.default.findDOMNode(comp);
 }
 function FindReact(dom) {
@@ -1198,7 +1199,7 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
     }, {
         key: "DOM",
         get: function get() {
-            return this.mounted ? (0, _General.GetDOM)(this) : null;
+            return (0, _General.GetDOM)(this);
         }
         //get DOM_() { return this.mounted ? $(this.DOM) : null; }
         // needed for wrapper-components that don't provide way of accessing inner-component
