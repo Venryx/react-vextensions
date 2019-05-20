@@ -776,8 +776,8 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
         // helper for debugging
         var _this = _possibleConstructorReturn(this, (BaseComponent.__proto__ || Object.getPrototypeOf(BaseComponent)).call(this, props));
 
-        _this.GetPropsChanged_lastProps = {};
-        _this.GetStateChanged_lastState = {};
+        _this.GetPropChanges_lastValues = {};
+        _this.GetStateChanges_lastValues = {};
         _this.changeListeners = [];
         _this.autoRemoveChangeListeners = true;
         _this.mounted = false;
@@ -812,46 +812,80 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
 
 
     _createClass(BaseComponent, [{
-        key: "GetPropsChanged",
-        value: function GetPropsChanged() {
+        key: "GetPropChanges",
+        value: function GetPropChanges() {
             var _this2 = this;
 
-            var keys = (0, _General.RemoveDuplicates)(Object.keys(this.props).concat(Object.keys(this.GetPropsChanged_lastProps)));
-            var result = keys.filter(function (key) {
-                return !Object.is(_this2.props[key], _this2.GetPropsChanged_lastProps[key]);
+            var oldAndNewKeys = (0, _General.RemoveDuplicates)(Object.keys(this.props).concat(Object.keys(this.GetPropChanges_lastValues)));
+            var changedKeys = oldAndNewKeys.filter(function (key) {
+                return !Object.is(_this2.props[key], _this2.GetPropChanges_lastValues[key]);
             });
-            this.GetPropsChanged_lastProps = Object.assign({}, this.props);
+            var result = [];
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = changedKeys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var key = _step.value;
+
+                    result.push({ key: key, oldVal: this.GetPropChanges_lastValues[key], newVal: this.props[key] });
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            this.GetPropChanges_lastValues = Object.assign({}, this.props);
             return result;
         }
     }, {
-        key: "GetPropsChanged_Data",
-        value: function GetPropsChanged_Data() {
+        key: "GetStateChanges",
+        value: function GetStateChanges() {
             var _this3 = this;
 
-            return (0, _General.ToJSON)(this.GetPropsChanged().reduce(function (result, key) {
-                return result[key] = _this3.props[key], result;
-            }, {}));
-        }
-    }, {
-        key: "GetStateChanged",
-        value: function GetStateChanged() {
-            var _this4 = this;
-
-            var keys = (0, _General.RemoveDuplicates)(Object.keys(this.state).concat(Object.keys(this.GetStateChanged_lastState)));
-            var result = keys.filter(function (key) {
-                return !Object.is(_this4.state[key], _this4.GetStateChanged_lastState[key]);
+            var oldAndNewKeys = (0, _General.RemoveDuplicates)(Object.keys(this.state).concat(Object.keys(this.GetStateChanges_lastValues)));
+            var changedKeys = oldAndNewKeys.filter(function (key) {
+                return !Object.is(_this3.state[key], _this3.GetStateChanges_lastValues[key]);
             });
-            this.GetStateChanged_lastState = Object.assign({}, this.state);
-            return result;
-        }
-    }, {
-        key: "GetStateChanged_Data",
-        value: function GetStateChanged_Data() {
-            var _this5 = this;
+            var result = [];
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
 
-            return (0, _General.ToJSON)(this.GetStateChanged().reduce(function (result, key) {
-                return result[key] = _this5.state[key], result;
-            }, {}));
+            try {
+                for (var _iterator2 = changedKeys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var key = _step2.value;
+
+                    result.push({ key: key, oldVal: this.GetStateChanges_lastValues[key], newVal: this.state[key] });
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
+            this.GetStateChanges_lastValues = Object.assign({}, this.state);
+            return result;
         }
         //forceUpdate(_: ()=>"Do not call this. Call Update() instead.") {
 
@@ -874,12 +908,12 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
         value: function Clear(postClear) {
             var oldRender = this.render;
             this.render = function () {
-                var _this6 = this;
+                var _this4 = this;
 
                 this.render = oldRender;
                 //WaitXThenRun(0, this.Update);
                 setTimeout(function () {
-                    return _this6.Update();
+                    return _this4.Update();
                 });
                 return _react2.default.createElement("div", null);
             };
@@ -888,11 +922,11 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
     }, {
         key: "ClearThenUpdate",
         value: function ClearThenUpdate() {
-            var _this7 = this;
+            var _this5 = this;
 
             //this.Clear(this.Update);
             this.Clear(function () {
-                return _this7.Update();
+                return _this5.Update();
             });
         }
         /** Shortcut for "()=>(this.forceUpdate(), this.ComponentWillMountOrReceiveProps(props))". */
@@ -900,15 +934,15 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
     }, {
         key: "UpdateAndReceive",
         value: function UpdateAndReceive(props) {
-            var _this8 = this,
+            var _this6 = this,
                 _arguments = arguments;
 
             return function () {
                 //if (!this.Mounted) return;
                 //this.forceUpdate();
-                _react.Component.prototype.forceUpdate.apply(_this8, _arguments);
-                if (_this8.autoRemoveChangeListeners) _this8.RemoveChangeListeners();
-                _this8.ComponentWillMountOrReceiveProps(props);
+                _react.Component.prototype.forceUpdate.apply(_this6, _arguments);
+                if (_this6.autoRemoveChangeListeners) _this6.RemoveChangeListeners();
+                _this6.ComponentWillMountOrReceiveProps(props);
             };
         }
         //setState(_: ()=>"Do not call this. Call SetState() instead.") {
@@ -924,7 +958,7 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
     }, {
         key: "SetState",
         value: function SetState(newState, callback) {
-            var _this9 = this;
+            var _this7 = this;
 
             var cancelIfStateSame = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
             var jsonCompare = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
@@ -933,7 +967,7 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
                 if (jsonCompare) {
                     // we only care about new-state's keys -- setState() leaves unmentioned keys untouched
                     var oldState_forNewStateKeys = Object.keys(newState).reduce(function (result, key) {
-                        return result[key] = _this9.state[key], result;
+                        return result[key] = _this7.state[key], result;
                     }, {});
                     if ((0, _General.ToJSON)(newState) == (0, _General.ToJSON)(oldState_forNewStateKeys)) return [];
                 } else {
@@ -941,13 +975,13 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
                     // use a looser comparison (we want a missing prop to be equivalent to null and undefined)
                     var same = true;
                     //for (let key of RemoveDuplicates(Object.keys(this.state).concat(Object.keys(newState)))) {
-                    var _iteratorNormalCompletion = true;
-                    var _didIteratorError = false;
-                    var _iteratorError = undefined;
+                    var _iteratorNormalCompletion3 = true;
+                    var _didIteratorError3 = false;
+                    var _iteratorError3 = undefined;
 
                     try {
-                        for (var _iterator = Object.keys(newState)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                            var key = _step.value;
+                        for (var _iterator3 = Object.keys(newState)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                            var key = _step3.value;
 
                             var valA = this.state[key];
                             var valB = newState[key];
@@ -958,16 +992,16 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
                             }
                         }
                     } catch (err) {
-                        _didIteratorError = true;
-                        _iteratorError = err;
+                        _didIteratorError3 = true;
+                        _iteratorError3 = err;
                     } finally {
                         try {
-                            if (!_iteratorNormalCompletion && _iterator.return) {
-                                _iterator.return();
+                            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                                _iterator3.return();
                             }
                         } finally {
-                            if (_didIteratorError) {
-                                throw _iteratorError;
+                            if (_didIteratorError3) {
+                                throw _iteratorError3;
                             }
                         }
                     }
@@ -996,13 +1030,13 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
                 funcs[_key - 1] = arguments[_key];
             }
 
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
+            var _iteratorNormalCompletion4 = true;
+            var _didIteratorError4 = false;
+            var _iteratorError4 = undefined;
 
             try {
-                for (var _iterator2 = funcs[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var func = _step2.value;
+                for (var _iterator4 = funcs[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                    var func = _step4.value;
 
                     if (typeof func == "string") func = func.Func(this.Update);
                     // if actual function, add it (else, ignore entry--it must have been a failed conditional)
@@ -1011,69 +1045,6 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
                         host.extraMethod = func;
                         this.changeListeners.push({ host: host, func: func });
                     }
-                }
-            } catch (err) {
-                _didIteratorError2 = true;
-                _iteratorError2 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                        _iterator2.return();
-                    }
-                } finally {
-                    if (_didIteratorError2) {
-                        throw _iteratorError2;
-                    }
-                }
-            }
-        }
-    }, {
-        key: "RemoveChangeListeners",
-        value: function RemoveChangeListeners() {
-            //this.changeListeners = this.changeListeners || []; // temp fix for odd "is null" issue
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
-
-            try {
-                for (var _iterator3 = this.changeListeners[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                    var changeListener = _step3.value;
-
-                    changeListener.host.removeExtraMethod = changeListener.func;
-                }
-            } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                        _iterator3.return();
-                    }
-                } finally {
-                    if (_didIteratorError3) {
-                        throw _iteratorError3;
-                    }
-                }
-            }
-
-            this.changeListeners = [];
-        }
-    }, {
-        key: "RemoveChangeListenersFor",
-        value: function RemoveChangeListenersFor(host) {
-            var changeListenersToRemove = this.changeListeners.filter(function (a) {
-                return a.host == host;
-            });
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
-
-            try {
-                for (var _iterator4 = changeListenersToRemove[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                    var listener = _step4.value;
-
-                    listener.host.removeExtraMethod = listener.func;
-                    this.changeListeners.splice(this.changeListeners.indexOf(listener), 1);
                 }
             } catch (err) {
                 _didIteratorError4 = true;
@@ -1086,6 +1057,69 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
                 } finally {
                     if (_didIteratorError4) {
                         throw _iteratorError4;
+                    }
+                }
+            }
+        }
+    }, {
+        key: "RemoveChangeListeners",
+        value: function RemoveChangeListeners() {
+            //this.changeListeners = this.changeListeners || []; // temp fix for odd "is null" issue
+            var _iteratorNormalCompletion5 = true;
+            var _didIteratorError5 = false;
+            var _iteratorError5 = undefined;
+
+            try {
+                for (var _iterator5 = this.changeListeners[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                    var changeListener = _step5.value;
+
+                    changeListener.host.removeExtraMethod = changeListener.func;
+                }
+            } catch (err) {
+                _didIteratorError5 = true;
+                _iteratorError5 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                        _iterator5.return();
+                    }
+                } finally {
+                    if (_didIteratorError5) {
+                        throw _iteratorError5;
+                    }
+                }
+            }
+
+            this.changeListeners = [];
+        }
+    }, {
+        key: "RemoveChangeListenersFor",
+        value: function RemoveChangeListenersFor(host) {
+            var changeListenersToRemove = this.changeListeners.filter(function (a) {
+                return a.host == host;
+            });
+            var _iteratorNormalCompletion6 = true;
+            var _didIteratorError6 = false;
+            var _iteratorError6 = undefined;
+
+            try {
+                for (var _iterator6 = changeListenersToRemove[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                    var listener = _step6.value;
+
+                    listener.host.removeExtraMethod = listener.func;
+                    this.changeListeners.splice(this.changeListeners.indexOf(listener), 1);
+                }
+            } catch (err) {
+                _didIteratorError6 = true;
+                _iteratorError6 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                        _iterator6.return();
+                    }
+                } finally {
+                    if (_didIteratorError6) {
+                        throw _iteratorError6;
                     }
                 }
             }
@@ -1165,7 +1199,7 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
     }, {
         key: "CallPostRender",
         value: function CallPostRender() {
-            var _this10 = this;
+            var _this8 = this;
 
             if (this.PostRender == BaseComponent_1.prototype.PostRender) return;
             var renderSource = this.lastRender_source;
@@ -1181,8 +1215,8 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
                 setTimeout(function () {
                     return window.requestAnimationFrame(function () {
                         //WaitXThenRun(0, ()=>g.requestIdleCallback(()=> {
-                        if (!_this10.mounted) return;
-                        _this10.PostRender(renderSource);
+                        if (!_this8.mounted) return;
+                        _this8.PostRender(renderSource);
                     });
                 });
                 /*WaitXThenRun(0, ()=> {
@@ -1240,13 +1274,13 @@ function BaseComponentWithConnector(connector, initialState) {
         function BaseComponentEnhanced(props) {
             _classCallCheck(this, BaseComponentEnhanced);
 
-            var _this11 = _possibleConstructorReturn(this, (BaseComponentEnhanced.__proto__ || Object.getPrototypeOf(BaseComponentEnhanced)).call(this, props));
+            var _this9 = _possibleConstructorReturn(this, (BaseComponentEnhanced.__proto__ || Object.getPrototypeOf(BaseComponentEnhanced)).call(this, props));
 
-            _this11.state = initialState;
-            if (_this11.constructor["defaultState"]) {
-                throw new Error("Cannot specify \"" + _this11.constructor.name + ".defaultState\". (initial-state is already set using BaseComponentWithConnect function)");
+            _this9.state = initialState;
+            if (_this9.constructor["defaultState"]) {
+                throw new Error("Cannot specify \"" + _this9.constructor.name + ".defaultState\". (initial-state is already set using BaseComponentWithConnect function)");
             }
-            return _this11;
+            return _this9;
         }
 
         return BaseComponentEnhanced;

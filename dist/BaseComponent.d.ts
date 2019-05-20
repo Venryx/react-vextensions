@@ -12,12 +12,18 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     refs: any;
     readonly DOM: Element;
     readonly FlattenedChildren: React.ReactElement<any>[];
-    private GetPropsChanged_lastProps;
-    GetPropsChanged(): any[];
-    GetPropsChanged_Data(): string;
-    private GetStateChanged_lastState;
-    GetStateChanged(): any[];
-    GetStateChanged_Data(): string;
+    private GetPropChanges_lastValues;
+    GetPropChanges(): {
+        key: string;
+        oldVal: any;
+        newVal: any;
+    }[];
+    private GetStateChanges_lastValues;
+    GetStateChanges(): {
+        key: string;
+        oldVal: any;
+        newVal: any;
+    }[];
     forceUpdate(): void;
     Update(postUpdate?: any): void;
     Clear(postClear?: any): void;

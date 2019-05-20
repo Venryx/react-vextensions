@@ -59,25 +59,29 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	}
 
 	// helper for debugging
-	private GetPropsChanged_lastProps = {};
-	GetPropsChanged() {
-		let keys = RemoveDuplicates(Object.keys(this.props).concat(Object.keys(this.GetPropsChanged_lastProps)));
-		let result = keys.filter(key=>!Object.is(this.props[key], this.GetPropsChanged_lastProps[key]));
-		this.GetPropsChanged_lastProps = {...this.props as any};
+	private GetPropChanges_lastValues = {};
+	GetPropChanges() {
+		let oldAndNewKeys = RemoveDuplicates(Object.keys(this.props).concat(Object.keys(this.GetPropChanges_lastValues)));
+		let changedKeys = oldAndNewKeys.filter(key=>!Object.is(this.props[key], this.GetPropChanges_lastValues[key]));
+
+		let result = [] as {key: string, oldVal: any, newVal: any}[];
+		for (let key of changedKeys) {
+			result.push({key, oldVal: this.GetPropChanges_lastValues[key], newVal: this.props[key]});
+		}
+		this.GetPropChanges_lastValues = {...this.props as any};
 		return result;
 	}
-	GetPropsChanged_Data() {
-		return ToJSON(this.GetPropsChanged().reduce((result, key)=>(result[key] = this.props[key], result), {}));
-	}
-	private GetStateChanged_lastState = {};
-	GetStateChanged() {
-		let keys = RemoveDuplicates(Object.keys(this.state).concat(Object.keys(this.GetStateChanged_lastState)));
-		let result = keys.filter(key=>!Object.is((this.state as any)[key], this.GetStateChanged_lastState[key]));
-		this.GetStateChanged_lastState = {...this.state as any};
+	private GetStateChanges_lastValues = {};
+	GetStateChanges() {
+		let oldAndNewKeys = RemoveDuplicates(Object.keys(this.state).concat(Object.keys(this.GetStateChanges_lastValues)));
+		let changedKeys = oldAndNewKeys.filter(key=>!Object.is(this.state[key], this.GetStateChanges_lastValues[key]));
+
+		let result = [] as {key: string, oldVal: any, newVal: any}[];
+		for (let key of changedKeys) {
+			result.push({key, oldVal: this.GetStateChanges_lastValues[key], newVal: this.state[key]});
+		}
+		this.GetStateChanges_lastValues = {...this.state as any};
 		return result;
-	}
-	GetStateChanged_Data() {
-		return ToJSON(this.GetStateChanged().reduce((result, key)=>(result[key] = this.state[key], result), {}));
 	}
 
 	//forceUpdate(_: ()=>"Do not call this. Call Update() instead.") {
