@@ -150,22 +150,43 @@ export function ApplyBasicStyles(target: React.ComponentClass<any>) {
 	}
 }*/
 
-export function SimpleShouldUpdate(target) {
-	target.prototype.shouldComponentUpdate = function(newProps, newState) {
-		/*if (ShallowChanged(this, newProps, newState))
-			Log("Changed: " + this.props.Props().Where(a=>a.value !== newProps[a.name]).Select(a=>a.name) + ";" + g.ToJSON(this.props) + ";" + g.ToJSON(newProps));*/
-	    return ShallowChanged(this, newProps, newState);
+function Excluding(obj, ...propNames) {
+	var result = E(obj);
+	for (let propName of propNames) {
+		 delete result[propName];
 	}
+	return result;
 }
-//export function SimpleShouldUpdate_Overridable(target: Component<{shouldUpdate: (newProps: React.Props<any>, newState: any)=>boolean}, {}>) {
-export function SimpleShouldUpdate_Overridable(target) {
-	target.prototype.shouldComponentUpdate = function(newProps, newState) {
-		let {shouldUpdate} = newProps;
-		if (typeof shouldUpdate == "boolean")
-			return shouldUpdate;
-		if (typeof shouldUpdate == "function")
-			return shouldUpdate(newProps, newState);
-	    return ShallowChanged(this, newProps, newState);
+
+export class SimpleShouldUpdate_Options {
+	propsToIgnore = null as string[];
+	stateToIgnore = null as string[];
+	useShouldUpdateProp = false;
+}
+export function SimpleShouldUpdate(target: Function);
+export function SimpleShouldUpdate(options: Partial<SimpleShouldUpdate_Options>);
+export function SimpleShouldUpdate(...args) {
+	let options = new SimpleShouldUpdate_Options();
+	if (typeof args[0] == "function") {
+		ApplyToClass(args[0]);
+	} else {
+		options = E(options, args[0]);
+		return ApplyToClass;
+	}
+
+	function ApplyToClass(targetClass: Function) {
+		targetClass.prototype.shouldComponentUpdate = function(newProps, newState) {
+			/*if (options.logChangedWhen...) {
+				Log("Changed: " + this.props.Props().Where(a=>a.value !== newProps[a.name]).Select(a=>a.name) + ";" + g.ToJSON(this.props) + ";" + g.ToJSON(newProps));
+			}*/
+
+			if (options.useShouldUpdateProp) {
+				let {shouldUpdate} = newProps;
+				if (typeof shouldUpdate == "boolean") return shouldUpdate;
+				if (typeof shouldUpdate == "function") return shouldUpdate(newProps, newState);
+			}
+			return ShallowChanged(this.props, newProps, {propsToIgnore: options.propsToIgnore}) || ShallowChanged(this.state, newState, {propsToIgnore: options.stateToIgnore});
+		}
 	}
 }
 
@@ -174,7 +195,7 @@ export function Instant(target, name) {
 	target[name].instant = true;
 }
 
-export function ShallowEquals(objA, objB) {
+export function ShallowEquals(objA, objB, options?: {propsToIgnore?: string[]}) {
 	if (objA === objB) return true;
 
 	const keysA = Object.keys(objA || {});
@@ -184,24 +205,24 @@ export function ShallowEquals(objA, objB) {
 	// Test for A's keys different from B.
 	const hasOwn = Object.prototype.hasOwnProperty;
 	for (let i = 0; i < keysA.length; i++) {
-		if (!hasOwn.call(objB, keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
-			return false;
-		}
+		let key = keysA[i];
+		if (options && options.propsToIgnore && options.propsToIgnore.indexOf(key) != -1) continue;
+		if (!hasOwn.call(objB, key) || objA[key] !== objB[key]) return false;
 
-		const valA = objA[keysA[i]];
-		const valB = objB[keysA[i]];
+		const valA = objA[key];
+		const valB = objB[key];
 		if (valA !== valB) return false;
 	}
 
 	return true;
 }
-export function ShallowChanged(objA, objB, ...propsToCompareMoreDeeply: string[]) {
-	if (propsToCompareMoreDeeply.length) {
-		if (ShallowChanged(objA.Excluding(...propsToCompareMoreDeeply), objB.Excluding(...propsToCompareMoreDeeply))) {
+export function ShallowChanged(objA, objB, options?: {propsToIgnore?: string[], propsToCompareMoreDeeply?: string[]}) {
+	if (options && options.propsToCompareMoreDeeply && options.propsToCompareMoreDeeply.length) {
+		if (ShallowChanged(objA.Excluding(...options.propsToCompareMoreDeeply), objB.Excluding(...options.propsToCompareMoreDeeply))) {
 			return true;
 		}
 
-		for (let key of propsToCompareMoreDeeply) {
+		for (let key of options.propsToCompareMoreDeeply) {
 			// for "children", shallow-compare at two levels deeper
 			if (key == "children") {
 				for (let childKey of (objA.children || {}).VKeys().concat((objB.children || {}).VKeys())) {
@@ -213,7 +234,7 @@ export function ShallowChanged(objA, objB, ...propsToCompareMoreDeeply: string[]
 		}
 		return false;
 	}
-	return !ShallowEquals(objA, objB);
+	return !ShallowEquals(objA, objB, options && options.propsToIgnore ? {propsToIgnore: options.propsToIgnore} : null);
 }
 
 //require("./GlobalStyles");

@@ -158,7 +158,7 @@ Object.keys(_BaseComponent).forEach(function (key) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.basePropFullKeys = undefined;
+exports.SimpleShouldUpdate_Options = exports.basePropFullKeys = undefined;
 exports.E = E;
 exports.ToJSON = ToJSON;
 exports.FromJSON = FromJSON;
@@ -170,7 +170,6 @@ exports.GetInnerComp = GetInnerComp;
 exports.BasicStyles = BasicStyles;
 exports.ApplyBasicStyles = ApplyBasicStyles;
 exports.SimpleShouldUpdate = SimpleShouldUpdate;
-exports.SimpleShouldUpdate_Overridable = SimpleShouldUpdate_Overridable;
 exports.Instant = Instant;
 exports.ShallowEquals = ShallowEquals;
 exports.ShallowChanged = ShallowChanged;
@@ -189,6 +188,10 @@ var _classnames = __webpack_require__(4);
 var _classnames2 = _interopRequireDefault(_classnames);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function E(e1, e2, e3, e4, e5, e6, e7, e8) {
     var result = {};
@@ -363,28 +366,77 @@ function ApplyBasicStyles(target) {
         return result;
     }
 }*/
-function SimpleShouldUpdate(target) {
-    target.prototype.shouldComponentUpdate = function (newProps, newState) {
-        /*if (ShallowChanged(this, newProps, newState))
-            Log("Changed: " + this.props.Props().Where(a=>a.value !== newProps[a.name]).Select(a=>a.name) + ";" + g.ToJSON(this.props) + ";" + g.ToJSON(newProps));*/
-        return ShallowChanged(this, newProps, newState);
-    };
-}
-//export function SimpleShouldUpdate_Overridable(target: Component<{shouldUpdate: (newProps: React.Props<any>, newState: any)=>boolean}, {}>) {
-function SimpleShouldUpdate_Overridable(target) {
-    target.prototype.shouldComponentUpdate = function (newProps, newState) {
-        var shouldUpdate = newProps.shouldUpdate;
+function Excluding(obj) {
+    var result = E(obj);
 
-        if (typeof shouldUpdate == "boolean") return shouldUpdate;
-        if (typeof shouldUpdate == "function") return shouldUpdate(newProps, newState);
-        return ShallowChanged(this, newProps, newState);
-    };
+    for (var _len = arguments.length, propNames = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        propNames[_key - 1] = arguments[_key];
+    }
+
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+        for (var _iterator3 = propNames[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var propName = _step3.value;
+
+            delete result[propName];
+        }
+    } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                _iterator3.return();
+            }
+        } finally {
+            if (_didIteratorError3) {
+                throw _iteratorError3;
+            }
+        }
+    }
+
+    return result;
+}
+
+var SimpleShouldUpdate_Options = exports.SimpleShouldUpdate_Options = function SimpleShouldUpdate_Options() {
+    _classCallCheck(this, SimpleShouldUpdate_Options);
+
+    this.propsToIgnore = null;
+    this.stateToIgnore = null;
+    this.useShouldUpdateProp = false;
+};
+
+function SimpleShouldUpdate() {
+    var options = new SimpleShouldUpdate_Options();
+    if (typeof (arguments.length <= 0 ? undefined : arguments[0]) == "function") {
+        ApplyToClass(arguments.length <= 0 ? undefined : arguments[0]);
+    } else {
+        options = E(options, arguments.length <= 0 ? undefined : arguments[0]);
+        return ApplyToClass;
+    }
+    function ApplyToClass(targetClass) {
+        targetClass.prototype.shouldComponentUpdate = function (newProps, newState) {
+            /*if (options.logChangedWhen...) {
+                Log("Changed: " + this.props.Props().Where(a=>a.value !== newProps[a.name]).Select(a=>a.name) + ";" + g.ToJSON(this.props) + ";" + g.ToJSON(newProps));
+            }*/
+            if (options.useShouldUpdateProp) {
+                var shouldUpdate = newProps.shouldUpdate;
+
+                if (typeof shouldUpdate == "boolean") return shouldUpdate;
+                if (typeof shouldUpdate == "function") return shouldUpdate(newProps, newState);
+            }
+            return ShallowChanged(this.props, newProps, { propsToIgnore: options.propsToIgnore }) || ShallowChanged(this.state, newState, { propsToIgnore: options.stateToIgnore });
+        };
+    }
 }
 // for PostRender() func
 function Instant(target, name) {
     target[name].instant = true;
 }
-function ShallowEquals(objA, objB) {
+function ShallowEquals(objA, objB, options) {
     if (objA === objB) return true;
     var keysA = Object.keys(objA || {});
     var keysB = Object.keys(objB || {});
@@ -392,55 +444,51 @@ function ShallowEquals(objA, objB) {
     // Test for A's keys different from B.
     var hasOwn = Object.prototype.hasOwnProperty;
     for (var i = 0; i < keysA.length; i++) {
-        if (!hasOwn.call(objB, keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
-            return false;
-        }
-        var valA = objA[keysA[i]];
-        var valB = objB[keysA[i]];
+        var key = keysA[i];
+        if (options && options.propsToIgnore && options.propsToIgnore.indexOf(key) != -1) continue;
+        if (!hasOwn.call(objB, key) || objA[key] !== objB[key]) return false;
+        var valA = objA[key];
+        var valB = objB[key];
         if (valA !== valB) return false;
     }
     return true;
 }
-function ShallowChanged(objA, objB) {
-    for (var _len = arguments.length, propsToCompareMoreDeeply = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-        propsToCompareMoreDeeply[_key - 2] = arguments[_key];
-    }
-
-    if (propsToCompareMoreDeeply.length) {
-        if (ShallowChanged(objA.Excluding.apply(objA, propsToCompareMoreDeeply), objB.Excluding.apply(objB, propsToCompareMoreDeeply))) {
+function ShallowChanged(objA, objB, options) {
+    if (options && options.propsToCompareMoreDeeply && options.propsToCompareMoreDeeply.length) {
+        if (ShallowChanged(objA.Excluding.apply(objA, _toConsumableArray(options.propsToCompareMoreDeeply)), objB.Excluding.apply(objB, _toConsumableArray(options.propsToCompareMoreDeeply)))) {
             return true;
         }
-        var _iteratorNormalCompletion3 = true;
-        var _didIteratorError3 = false;
-        var _iteratorError3 = undefined;
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
 
         try {
-            for (var _iterator3 = propsToCompareMoreDeeply[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                var key = _step3.value;
+            for (var _iterator4 = options.propsToCompareMoreDeeply[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                var key = _step4.value;
 
                 // for "children", shallow-compare at two levels deeper
                 if (key == "children") {
-                    var _iteratorNormalCompletion4 = true;
-                    var _didIteratorError4 = false;
-                    var _iteratorError4 = undefined;
+                    var _iteratorNormalCompletion5 = true;
+                    var _didIteratorError5 = false;
+                    var _iteratorError5 = undefined;
 
                     try {
-                        for (var _iterator4 = (objA.children || {}).VKeys().concat((objB.children || {}).VKeys())[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                            var childKey = _step4.value;
+                        for (var _iterator5 = (objA.children || {}).VKeys().concat((objB.children || {}).VKeys())[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                            var childKey = _step5.value;
 
                             if (ShallowChanged(objA.children[childKey], objB.children[childKey])) return true;
                         }
                     } catch (err) {
-                        _didIteratorError4 = true;
-                        _iteratorError4 = err;
+                        _didIteratorError5 = true;
+                        _iteratorError5 = err;
                     } finally {
                         try {
-                            if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                                _iterator4.return();
+                            if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                                _iterator5.return();
                             }
                         } finally {
-                            if (_didIteratorError4) {
-                                throw _iteratorError4;
+                            if (_didIteratorError5) {
+                                throw _iteratorError5;
                             }
                         }
                     }
@@ -449,23 +497,23 @@ function ShallowChanged(objA, objB) {
                 }
             }
         } catch (err) {
-            _didIteratorError3 = true;
-            _iteratorError3 = err;
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
         } finally {
             try {
-                if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                    _iterator3.return();
+                if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                    _iterator4.return();
                 }
             } finally {
-                if (_didIteratorError3) {
-                    throw _iteratorError3;
+                if (_didIteratorError4) {
+                    throw _iteratorError4;
                 }
             }
         }
 
         return false;
     }
-    return !ShallowEquals(objA, objB);
+    return !ShallowEquals(objA, objB, options && options.propsToIgnore ? { propsToIgnore: options.propsToIgnore } : null);
 }
 //require("./GlobalStyles");
 var loaded = false;

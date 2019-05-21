@@ -56,11 +56,21 @@ export declare var basePropFullKeys: {
 };
 export declare function BasicStyles(props: any): any;
 export declare function ApplyBasicStyles(target: React.ComponentClass<any>): void;
-export declare function SimpleShouldUpdate(target: any): void;
-export declare function SimpleShouldUpdate_Overridable(target: any): void;
+export declare class SimpleShouldUpdate_Options {
+    propsToIgnore: string[];
+    stateToIgnore: string[];
+    useShouldUpdateProp: boolean;
+}
+export declare function SimpleShouldUpdate(target: Function): any;
+export declare function SimpleShouldUpdate(options: Partial<SimpleShouldUpdate_Options>): any;
 export declare function Instant(target: any, name: any): void;
-export declare function ShallowEquals(objA: any, objB: any): boolean;
-export declare function ShallowChanged(objA: any, objB: any, ...propsToCompareMoreDeeply: string[]): boolean;
+export declare function ShallowEquals(objA: any, objB: any, options?: {
+    propsToIgnore?: string[];
+}): boolean;
+export declare function ShallowChanged(objA: any, objB: any, options?: {
+    propsToIgnore?: string[];
+    propsToCompareMoreDeeply?: string[];
+}): boolean;
 export declare function AddGlobalElement(html: string, asMultiline?: boolean): void;
 export declare function AddGlobalStyle(str: string, asMultiline?: boolean): void;
 /** Tunnels into Radium wrapper-class, and retrieves the original class, letting you access its static props. */
