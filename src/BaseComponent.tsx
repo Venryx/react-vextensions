@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import autoBind from "react-autobind";
-import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, ToJSON } from "./General";
+import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, ToJSON, EnsureSealedPropsArentOverriden } from "./General";
 
 export enum RenderSource {
 	Mount, // first render, after creation
@@ -8,15 +8,17 @@ export enum RenderSource {
 	SetState, // from this.SetState()
 	Update, // from this.Update()
 }
-@HasSealedProps
+//@HasSealedProps // instead of using this decorator, we just include the "EnsureSealedPropsArentOverriden(this, BaseComponent);" line directly (to reduce nesting / depth of class-prototype chain)	
 export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	constructor(props) {
 		super(props);
+		EnsureSealedPropsArentOverriden(this, BaseComponent);
 		autoBind(this);
 		// if had @Radium decorator, then "this" is actually an instance of a class-specific "RadiumEnhancer" derived-class
 		//		so reach in to original class, and set up auto-binding for its prototype members as well
-		if (this.constructor.name == "RadiumEnhancer")
+		if (this.constructor.name == "RadiumEnhancer") {
 			autoBind(Object.getPrototypeOf(this));
+		}
 		//this.state = this.state || this.defaultState || {} as any;
 		this.state = this.constructor["defaultState"] || {} as any;
 		
@@ -293,6 +295,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 		return BaseComponent as new(..._)=>BaseComponent<Props, State>;
 	};
 }*/
+// maybe todo: have this apply the @Connect decorator automatically
 export function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State) {
 	class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State> {
 		constructor(props) {

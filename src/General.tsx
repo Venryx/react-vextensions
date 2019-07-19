@@ -276,7 +276,7 @@ export function AddGlobalStyle(str: string, asMultiline = true) {
 }
 `);*/
 
-/** Tunnels into Radium wrapper-class, and retrieves the original class, letting you access its static props. */
+/*#* Tunnels into Radium wrapper-class, and retrieves the original class, letting you access its static props. */
 /*export function PreRadium<T>(typeGetterFunc: ()=>T, setFunc: Function): T {
 	WaitXThenRun(0, ()=> {
 		debugger;
@@ -294,8 +294,9 @@ export function AddGlobalStyle(str: string, asMultiline = true) {
 	return element.querySelector(":invalid").ToList().map(node=>(node[0] as any).validationMessage || `Invalid value.`);
 }*/
 
-export function HasSealedProps(target: Object) {
-	let oldConstructor = target.constructor;
+/** As an alternative to adding this decorator to your class, consider just adding the line "EnsureSealedPropsArentOverriden(this, MyClass);" into its constructor. */
+export function HasSealedProps(target: new(..._)=>any) {
+	/*let oldConstructor = target.constructor;
 	target.constructor = function() {
 		for (let key in target["prototype"]) {
 			let method = target["prototype"][key];
@@ -304,8 +305,40 @@ export function HasSealedProps(target: Object) {
 			}
 		}
 		return oldConstructor.apply(this, arguments);
-	};
+	};*/
+
+	/*class WrapperClass {
+		constructor(...args) {
+			for (let key of Object.getOwnPropertyNames(target.prototype)) {
+				//let method = target.prototype[key];
+				let method = Object.getOwnPropertyDescriptor(target.prototype, key).value;
+				if (method instanceof Function && method.sealed && this[key] != method) {
+					throw new Error(`Cannot override sealed method "${key}".`);
+				}
+			}
+			return new target(...args);
+		}
+	}
+	WrapperClass.prototype = target.prototype;
+	return WrapperClass as any;*/
+	  
+	return (class WrapperClass extends target {
+		constructor(...args) {
+			super(...args);
+			EnsureSealedPropsArentOverriden(this, target);
+		}
+	}) as any;
 }
+export function EnsureSealedPropsArentOverriden(compInstance: any, classWherePropsSealed: new(..._)=>any) {
+	for (let key of Object.getOwnPropertyNames(classWherePropsSealed.prototype)) {
+		//let method = classWherePropsSealed.prototype[key];
+		let method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, key).value;
+		if (method instanceof Function && method.sealed && compInstance[key] != method) {
+			throw new Error(`Cannot override sealed method "${key}".`);
+		}
+	}
+}
+
 export function Sealed(target: Object, key: string) {
 	target[key].sealed = true;
 }

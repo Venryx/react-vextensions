@@ -73,7 +73,8 @@ export declare function ShallowChanged(objA: any, objB: any, options?: {
 }): boolean;
 export declare function AddGlobalElement(html: string, asMultiline?: boolean): void;
 export declare function AddGlobalStyle(str: string, asMultiline?: boolean): void;
-/** Tunnels into Radium wrapper-class, and retrieves the original class, letting you access its static props. */
-export declare function HasSealedProps(target: Object): void;
+/** As an alternative to adding this decorator to your class, consider just adding the line "EnsureSealedPropsArentOverriden(this, MyClass);" into its constructor. */
+export declare function HasSealedProps(target: new (..._: any[]) => any): any;
+export declare function EnsureSealedPropsArentOverriden(compInstance: any, classWherePropsSealed: new (..._: any[]) => any): void;
 export declare function Sealed(target: Object, key: string): void;
 export declare function FilterOutUnrecognizedProps(props: Object, elementType: string, allowDataProps?: boolean): {};

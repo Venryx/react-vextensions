@@ -176,6 +176,7 @@ exports.ShallowChanged = ShallowChanged;
 exports.AddGlobalElement = AddGlobalElement;
 exports.AddGlobalStyle = AddGlobalStyle;
 exports.HasSealedProps = HasSealedProps;
+exports.EnsureSealedPropsArentOverriden = EnsureSealedPropsArentOverriden;
 exports.Sealed = Sealed;
 exports.FilterOutUnrecognizedProps = FilterOutUnrecognizedProps;
 
@@ -188,6 +189,10 @@ var _classnames = __webpack_require__(4);
 var _classnames2 = _interopRequireDefault(_classnames);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -553,7 +558,7 @@ function AddGlobalStyle(str) {
     color: rgba(255,255,255,.7);
 }
 `);*/
-/** Tunnels into Radium wrapper-class, and retrieves the original class, letting you access its static props. */
+/*#* Tunnels into Radium wrapper-class, and retrieves the original class, letting you access its static props. */
 /*export function PreRadium<T>(typeGetterFunc: ()=>T, setFunc: Function): T {
     WaitXThenRun(0, ()=> {
         debugger;
@@ -569,17 +574,82 @@ function AddGlobalStyle(str) {
     return $(element).find(":invalid").ToList().map(node=>(node[0] as any).validationMessage || `Invalid value.`);
     return element.querySelector(":invalid").ToList().map(node=>(node[0] as any).validationMessage || `Invalid value.`);
 }*/
+/** As an alternative to adding this decorator to your class, consider just adding the line "EnsureSealedPropsArentOverriden(this, MyClass);" into its constructor. */
 function HasSealedProps(target) {
-    var oldConstructor = target.constructor;
-    target.constructor = function () {
-        for (var key in target["prototype"]) {
-            var method = target["prototype"][key];
+    /*let oldConstructor = target.constructor;
+    target.constructor = function() {
+        for (let key in target["prototype"]) {
+            let method = target["prototype"][key];
             if (method.sealed && this[key] != method) {
-                throw new Error("Cannot override sealed method \"" + key + "\".");
+                throw new Error(`Cannot override sealed method "${key}".`);
             }
         }
         return oldConstructor.apply(this, arguments);
-    };
+    };*/
+    /*class WrapperClass {
+        constructor(...args) {
+            for (let key of Object.getOwnPropertyNames(target.prototype)) {
+                //let method = target.prototype[key];
+                let method = Object.getOwnPropertyDescriptor(target.prototype, key).value;
+                if (method instanceof Function && method.sealed && this[key] != method) {
+                    throw new Error(`Cannot override sealed method "${key}".`);
+                }
+            }
+            return new target(...args);
+        }
+    }
+    WrapperClass.prototype = target.prototype;
+    return WrapperClass as any;*/
+    return function (_target) {
+        _inherits(WrapperClass, _target);
+
+        function WrapperClass() {
+            var _ref;
+
+            _classCallCheck(this, WrapperClass);
+
+            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                args[_key2] = arguments[_key2];
+            }
+
+            var _this = _possibleConstructorReturn(this, (_ref = WrapperClass.__proto__ || Object.getPrototypeOf(WrapperClass)).call.apply(_ref, [this].concat(args)));
+
+            EnsureSealedPropsArentOverriden(_this, target);
+            return _this;
+        }
+
+        return WrapperClass;
+    }(target);
+}
+function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSealed) {
+    var _iteratorNormalCompletion6 = true;
+    var _didIteratorError6 = false;
+    var _iteratorError6 = undefined;
+
+    try {
+        for (var _iterator6 = Object.getOwnPropertyNames(classWherePropsSealed.prototype)[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+            var key = _step6.value;
+
+            //let method = classWherePropsSealed.prototype[key];
+            var method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, key).value;
+            if (method instanceof Function && method.sealed && compInstance[key] != method) {
+                throw new Error("Cannot override sealed method \"" + key + "\".");
+            }
+        }
+    } catch (err) {
+        _didIteratorError6 = true;
+        _iteratorError6 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                _iterator6.return();
+            }
+        } finally {
+            if (_didIteratorError6) {
+                throw _iteratorError6;
+            }
+        }
+    }
 }
 function Sealed(target, key) {
     target[key].sealed = true;
@@ -807,7 +877,6 @@ var __decorate = undefined && undefined.__decorate || function (decorators, targ
         if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     }return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var BaseComponent_1;
 var RenderSource = exports.RenderSource = undefined;
 (function (RenderSource) {
     RenderSource[RenderSource["Mount"] = 0] = "Mount";
@@ -815,7 +884,9 @@ var RenderSource = exports.RenderSource = undefined;
     RenderSource[RenderSource["SetState"] = 2] = "SetState";
     RenderSource[RenderSource["Update"] = 3] = "Update";
 })(RenderSource || (exports.RenderSource = RenderSource = {}));
-var BaseComponent = BaseComponent_1 = function (_Component) {
+//@HasSealedProps // instead of using this decorator, we just include the "EnsureSealedPropsArentOverriden(this, BaseComponent);" line directly (to reduce nesting / depth of class-prototype chain)	
+
+var BaseComponent = exports.BaseComponent = function (_Component) {
     _inherits(BaseComponent, _Component);
 
     function BaseComponent(props) {
@@ -829,14 +900,17 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
         _this.changeListeners = [];
         _this.autoRemoveChangeListeners = true;
         _this.mounted = false;
+        (0, _General.EnsureSealedPropsArentOverriden)(_this, BaseComponent);
         (0, _reactAutobind2.default)(_this);
         // if had @Radium decorator, then "this" is actually an instance of a class-specific "RadiumEnhancer" derived-class
         //		so reach in to original class, and set up auto-binding for its prototype members as well
-        if (_this.constructor.name == "RadiumEnhancer") (0, _reactAutobind2.default)(Object.getPrototypeOf(_this));
+        if (_this.constructor.name == "RadiumEnhancer") {
+            (0, _reactAutobind2.default)(Object.getPrototypeOf(_this));
+        }
         //this.state = this.state || this.defaultState || {} as any;
         _this.state = _this.constructor["defaultState"] || {};
         // if using PreRender, wrap render func
-        if (_this.PreRender != BaseComponent_1.prototype.PreRender) {
+        if (_this.PreRender != BaseComponent.prototype.PreRender) {
             var oldRender = _this.render;
             _this.render = function () {
                 this.PreRender();
@@ -1249,7 +1323,7 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
         value: function CallPostRender() {
             var _this8 = this;
 
-            if (this.PostRender == BaseComponent_1.prototype.PostRender) return;
+            if (this.PostRender == BaseComponent.prototype.PostRender) return;
             var renderSource = this.lastRender_source;
             var ownPostRender = this.PostRender;
             // can be different, for wrapped components (apparently they copy the inner type's PostRender as their own PostRender -- except as a new function, for some reason)
@@ -1302,19 +1376,18 @@ var BaseComponent = BaseComponent_1 = function (_Component) {
 
     return BaseComponent;
 }(_react.Component);
+
 __decorate([_General.Sealed], BaseComponent.prototype, "componentWillMount", null);
 __decorate([_General.Sealed], BaseComponent.prototype, "componentDidMount", null);
 __decorate([_General.Sealed], BaseComponent.prototype, "componentWillUnmount", null);
 __decorate([_General.Sealed], BaseComponent.prototype, "componentWillReceiveProps", null);
 __decorate([_General.Sealed], BaseComponent.prototype, "componentDidUpdate", null);
-exports.BaseComponent = BaseComponent = BaseComponent_1 = __decorate([_General.HasSealedProps], BaseComponent);
-exports.BaseComponent = BaseComponent;
 /*export function BaseComponentWithConnect<Props>(connectFunc: (state?: RootState, props?)=>Props) {
     return function InnerFunc<State>() {
         return BaseComponent as new(..._)=>BaseComponent<Props, State>;
     };
 }*/
-
+// maybe todo: have this apply the @Connect decorator automatically
 function BaseComponentWithConnector(connector, initialState) {
     var BaseComponentEnhanced = function (_BaseComponent) {
         _inherits(BaseComponentEnhanced, _BaseComponent);
