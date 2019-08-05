@@ -295,7 +295,47 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 		return BaseComponent as new(..._)=>BaseComponent<Props, State>;
 	};
 }*/
-// maybe todo: have this apply the @Connect decorator automatically
+/*export function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State, forwardRef = false) {
+	let resultClass = class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State> {
+		constructor(props) {
+			super(props);
+			this.state = initialState;
+			if (this.constructor["defaultState"]) {
+				throw new Error(`Cannot specify "${this.constructor.name}.defaultState". (initial-state is already set using BaseComponentWithConnect function)`)
+			}
+		}
+	}
+	// we can't auto-decorate with Connect, because the ConnectedComp is a *wrapper* around the component (Wrapper is a separate component containing the Comp->BaseCompWithConnector->BaseComp proto-chain)
+	/*let Connect = BaseComponentWithConnector["Connect"];
+	if (Connect) {
+		resultClass = Connect(connector, forwardRef)(resultClass);
+	}*#/
+	
+	//return resultClass;
+	return resultClass as any as new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>;
+}
+
+/** Derivative of BaseComponentWithConnector. Has same signature, but ignores the connector-related functionality. (so makes same as just BaseComponent, but as a quick toggle) *#/
+export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>(initialState: State);
+export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State);
+export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>(...args) {
+	let connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State;
+	if (args.length == 1) [initialState] = args;
+	else if (args.length == 2) [connector, initialState] = args;
+	
+	let resultClass = class BaseComponentEnhanced extends BaseComponent<PassedProps, State> {
+		constructor(props) {
+			super(props);
+			this.state = initialState;
+			if (this.constructor["defaultState"]) {
+				throw new Error(`Cannot specify "${this.constructor.name}.defaultState". (initial-state is already set using BaseComponentWithConnect function)`)
+			}
+		}
+	}
+	return resultClass as any as new(..._)=>BaseComponent<PassedProps, State>;
+}*/
+
+// Note: We can't auto-apply the actual Connect decorator, because here can only be the *base* for the user-component, not *wrap* it (which is needed for the react-redux "Connected(Comp)" component)
 export function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State) {
 	class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State> {
 		constructor(props) {
