@@ -148,6 +148,18 @@ Object.keys(_BaseComponent).forEach(function (key) {
   });
 });
 
+var _BaseHooks = __webpack_require__(11);
+
+Object.keys(_BaseHooks).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _BaseHooks[key];
+    }
+  });
+});
+
 /***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1253,8 +1265,8 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         key: "ComponentWillMountOrReceiveProps",
         value: function ComponentWillMountOrReceiveProps(newProps, forMount) {}
     }, {
-        key: "componentWillMount",
-        value: function componentWillMount() {
+        key: "UNSAFE_componentWillMount",
+        value: function UNSAFE_componentWillMount() {
             if (this.autoRemoveChangeListeners) this.RemoveChangeListeners();
             this.ComponentWillMount();
             this.ComponentWillMountOrReceiveProps(this.props, true);
@@ -1297,8 +1309,8 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         key: "ComponentWillReceiveProps",
         value: function ComponentWillReceiveProps(newProps) {}
     }, {
-        key: "componentWillReceiveProps",
-        value: function componentWillReceiveProps(newProps) {
+        key: "UNSAFE_componentWillReceiveProps",
+        value: function UNSAFE_componentWillReceiveProps(newProps) {
             if (this.autoRemoveChangeListeners) {
                 this.RemoveChangeListeners();
             }
@@ -1357,6 +1369,12 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         get: function get() {
             return (0, _General.GetDOM)(this);
         }
+    }, {
+        key: "DOM_HTML",
+        get: function get() {
+            return (0, _General.GetDOM)(this);
+        }
+        //DOMAs<T extends Element>() { return GetDOM(this) as T; }
         //get DOM_() { return this.mounted ? $(this.DOM) : null; }
         // needed for wrapper-components that don't provide way of accessing inner-component
         //get InnerComp() { return FindReact(this.DOM); }
@@ -1377,10 +1395,10 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     return BaseComponent;
 }(_react.Component);
 
-__decorate([_General.Sealed], BaseComponent.prototype, "componentWillMount", null);
+__decorate([_General.Sealed], BaseComponent.prototype, "UNSAFE_componentWillMount", null);
 __decorate([_General.Sealed], BaseComponent.prototype, "componentDidMount", null);
 __decorate([_General.Sealed], BaseComponent.prototype, "componentWillUnmount", null);
-__decorate([_General.Sealed], BaseComponent.prototype, "componentWillReceiveProps", null);
+__decorate([_General.Sealed], BaseComponent.prototype, "UNSAFE_componentWillReceiveProps", null);
 __decorate([_General.Sealed], BaseComponent.prototype, "componentDidUpdate", null);
 /*export function BaseComponentWithConnect<Props>(connectFunc: (state?: RootState, props?)=>Props) {
     return function InnerFunc<State>() {
@@ -1534,6 +1552,20 @@ function boundMethod(objPrototype, method, descriptor) {
 }
 module.exports = exports['default'];
 
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TODO = TODO;
+// BaseHooks.ts is the replacement for BaseComponent.ts, made up of "hooks" for React "function classes" (rather than being the base-class for user components)
+function TODO() {}
 
 /***/ })
 /******/ ]);

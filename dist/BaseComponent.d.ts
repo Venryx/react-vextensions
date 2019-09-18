@@ -11,6 +11,7 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     defaultState: Partial<S>;
     refs: any;
     readonly DOM: Element;
+    readonly DOM_HTML: HTMLElement;
     readonly FlattenedChildren: React.ReactElement<any>[];
     private GetPropChanges_lastValues;
     GetPropChanges(): {
@@ -39,7 +40,7 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     autoRemoveChangeListeners: boolean;
     ComponentWillMount(): void;
     ComponentWillMountOrReceiveProps(newProps: any, forMount?: boolean): void;
-    componentWillMount(): void;
+    UNSAFE_componentWillMount(): void;
     ComponentDidMount(...args: any[]): void;
     ComponentDidMountOrUpdate(lastProps?: Readonly<P & BaseProps & {
         children?: any;
@@ -53,7 +54,7 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     ComponentWillUnmount(): void;
     componentWillUnmount(): void;
     ComponentWillReceiveProps(newProps: any[]): void;
-    componentWillReceiveProps(newProps: any): void;
+    UNSAFE_componentWillReceiveProps(newProps: any): void;
     ComponentDidUpdate(...args: any[]): void;
     componentDidUpdate(...args: any[]): void;
     lastRender_source: RenderSource;

@@ -50,6 +50,8 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	//timers = [] as Timer[];
 
 	get DOM() { return GetDOM(this); }
+	get DOM_HTML() { return GetDOM(this) as HTMLElement; }
+	//DOMAs<T extends Element>() { return GetDOM(this) as T; }
 	//get DOM_() { return this.mounted ? $(this.DOM) : null; }
 	// needed for wrapper-components that don't provide way of accessing inner-component
 	//get InnerComp() { return FindReact(this.DOM); }
@@ -199,7 +201,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	autoRemoveChangeListeners = true;
 	ComponentWillMount(): void {};
 	ComponentWillMountOrReceiveProps(newProps: any, forMount?: boolean): void {};
-	@Sealed componentWillMount() {
+	@Sealed UNSAFE_componentWillMount() {
 		if (this.autoRemoveChangeListeners)
 			this.RemoveChangeListeners();
 		this.ComponentWillMount(); 
@@ -237,7 +239,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	}
 	
 	ComponentWillReceiveProps(newProps: any[]): void {};
-	@Sealed componentWillReceiveProps(newProps) {
+	@Sealed UNSAFE_componentWillReceiveProps(newProps) {
 		if (this.autoRemoveChangeListeners) {
 			this.RemoveChangeListeners();
 		}
