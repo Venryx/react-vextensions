@@ -1027,7 +1027,8 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         key: "forceUpdate",
         value: function forceUpdate() {
             //throw new Error("Do not call this. Call Update() instead.");
-            console.warn("Do not call this. Call Update() instead.");
+            //console.warn("Do not call this. Call Update() instead."); // removed warning, since we're transitioning to react-hooks, and forceUpdate gets called from some hooks
+            this.Update();
         }
     }, {
         key: "Update",
@@ -1561,11 +1562,104 @@ module.exports = exports['default'];
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
+exports.UseImperativeHandle = exports.UseEffect = exports.inRenderFunc = exports.WrapOptions = undefined;
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+exports.Wrap = Wrap;
+
+var _react = __webpack_require__(7);
+
+Object.defineProperty(exports, "UseEffect", {
+    enumerable: true,
+    get: function get() {
+        return _react.useEffect;
+    }
+});
+Object.defineProperty(exports, "UseImperativeHandle", {
+    enumerable: true,
+    get: function get() {
+        return _react.useImperativeHandle;
+    }
+});
+exports.UseState = UseState;
 exports.TODO = TODO;
+
+var _react2 = _interopRequireDefault(_react);
+
+var _ = __webpack_require__(1);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// wrapper for function-components
+// ==========
+var WrapOptions = exports.WrapOptions = function WrapOptions() {
+    _classCallCheck(this, WrapOptions);
+
+    /** If true, render-func is wrapped with React.memo(...) */
+    this.pure = true;
+    /** Only actually called if the render-func supplied has a ref parameter. */
+    this.forwardRef = true;
+};
+
+var inRenderFunc = exports.inRenderFunc = false;
+function Wrap() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+    }
+
+    var options = void 0,
+        renderFunc = void 0;
+    if (args.length == 1) {
+        ;
+        renderFunc = args[0];
+    }if (args.length == 2) {
+        ;
+        options = args[0];
+        renderFunc = args[1];
+    }options = (0, _.E)(new WrapOptions(), options);
+    var result = function result() {
+        exports.inRenderFunc = inRenderFunc = true;
+        var result = renderFunc.apply(this, arguments);
+        exports.inRenderFunc = inRenderFunc = false;
+        return result;
+    };
+    if (options.forwardRef && renderFunc.length == 2) result = (0, _react.forwardRef)(result);
+    if (options.pure) result = _react2.default.memo(result);
+    return result;
+}
 // hooks
 // ==========
+// use as-is
+
+function areStrictEqual(a, b) {
+    return a === b;
+}
+/** Like useState, except it cancels the state-setting if the new-value equals the old-value. */
+function UseState(initialState) {
+    var areEqual = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : areStrictEqual;
+
+    var _React$useState = _react2.default.useState(initialState),
+        _React$useState2 = _slicedToArray(_React$useState, 2),
+        state = _React$useState2[0],
+        setState = _React$useState2[1];
+
+    var stateRef = _react2.default.useRef(state);
+    var areEqualRef = _react2.default.useRef(areEqual);
+    areEqualRef.current = areEqual;
+    var updateState = _react2.default.useCallback(function (stateOrReducer) {
+        var nextState = typeof stateOrReducer === "function" ? stateOrReducer(stateRef.current) : stateOrReducer;
+        if (!areEqualRef.current(stateRef.current, nextState)) {
+            stateRef.current = nextState;
+            setState(nextState);
+        }
+    }, []);
+    return [state, updateState];
+}
 function TODO() {}
 
 /***/ })

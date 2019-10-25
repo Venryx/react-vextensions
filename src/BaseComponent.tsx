@@ -91,7 +91,8 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	//forceUpdate(_: ()=>"Do not call this. Call Update() instead.") {
 	forceUpdate() {
 		//throw new Error("Do not call this. Call Update() instead.");
-		console.warn("Do not call this. Call Update() instead.");
+		//console.warn("Do not call this. Call Update() instead."); // removed warning, since we're transitioning to react-hooks, and forceUpdate gets called from some hooks
+		this.Update();
 	}
 	Update(postUpdate?) {
 		//if (!this.Mounted) return;
