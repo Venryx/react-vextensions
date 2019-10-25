@@ -26,8 +26,6 @@ export interface BaseProps {
     ptb?: numberOrSuch | "padding top-bottom";
     sel?: boolean;
     ct?: boolean;
-    tabLabel?: string;
-    active?: boolean;
     page?: any;
     match?: any;
 }
@@ -48,8 +46,6 @@ export declare var basePropFullKeys: {
     ptb: any;
     sel: any;
     ct: any;
-    tabLabel: any;
-    active: any;
     page: any;
     match: any;
     firebase: any;

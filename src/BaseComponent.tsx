@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import autoBind from "react-autobind";
-import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, ToJSON, EnsureSealedPropsArentOverriden } from "./General";
+import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, ToJSON, EnsureSealedPropsArentOverriden, E } from "./General";
 
 export enum RenderSource {
 	Mount, // first render, after creation
@@ -9,7 +9,7 @@ export enum RenderSource {
 	Update, // from this.Update()
 }
 //@HasSealedProps // instead of using this decorator, we just include the "EnsureSealedPropsArentOverriden(this, BaseComponent);" line directly (to reduce nesting / depth of class-prototype chain)	
-export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
+export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
 	constructor(props) {
 		super(props);
 		EnsureSealedPropsArentOverriden(this, BaseComponent);
@@ -44,7 +44,13 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 		};*/
 	}
 
-	defaultState: Partial<S>;
+	defaultState: Partial<State>;
+
+	stash: Stash;
+	get PropsAndStash() { return E(this.props, this.stash); } 
+	Stash(stash: Stash) {
+		this.stash = stash;
+	}
 
 	refs;
 	//timers = [] as Timer[];
@@ -64,27 +70,27 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 
 	// helper for debugging
 	private GetPropChanges_lastValues = {};
-	GetPropChanges() {
-		let oldAndNewKeys = RemoveDuplicates(Object.keys(this.props).concat(Object.keys(this.GetPropChanges_lastValues)));
-		let changedKeys = oldAndNewKeys.filter(key=>!Object.is(this.props[key], this.GetPropChanges_lastValues[key]));
+	GetPropChanges(newProps = this.props, oldProps = this.GetPropChanges_lastValues, setLastValues = true) {
+		let oldAndNewKeys = RemoveDuplicates(Object.keys(newProps).concat(Object.keys(oldProps)));
+		let changedKeys = oldAndNewKeys.filter(key=>!Object.is(newProps[key], oldProps[key]));
 
 		let result = [] as {key: string, oldVal: any, newVal: any}[];
 		for (let key of changedKeys) {
-			result.push({key, oldVal: this.GetPropChanges_lastValues[key], newVal: this.props[key]});
+			result.push({key, oldVal: oldProps[key], newVal: newProps[key]});
 		}
-		this.GetPropChanges_lastValues = {...this.props as any};
+		if (setLastValues) this.GetPropChanges_lastValues = {...newProps as any};
 		return result;
 	}
 	private GetStateChanges_lastValues = {};
-	GetStateChanges() {
-		let oldAndNewKeys = RemoveDuplicates(Object.keys(this.state).concat(Object.keys(this.GetStateChanges_lastValues)));
-		let changedKeys = oldAndNewKeys.filter(key=>!Object.is(this.state[key], this.GetStateChanges_lastValues[key]));
+	GetStateChanges(newState = this.state, oldState = this.GetStateChanges_lastValues, setLastValues = true) {
+		let oldAndNewKeys = RemoveDuplicates(Object.keys(newState).concat(Object.keys(oldState)));
+		let changedKeys = oldAndNewKeys.filter(key=>!Object.is(newState[key], oldState[key]));
 
 		let result = [] as {key: string, oldVal: any, newVal: any}[];
 		for (let key of changedKeys) {
-			result.push({key, oldVal: this.GetStateChanges_lastValues[key], newVal: this.state[key]});
+			result.push({key, oldVal: oldState[key], newVal: newState[key]});
 		}
-		this.GetStateChanges_lastValues = {...this.state as any};
+		if (setLastValues) this.GetStateChanges_lastValues = {...newState as any};
 		return result;
 	}
 
@@ -131,7 +137,7 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 		throw new Error("Do not call this. Call SetState() instead.");
 	}*/
 	setState(): "Do not call this. Call SetState() instead." { return null as any; }
-	SetState(newState: Partial<S>, callback?: ()=>any, cancelIfStateSame = true, jsonCompare = false) {
+	SetState(newState: Partial<State>, callback?: ()=>any, cancelIfStateSame = true, jsonCompare = false) {
 		if (cancelIfStateSame) {
 			if (jsonCompare) {
 				// we only care about new-state's keys -- setState() leaves unmentioned keys untouched
@@ -211,9 +217,9 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 	}
 
 	ComponentDidMount(...args: any[]): void {};
-	ComponentDidMountOrUpdate(lastProps?: Readonly<P & BaseProps & {children?}>, lastState?: S): void {};
-	ComponentDidMountOrUpdate_lastProps: Readonly<P & BaseProps & {children?}>;
-	ComponentDidMountOrUpdate_lastState: S;
+	ComponentDidMountOrUpdate(lastProps?: Readonly<Props & BaseProps & {children?}>, lastState?: State): void {};
+	ComponentDidMountOrUpdate_lastProps: Readonly<Props & BaseProps & {children?}>;
+	ComponentDidMountOrUpdate_lastState: State;
 
 	mounted = false;
 	@Sealed componentDidMount(...args) {
@@ -239,11 +245,28 @@ export class BaseComponent<P, S> extends Component<P & BaseProps, S> {
 		this.mounted = false;
 	}
 	
+	warnOfTransientCallbackProp = true;
 	ComponentWillReceiveProps(newProps: any[]): void {};
 	@Sealed UNSAFE_componentWillReceiveProps(newProps) {
 		if (this.autoRemoveChangeListeners) {
 			this.RemoveChangeListeners();
 		}
+		
+		if (window["DEV"] && this.warnOfTransientCallbackProp) {
+			for (let [key, value] of Object["entries"](newProps)) {
+				if (value instanceof Function && value != this.props[key] && value.memoized == null) {
+					console.warn(`Transient callback-prop detected. @Comp(${this.constructor.name}) @Prop(${key}) @Value:`, value);
+				}
+			}
+			/* let changedProps = this.GetPropChanges(newProps, this.props, false);
+			// to prevent false-positives, only raise a warning when the *only* props that changed were callbacks
+			if (changedProps.every(prop=>prop.oldVal instanceof Function && prop.newVal instanceof Function)) {
+				for (let prop of changedProps) {
+					console.warn(`Transient callback-prop detected. @Comp(${this.constructor.name}) @Prop(${prop.key}) @Value:`, prop.newVal);
+				}
+			} */
+		}
+
 		this.ComponentWillReceiveProps(newProps);
 		this.ComponentWillMountOrReceiveProps(newProps, false);
 		this.lastRender_source = RenderSource.PropChange;

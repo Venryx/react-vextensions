@@ -1,4 +1,4 @@
-import React, {ForwardRefExoticComponent, RefAttributes, Dispatch, SetStateAction, forwardRef, Ref} from "react";
+import React, {ForwardRefExoticComponent, RefAttributes, Dispatch, SetStateAction, forwardRef, Ref, DependencyList} from "react";
 import {E} from ".";
 
 // BaseHooks.ts is the replacement for BaseComponent.ts, made up of "hooks" for React "function classes" (rather than being the base-class for user components)
@@ -51,6 +51,9 @@ export function Wrap(...args) {
 
 // use as-is
 export {useEffect as UseEffect, useImperativeHandle as UseImperativeHandle} from "react";
+//export {useMemo as UseMemo, useCallback as UseCallback} from "react";
+export {useMemo as UseMemo} from "react";
+import {useCallback} from "react";
 
 function areStrictEqual(a, b) {
 	return a === b;
@@ -76,6 +79,20 @@ export function UseState<S>(initialState: S | (() => S), areEqual = areStrictEqu
 	}, []);
 
 	return [state, updateState];
+}
+
+/*export function UseMemo<T>(deps: DependencyList | undefined, factory: () => T): T {
+	return useMemo(factory, deps);
+}*/
+
+/*export function UseMemo<T>(factory: () => T, deps: DependencyList | undefined): T {
+	if (factory instanceof)
+	return useMemo(factory, deps);
+}*/
+
+export function UseCallback<T extends (...args: any[]) => any>(callback: T, deps: DependencyList): T {
+	if (window["DEV"]) callback["memoized"] = true;
+	return useCallback(callback, deps);
 }
 
 export function TODO() {

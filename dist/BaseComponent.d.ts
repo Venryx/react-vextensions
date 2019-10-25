@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React, { Component } from "react";
 import { BaseProps } from "./General";
 export declare enum RenderSource {
     Mount = 0,
@@ -6,21 +6,28 @@ export declare enum RenderSource {
     SetState = 2,
     Update = 3
 }
-export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
+export declare class BaseComponent<Props, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
     constructor(props: any);
-    defaultState: Partial<S>;
+    defaultState: Partial<State>;
+    stash: Stash;
+    readonly PropsAndStash: Readonly<Props & BaseProps> & Readonly<{
+        children?: React.ReactNode;
+    }> & Stash;
+    Stash(stash: Stash): void;
     refs: any;
     readonly DOM: Element;
     readonly DOM_HTML: HTMLElement;
     readonly FlattenedChildren: any[];
     private GetPropChanges_lastValues;
-    GetPropChanges(): {
+    GetPropChanges(newProps?: Readonly<Props & BaseProps> & Readonly<{
+        children?: React.ReactNode;
+    }>, oldProps?: {}, setLastValues?: boolean): {
         key: string;
         oldVal: any;
         newVal: any;
     }[];
     private GetStateChanges_lastValues;
-    GetStateChanges(): {
+    GetStateChanges(newState?: Readonly<State>, oldState?: {}, setLastValues?: boolean): {
         key: string;
         oldVal: any;
         newVal: any;
@@ -32,7 +39,7 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     /** Shortcut for "()=>(this.forceUpdate(), this.ComponentWillMountOrReceiveProps(props))". */
     UpdateAndReceive(props: any): () => void;
     setState(): "Do not call this. Call SetState() instead.";
-    SetState(newState: Partial<S>, callback?: () => any, cancelIfStateSame?: boolean, jsonCompare?: boolean): any[];
+    SetState(newState: Partial<State>, callback?: () => any, cancelIfStateSame?: boolean, jsonCompare?: boolean): any[];
     changeListeners: any[];
     AddChangeListeners(host: any, ...funcs: any[]): void;
     RemoveChangeListeners(): void;
@@ -42,17 +49,18 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     ComponentWillMountOrReceiveProps(newProps: any, forMount?: boolean): void;
     UNSAFE_componentWillMount(): void;
     ComponentDidMount(...args: any[]): void;
-    ComponentDidMountOrUpdate(lastProps?: Readonly<P & BaseProps & {
+    ComponentDidMountOrUpdate(lastProps?: Readonly<Props & BaseProps & {
         children?: any;
-    }>, lastState?: S): void;
-    ComponentDidMountOrUpdate_lastProps: Readonly<P & BaseProps & {
+    }>, lastState?: State): void;
+    ComponentDidMountOrUpdate_lastProps: Readonly<Props & BaseProps & {
         children?: any;
     }>;
-    ComponentDidMountOrUpdate_lastState: S;
+    ComponentDidMountOrUpdate_lastState: State;
     mounted: boolean;
     componentDidMount(...args: any[]): void;
     ComponentWillUnmount(): void;
     componentWillUnmount(): void;
+    warnOfTransientCallbackProp: boolean;
     ComponentWillReceiveProps(newProps: any[]): void;
     UNSAFE_componentWillReceiveProps(newProps: any): void;
     ComponentDidUpdate(...args: any[]): void;
@@ -62,4 +70,4 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     PreRender(): void;
     PostRender(source?: RenderSource): void;
 }
-export declare function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?: any, props?: PassedProps) => ConnectProps, initialState: State): new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State>;
+export declare function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?: any, props?: PassedProps) => ConnectProps, initialState: State): new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State, {}>;

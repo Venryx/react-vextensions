@@ -329,7 +329,7 @@ var basePropFullKeys = exports.basePropFullKeys = {
     plr: null, ptb: null,
     sel: null,
     ct: null,
-    tabLabel: null, active: null,
+    //tabLabel: null, active: null,
     page: null, match: null,
     firebase: null
 };
@@ -857,6 +857,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.BaseComponent = exports.RenderSource = undefined;
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -912,6 +914,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         _this.changeListeners = [];
         _this.autoRemoveChangeListeners = true;
         _this.mounted = false;
+        _this.warnOfTransientCallbackProp = true;
         (0, _General.EnsureSealedPropsArentOverriden)(_this, BaseComponent);
         (0, _reactAutobind2.default)(_this);
         // if had @Radium decorator, then "this" is actually an instance of a class-specific "RadiumEnhancer" derived-class
@@ -942,17 +945,24 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         };*/
         return _this;
     }
-    //timers = [] as Timer[];
-
 
     _createClass(BaseComponent, [{
+        key: "Stash",
+        value: function Stash(stash) {
+            this.stash = stash;
+        }
+        //timers = [] as Timer[];
+
+    }, {
         key: "GetPropChanges",
         value: function GetPropChanges() {
-            var _this2 = this;
+            var newProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.props;
+            var oldProps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.GetPropChanges_lastValues;
+            var setLastValues = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
-            var oldAndNewKeys = (0, _General.RemoveDuplicates)(Object.keys(this.props).concat(Object.keys(this.GetPropChanges_lastValues)));
+            var oldAndNewKeys = (0, _General.RemoveDuplicates)(Object.keys(newProps).concat(Object.keys(oldProps)));
             var changedKeys = oldAndNewKeys.filter(function (key) {
-                return !Object.is(_this2.props[key], _this2.GetPropChanges_lastValues[key]);
+                return !Object.is(newProps[key], oldProps[key]);
             });
             var result = [];
             var _iteratorNormalCompletion = true;
@@ -963,7 +973,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 for (var _iterator = changedKeys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                     var key = _step.value;
 
-                    result.push({ key: key, oldVal: this.GetPropChanges_lastValues[key], newVal: this.props[key] });
+                    result.push({ key: key, oldVal: oldProps[key], newVal: newProps[key] });
                 }
             } catch (err) {
                 _didIteratorError = true;
@@ -980,17 +990,19 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 }
             }
 
-            this.GetPropChanges_lastValues = Object.assign({}, this.props);
+            if (setLastValues) this.GetPropChanges_lastValues = Object.assign({}, newProps);
             return result;
         }
     }, {
         key: "GetStateChanges",
         value: function GetStateChanges() {
-            var _this3 = this;
+            var newState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.state;
+            var oldState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.GetStateChanges_lastValues;
+            var setLastValues = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
-            var oldAndNewKeys = (0, _General.RemoveDuplicates)(Object.keys(this.state).concat(Object.keys(this.GetStateChanges_lastValues)));
+            var oldAndNewKeys = (0, _General.RemoveDuplicates)(Object.keys(newState).concat(Object.keys(oldState)));
             var changedKeys = oldAndNewKeys.filter(function (key) {
-                return !Object.is(_this3.state[key], _this3.GetStateChanges_lastValues[key]);
+                return !Object.is(newState[key], oldState[key]);
             });
             var result = [];
             var _iteratorNormalCompletion2 = true;
@@ -1001,7 +1013,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 for (var _iterator2 = changedKeys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                     var key = _step2.value;
 
-                    result.push({ key: key, oldVal: this.GetStateChanges_lastValues[key], newVal: this.state[key] });
+                    result.push({ key: key, oldVal: oldState[key], newVal: newState[key] });
                 }
             } catch (err) {
                 _didIteratorError2 = true;
@@ -1018,7 +1030,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 }
             }
 
-            this.GetStateChanges_lastValues = Object.assign({}, this.state);
+            if (setLastValues) this.GetStateChanges_lastValues = Object.assign({}, newState);
             return result;
         }
         //forceUpdate(_: ()=>"Do not call this. Call Update() instead.") {
@@ -1043,12 +1055,12 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         value: function Clear(postClear) {
             var oldRender = this.render;
             this.render = function () {
-                var _this4 = this;
+                var _this2 = this;
 
                 this.render = oldRender;
                 //WaitXThenRun(0, this.Update);
                 setTimeout(function () {
-                    return _this4.Update();
+                    return _this2.Update();
                 });
                 return _react2.default.createElement("div", null);
             };
@@ -1057,11 +1069,11 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     }, {
         key: "ClearThenUpdate",
         value: function ClearThenUpdate() {
-            var _this5 = this;
+            var _this3 = this;
 
             //this.Clear(this.Update);
             this.Clear(function () {
-                return _this5.Update();
+                return _this3.Update();
             });
         }
         /** Shortcut for "()=>(this.forceUpdate(), this.ComponentWillMountOrReceiveProps(props))". */
@@ -1069,15 +1081,15 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     }, {
         key: "UpdateAndReceive",
         value: function UpdateAndReceive(props) {
-            var _this6 = this,
+            var _this4 = this,
                 _arguments = arguments;
 
             return function () {
                 //if (!this.Mounted) return;
                 //this.forceUpdate();
-                _react.Component.prototype.forceUpdate.apply(_this6, _arguments);
-                if (_this6.autoRemoveChangeListeners) _this6.RemoveChangeListeners();
-                _this6.ComponentWillMountOrReceiveProps(props);
+                _react.Component.prototype.forceUpdate.apply(_this4, _arguments);
+                if (_this4.autoRemoveChangeListeners) _this4.RemoveChangeListeners();
+                _this4.ComponentWillMountOrReceiveProps(props);
             };
         }
         //setState(_: ()=>"Do not call this. Call SetState() instead.") {
@@ -1093,7 +1105,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     }, {
         key: "SetState",
         value: function SetState(newState, callback) {
-            var _this7 = this;
+            var _this5 = this;
 
             var cancelIfStateSame = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
             var jsonCompare = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
@@ -1102,7 +1114,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 if (jsonCompare) {
                     // we only care about new-state's keys -- setState() leaves unmentioned keys untouched
                     var oldState_forNewStateKeys = Object.keys(newState).reduce(function (result, key) {
-                        return result[key] = _this7.state[key], result;
+                        return result[key] = _this5.state[key], result;
                     }, {});
                     if ((0, _General.ToJSON)(newState) == (0, _General.ToJSON)(oldState_forNewStateKeys)) return [];
                 } else {
@@ -1315,6 +1327,43 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
             if (this.autoRemoveChangeListeners) {
                 this.RemoveChangeListeners();
             }
+            if (window["DEV"] && this.warnOfTransientCallbackProp) {
+                var _iteratorNormalCompletion7 = true;
+                var _didIteratorError7 = false;
+                var _iteratorError7 = undefined;
+
+                try {
+                    for (var _iterator7 = Object["entries"](newProps)[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                        var _step7$value = _slicedToArray(_step7.value, 2),
+                            key = _step7$value[0],
+                            value = _step7$value[1];
+
+                        if (value instanceof Function && value != this.props[key] && value.memoized == null) {
+                            console.warn("Transient callback-prop detected. @Comp(" + this.constructor.name + ") @Prop(" + key + ") @Value:", value);
+                        }
+                    }
+                    /* let changedProps = this.GetPropChanges(newProps, this.props, false);
+                    // to prevent false-positives, only raise a warning when the *only* props that changed were callbacks
+                    if (changedProps.every(prop=>prop.oldVal instanceof Function && prop.newVal instanceof Function)) {
+                        for (let prop of changedProps) {
+                            console.warn(`Transient callback-prop detected. @Comp(${this.constructor.name}) @Prop(${prop.key}) @Value:`, prop.newVal);
+                        }
+                    } */
+                } catch (err) {
+                    _didIteratorError7 = true;
+                    _iteratorError7 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                            _iterator7.return();
+                        }
+                    } finally {
+                        if (_didIteratorError7) {
+                            throw _iteratorError7;
+                        }
+                    }
+                }
+            }
             this.ComponentWillReceiveProps(newProps);
             this.ComponentWillMountOrReceiveProps(newProps, false);
             this.lastRender_source = RenderSource.PropChange;
@@ -1334,7 +1383,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     }, {
         key: "CallPostRender",
         value: function CallPostRender() {
-            var _this8 = this;
+            var _this6 = this;
 
             if (this.PostRender == BaseComponent.prototype.PostRender) return;
             var renderSource = this.lastRender_source;
@@ -1350,8 +1399,8 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 setTimeout(function () {
                     return window.requestAnimationFrame(function () {
                         //WaitXThenRun(0, ()=>g.requestIdleCallback(()=> {
-                        if (!_this8.mounted) return;
-                        _this8.PostRender(renderSource);
+                        if (!_this6.mounted) return;
+                        _this6.PostRender(renderSource);
                     });
                 });
                 /*WaitXThenRun(0, ()=> {
@@ -1365,6 +1414,11 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     }, {
         key: "PostRender",
         value: function PostRender(source) {}
+    }, {
+        key: "PropsAndStash",
+        get: function get() {
+            return (0, _General.E)(this.props, this.stash);
+        }
     }, {
         key: "DOM",
         get: function get() {
@@ -1453,13 +1507,13 @@ function BaseComponentWithConnector(connector, initialState) {
         function BaseComponentEnhanced(props) {
             _classCallCheck(this, BaseComponentEnhanced);
 
-            var _this9 = _possibleConstructorReturn(this, (BaseComponentEnhanced.__proto__ || Object.getPrototypeOf(BaseComponentEnhanced)).call(this, props));
+            var _this7 = _possibleConstructorReturn(this, (BaseComponentEnhanced.__proto__ || Object.getPrototypeOf(BaseComponentEnhanced)).call(this, props));
 
-            _this9.state = initialState;
-            if (_this9.constructor["defaultState"]) {
-                throw new Error("Cannot specify \"" + _this9.constructor.name + ".defaultState\". (initial-state is already set using BaseComponentWithConnect function)");
+            _this7.state = initialState;
+            if (_this7.constructor["defaultState"]) {
+                throw new Error("Cannot specify \"" + _this7.constructor.name + ".defaultState\". (initial-state is already set using BaseComponentWithConnect function)");
             }
-            return _this9;
+            return _this7;
         }
 
         return BaseComponentEnhanced;
@@ -1564,7 +1618,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.UseImperativeHandle = exports.UseEffect = exports.inRenderFunc = exports.WrapOptions = undefined;
+exports.UseMemo = exports.UseImperativeHandle = exports.UseEffect = exports.inRenderFunc = exports.WrapOptions = undefined;
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -1584,7 +1638,14 @@ Object.defineProperty(exports, "UseImperativeHandle", {
         return _react.useImperativeHandle;
     }
 });
+Object.defineProperty(exports, "UseMemo", {
+    enumerable: true,
+    get: function get() {
+        return _react.useMemo;
+    }
+});
 exports.UseState = UseState;
+exports.UseCallback = UseCallback;
 exports.TODO = TODO;
 
 var _react2 = _interopRequireDefault(_react);
@@ -1659,6 +1720,17 @@ function UseState(initialState) {
         }
     }, []);
     return [state, updateState];
+}
+/*export function UseMemo<T>(deps: DependencyList | undefined, factory: () => T): T {
+    return useMemo(factory, deps);
+}*/
+/*export function UseMemo<T>(factory: () => T, deps: DependencyList | undefined): T {
+    if (factory instanceof)
+    return useMemo(factory, deps);
+}*/
+function UseCallback(callback, deps) {
+    if (window["DEV"]) callback["memoized"] = true;
+    return (0, _react.useCallback)(callback, deps);
 }
 function TODO() {}
 

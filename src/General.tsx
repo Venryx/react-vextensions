@@ -75,7 +75,7 @@ export interface BaseProps {
 	plr?: numberOrSuch | "padding left-right"; ptb?: numberOrSuch | "padding top-bottom";
 	sel?: boolean; ct?: boolean;
 
-	tabLabel?: string; active?: boolean;
+	//tabLabel?: string; active?: boolean;
 
 	page?; match?;
 	//firebase?: FirebaseDatabase;
@@ -91,7 +91,7 @@ export var basePropFullKeys = {
 	sel: null, // selectable
 	ct: null, // clickthrough
 
-	tabLabel: null, active: null,
+	//tabLabel: null, active: null,
 
 	page: null, match: null,
 	firebase: null,
