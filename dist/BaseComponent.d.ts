@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import { BaseProps } from "./General";
 export declare enum RenderSource {
     Mount = 0,
@@ -12,7 +12,7 @@ export declare class BaseComponent<P, S> extends Component<P & BaseProps, S> {
     refs: any;
     readonly DOM: Element;
     readonly DOM_HTML: HTMLElement;
-    readonly FlattenedChildren: React.ReactElement<any>[];
+    readonly FlattenedChildren: any[];
     private GetPropChanges_lastValues;
     GetPropChanges(): {
         key: string;

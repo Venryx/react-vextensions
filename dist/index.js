@@ -1564,7 +1564,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.TODO = TODO;
-// BaseHooks.ts is the replacement for BaseComponent.ts, made up of "hooks" for React "function classes" (rather than being the base-class for user components)
+// hooks
+// ==========
 function TODO() {}
 
 /***/ })
