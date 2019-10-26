@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import autoBind from "react-autobind";
-import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, ToJSON, EnsureSealedPropsArentOverriden, E, Assert } from "./General";
+import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, ToJSON, EnsureSealedPropsArentOverriden, E, Assert, ShallowEquals } from "./General";
 import {WarnOfTransientObjectProps_Options} from "./Decorators";
 
 export enum RenderSource {
@@ -11,6 +11,9 @@ export enum RenderSource {
 }
 //@HasSealedProps // instead of using this decorator, we just include the "EnsureSealedPropsArentOverriden(this, BaseComponent);" line directly (to reduce nesting / depth of class-prototype chain)	
 export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
+	static componentCurrentlyRendering: BaseComponent<any>;
+
+	renderCount = 0;
 	constructor(props) {
 		super(props);
 		EnsureSealedPropsArentOverriden(this, BaseComponent);
@@ -25,12 +28,27 @@ export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Prop
 		this.stash = this.constructor["initialStash"];
 		
 		// if using PreRender, wrap render func
-		if (this.PreRender != BaseComponent.prototype.PreRender) {
+		/* if (this.PreRender != BaseComponent.prototype.PreRender) {
 			let oldRender = this.render;
 			this.render = function() {
 				this.PreRender();
 				return oldRender.apply(this, arguments);
 			};
+		} */
+
+		// wrap the derived-class' render function, to include some extra code
+		if (!this.constructor.prototype.render.modifiedByBaseComponent) {
+			let oldRender = this.constructor.prototype.render;
+			this.constructor.prototype.render = function() {
+				this.PreRender();
+				BaseComponent.componentCurrentlyRendering = this;
+				//this.renderCount = (this.renderCount|0) + 1;
+				this.renderCount++;
+				let result = oldRender.apply(this, arguments);
+				BaseComponent.componentCurrentlyRendering = null;
+				return result;
+			};
+			this.constructor.prototype.render.modifiedByBaseComponent = true;
 		}
 
 		// you know what, let's just always wrap the render() method, in this project; solves the annoying firebase-gobbling-errors issue
@@ -52,16 +70,31 @@ export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Prop
 	get PropsState() { return E(this.props, this.state); }
 	get PropsStash() { return E(this.props, this.stash); }
 	get PropsStateStash() { return E(this.props, this.state, this.stash); }
-	Stash(stash: Stash) {
-		this.stash = stash;
+	Stash(newStashData: Stash, replaceStash = false) {
+		if (replaceStash) {
+			this.stash = newStashData;
+		} else {
+			this.stash = E(this.stash, newStashData);
+		}
 
 		// maybe temp; expose stash object into "state" as well (for inspection in react-devtools)
-		//this.state["stash"] = this.stash;
+		//this.state["@stash"] = this.stash;
 		//Object.defineProperty(this.state, "stash", {value: this.stash, enumerable: false, configurable: true}); // make non-enumerable, so shallow-[compare/equals] doesn't see it (problem: then hidden in react-devtools)
-		if (this.state["stash"] == null) this.state["stash"] = {};
+		if (this.state["@stash"] == null) this.state["@stash"] = {};
 		// mutate the existing "state.stash" with the new data; this way the reference is the same, so the change isn't detected by shallow-[compare/equals] 
-		this.state["stash"].VKeys().forEach(key=> { delete this.state["stash"][key]; });
-		this.state["stash"].Extend(this.stash);
+		this.state["@stash"].VKeys().forEach(key=> { delete this.state["@stash"][key]; });
+		this.state["@stash"].Extend(this.stash);
+	}
+
+	debug: any;
+	Debug(newDebugData: any) {
+		this.debug = E(this.debug, newDebugData);
+
+		// maybe temp; expose debug object into "state" as well (for inspection in react-devtools)
+		if (this.state["@debug"] == null) this.state["@debug"] = {};
+		// mutate the existing "state.debug" with the new data; this way the reference is the same, so the change isn't detected by shallow-[compare/equals] 
+		this.state["@debug"].VKeys().forEach(key=> { delete this.state["@debug"][key]; });
+		this.state["@debug"].Extend(this.debug);
 	}
 
 	refs;

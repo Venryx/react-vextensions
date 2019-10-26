@@ -8,6 +8,8 @@ export declare enum RenderSource {
     Update = 3
 }
 export declare class BaseComponent<Props, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
+    static componentCurrentlyRendering: BaseComponent<any>;
+    renderCount: number;
     constructor(props: any);
     initialState: Partial<State>;
     stash: Stash;
@@ -20,7 +22,9 @@ export declare class BaseComponent<Props, State = {}, Stash = {}> extends Compon
     readonly PropsStateStash: Readonly<Props & BaseProps> & Readonly<{
         children?: React.ReactNode;
     }> & Readonly<State> & Stash;
-    Stash(stash: Stash): void;
+    Stash(newStashData: Stash, replaceStash?: boolean): void;
+    debug: any;
+    Debug(newDebugData: any): void;
     refs: any;
     readonly DOM: Element;
     readonly DOM_HTML: HTMLElement;
