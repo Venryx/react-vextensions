@@ -54,7 +54,16 @@ export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Prop
 	get PropsStateStash() { return E(this.props, this.state, this.stash); }
 	Stash(stash: Stash) {
 		this.stash = stash;
+
+		// maybe temp; expose stash object into "state" as well
+		if (this.state["stashExposer"] != this.stashExposer) {
+			//this.SetState({ stashExposer: this.stashExposer } as any);
+			this.state["stashExposer"] = this.stashExposer;
+		}
+		this.stashExposer.VKeys().forEach(key=> { delete this.stashExposer[key]; });
+		this.stashExposer.Extend(this.stash);
 	}
+	stashExposer = {} as any;
 
 	refs;
 	//timers = [] as Timer[];

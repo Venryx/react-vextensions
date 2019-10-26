@@ -21,6 +21,7 @@ export declare class BaseComponent<Props, State = {}, Stash = {}> extends Compon
         children?: React.ReactNode;
     }> & Readonly<State> & Stash;
     Stash(stash: Stash): void;
+    stashExposer: any;
     refs: any;
     readonly DOM: Element;
     readonly DOM_HTML: HTMLElement;

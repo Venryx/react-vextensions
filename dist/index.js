@@ -891,9 +891,10 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     function BaseComponent(props) {
         _classCallCheck(this, BaseComponent);
 
-        // helper for debugging
         var _this = _possibleConstructorReturn(this, (BaseComponent.__proto__ || Object.getPrototypeOf(BaseComponent)).call(this, props));
 
+        _this.stashExposer = {};
+        // helper for debugging
         _this.GetPropChanges_lastValues = {};
         _this.GetStateChanges_lastValues = {};
         _this.changeListeners = [];
@@ -935,7 +936,18 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     _createClass(BaseComponent, [{
         key: "Stash",
         value: function Stash(stash) {
+            var _this2 = this;
+
             this.stash = stash;
+            // maybe temp; expose stash object into "state" as well
+            if (this.state["stashExposer"] != this.stashExposer) {
+                //this.SetState({ stashExposer: this.stashExposer } as any);
+                this.state["stashExposer"] = this.stashExposer;
+            }
+            this.stashExposer.VKeys().forEach(function (key) {
+                delete _this2.stashExposer[key];
+            });
+            this.stashExposer.Extend(this.stash);
         }
         //timers = [] as Timer[];
 
@@ -1041,12 +1053,12 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         value: function Clear(postClear) {
             var oldRender = this.render;
             this.render = function () {
-                var _this2 = this;
+                var _this3 = this;
 
                 this.render = oldRender;
                 //WaitXThenRun(0, this.Update);
                 setTimeout(function () {
-                    return _this2.Update();
+                    return _this3.Update();
                 });
                 return _react2.default.createElement("div", null);
             };
@@ -1055,11 +1067,11 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     }, {
         key: "ClearThenUpdate",
         value: function ClearThenUpdate() {
-            var _this3 = this;
+            var _this4 = this;
 
             //this.Clear(this.Update);
             this.Clear(function () {
-                return _this3.Update();
+                return _this4.Update();
             });
         }
         /** Shortcut for "()=>(this.forceUpdate(), this.ComponentWillMountOrReceiveProps(props))". */
@@ -1067,15 +1079,15 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     }, {
         key: "UpdateAndReceive",
         value: function UpdateAndReceive(props) {
-            var _this4 = this,
+            var _this5 = this,
                 _arguments = arguments;
 
             return function () {
                 //if (!this.Mounted) return;
                 //this.forceUpdate();
-                _react.Component.prototype.forceUpdate.apply(_this4, _arguments);
-                if (_this4.autoRemoveChangeListeners) _this4.RemoveChangeListeners();
-                _this4.ComponentWillMountOrReceiveProps(props);
+                _react.Component.prototype.forceUpdate.apply(_this5, _arguments);
+                if (_this5.autoRemoveChangeListeners) _this5.RemoveChangeListeners();
+                _this5.ComponentWillMountOrReceiveProps(props);
             };
         }
         //setState(_: ()=>"Do not call this. Call SetState() instead.") {
@@ -1091,7 +1103,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     }, {
         key: "SetState",
         value: function SetState(newState, callback) {
-            var _this5 = this;
+            var _this6 = this;
 
             var cancelIfStateSame = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
             var jsonCompare = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
@@ -1100,7 +1112,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 if (jsonCompare) {
                     // we only care about new-state's keys -- setState() leaves unmentioned keys untouched
                     var oldState_forNewStateKeys = Object.keys(newState).reduce(function (result, key) {
-                        return result[key] = _this5.state[key], result;
+                        return result[key] = _this6.state[key], result;
                     }, {});
                     if ((0, _General.ToJSON)(newState) == (0, _General.ToJSON)(oldState_forNewStateKeys)) return [];
                 } else {
@@ -1374,7 +1386,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     }, {
         key: "CallPostRender",
         value: function CallPostRender() {
-            var _this6 = this;
+            var _this7 = this;
 
             if (this.PostRender == BaseComponent.prototype.PostRender) return;
             var renderSource = this.lastRender_source;
@@ -1390,8 +1402,8 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 setTimeout(function () {
                     return window.requestAnimationFrame(function () {
                         //WaitXThenRun(0, ()=>g.requestIdleCallback(()=> {
-                        if (!_this6.mounted) return;
-                        _this6.PostRender(renderSource);
+                        if (!_this7.mounted) return;
+                        _this7.PostRender(renderSource);
                     });
                 });
                 /*WaitXThenRun(0, ()=> {
@@ -1508,12 +1520,12 @@ function BaseComponentWithConnector(connector, initialState) {
         function BaseComponentEnhanced(props) {
             _classCallCheck(this, BaseComponentEnhanced);
 
-            var _this7 = _possibleConstructorReturn(this, (BaseComponentEnhanced.__proto__ || Object.getPrototypeOf(BaseComponentEnhanced)).call(this, props));
+            var _this8 = _possibleConstructorReturn(this, (BaseComponentEnhanced.__proto__ || Object.getPrototypeOf(BaseComponentEnhanced)).call(this, props));
 
-            _this7.state = initialState;
-            (0, _General.Assert)(_this7.constructor["initialState"] == null, "Cannot specify \"" + _this7.constructor.name + ".initialState\". (initial-state is already set using BaseComponentWithConnect function)");
+            _this8.state = initialState;
+            (0, _General.Assert)(_this8.constructor["initialState"] == null, "Cannot specify \"" + _this8.constructor.name + ".initialState\". (initial-state is already set using BaseComponentWithConnect function)");
             //Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentWithConnect function)`);
-            return _this7;
+            return _this8;
         }
 
         return BaseComponentEnhanced;
@@ -1533,13 +1545,13 @@ function BaseComponentPlus(defaultProps) {
         function BaseComponentPlus(props) {
             _classCallCheck(this, BaseComponentPlus);
 
-            var _this8 = _possibleConstructorReturn(this, (BaseComponentPlus.__proto__ || Object.getPrototypeOf(BaseComponentPlus)).call(this, props));
+            var _this9 = _possibleConstructorReturn(this, (BaseComponentPlus.__proto__ || Object.getPrototypeOf(BaseComponentPlus)).call(this, props));
 
-            _this8.state = initialState;
-            _this8.stash = initialStash;
-            (0, _General.Assert)(_this8.constructor["initialState"] == null, "Cannot specify \"" + _this8.constructor.name + ".initialState\". (initial-state is already set using BaseComponentPlus function)");
-            (0, _General.Assert)(_this8.constructor["initialStash"] == null, "Cannot specify \"" + _this8.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentPlus function)");
-            return _this8;
+            _this9.state = initialState;
+            _this9.stash = initialStash;
+            (0, _General.Assert)(_this9.constructor["initialState"] == null, "Cannot specify \"" + _this9.constructor.name + ".initialState\". (initial-state is already set using BaseComponentPlus function)");
+            (0, _General.Assert)(_this9.constructor["initialStash"] == null, "Cannot specify \"" + _this9.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentPlus function)");
+            return _this9;
         }
 
         return BaseComponentPlus;
