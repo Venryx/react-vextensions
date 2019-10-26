@@ -416,7 +416,7 @@ export function BaseComponentWithConnector<PassedProps, ConnectProps, State>(con
 	class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State> {
 		constructor(props) {
 			super(props);
-			this.state = initialState;
+			this.state = E(initialState);
 			Assert(this.constructor["initialState"] == null, `Cannot specify "${this.constructor.name}.initialState". (initial-state is already set using BaseComponentWithConnect function)`);
 			//Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentWithConnect function)`);
 		}
@@ -430,8 +430,8 @@ export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props, init
 		static defaultProps = defaultProps;
 		constructor(props) {
 			super(props);
-			this.state = initialState;
-			this.stash = initialStash;
+			this.state = E(initialState);
+			this.stash = E(initialStash);
 			Assert(this.constructor["initialState"] == null, `Cannot specify "${this.constructor.name}.initialState". (initial-state is already set using BaseComponentPlus function)`);
 			Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentPlus function)`);
 		}

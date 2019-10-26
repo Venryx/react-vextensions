@@ -1556,7 +1556,7 @@ function BaseComponentWithConnector(connector, initialState) {
 
             var _this9 = _possibleConstructorReturn(this, (BaseComponentEnhanced.__proto__ || Object.getPrototypeOf(BaseComponentEnhanced)).call(this, props));
 
-            _this9.state = initialState;
+            _this9.state = (0, _General.E)(initialState);
             (0, _General.Assert)(_this9.constructor["initialState"] == null, "Cannot specify \"" + _this9.constructor.name + ".initialState\". (initial-state is already set using BaseComponentWithConnect function)");
             //Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentWithConnect function)`);
             return _this9;
@@ -1581,8 +1581,8 @@ function BaseComponentPlus(defaultProps) {
 
             var _this10 = _possibleConstructorReturn(this, (BaseComponentPlus.__proto__ || Object.getPrototypeOf(BaseComponentPlus)).call(this, props));
 
-            _this10.state = initialState;
-            _this10.stash = initialStash;
+            _this10.state = (0, _General.E)(initialState);
+            _this10.stash = (0, _General.E)(initialStash);
             (0, _General.Assert)(_this10.constructor["initialState"] == null, "Cannot specify \"" + _this10.constructor.name + ".initialState\". (initial-state is already set using BaseComponentPlus function)");
             (0, _General.Assert)(_this10.constructor["initialStash"] == null, "Cannot specify \"" + _this10.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentPlus function)");
             return _this10;
