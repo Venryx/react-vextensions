@@ -9,11 +9,17 @@ export declare enum RenderSource {
 }
 export declare class BaseComponent<Props, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
     constructor(props: any);
-    defaultState: Partial<State>;
+    initialState: Partial<State>;
     stash: Stash;
-    readonly PropsAndStash: Readonly<Props & BaseProps> & Readonly<{
+    readonly PropsState: Readonly<Props & BaseProps> & Readonly<{
+        children?: React.ReactNode;
+    }> & Readonly<State>;
+    readonly PropsStash: Readonly<Props & BaseProps> & Readonly<{
         children?: React.ReactNode;
     }> & Stash;
+    readonly PropsStateStash: Readonly<Props & BaseProps> & Readonly<{
+        children?: React.ReactNode;
+    }> & Readonly<State> & Stash;
     Stash(stash: Stash): void;
     refs: any;
     readonly DOM: Element;
@@ -72,3 +78,4 @@ export declare class BaseComponent<Props, State = {}, Stash = {}> extends Compon
     PostRender(source?: RenderSource): void;
 }
 export declare function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?: any, props?: PassedProps) => ConnectProps, initialState: State): new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State, {}>;
+export declare function BaseComponentPlus<Props, State, Stash>(defaultProps: Props, initialState?: State, initialStash?: Stash): new (..._: any[]) => BaseComponent<Props, State, Stash>;

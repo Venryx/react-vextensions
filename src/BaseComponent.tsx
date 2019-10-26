@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import autoBind from "react-autobind";
-import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, ToJSON, EnsureSealedPropsArentOverriden, E } from "./General";
+import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, ToJSON, EnsureSealedPropsArentOverriden, E, Assert } from "./General";
 import {WarnOfTransientObjectProps_Options} from "./Decorators";
 
 export enum RenderSource {
@@ -20,8 +20,9 @@ export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Prop
 		if (this.constructor.name == "RadiumEnhancer") {
 			autoBind(Object.getPrototypeOf(this));
 		}
-		//this.state = this.state || this.defaultState || {} as any;
-		this.state = this.constructor["defaultState"] || {} as any;
+		this.state = this.constructor["initialState"] || {} as any;
+		//this.stash = this.constructor["initialStash"] || {} as any;
+		this.stash = this.constructor["initialStash"];
 		
 		// if using PreRender, wrap render func
 		if (this.PreRender != BaseComponent.prototype.PreRender) {
@@ -45,10 +46,12 @@ export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Prop
 		};*/
 	}
 
-	defaultState: Partial<State>;
+	initialState: Partial<State>;
 
 	stash: Stash;
-	get PropsAndStash() { return E(this.props, this.stash); } 
+	get PropsState() { return E(this.props, this.state); }
+	get PropsStash() { return E(this.props, this.stash); }
+	get PropsStateStash() { return E(this.props, this.state, this.stash); }
 	Stash(stash: Stash) {
 		this.stash = stash;
 	}
@@ -332,8 +335,8 @@ export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Prop
 		constructor(props) {
 			super(props);
 			this.state = initialState;
-			if (this.constructor["defaultState"]) {
-				throw new Error(`Cannot specify "${this.constructor.name}.defaultState". (initial-state is already set using BaseComponentWithConnect function)`)
+			if (this.constructor["initialState"]) {
+				throw new Error(`Cannot specify "${this.constructor.name}.initialState". (initial-state is already set using BaseComponentWithConnect function)`)
 			}
 		}
 	}
@@ -359,8 +362,8 @@ export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>
 		constructor(props) {
 			super(props);
 			this.state = initialState;
-			if (this.constructor["defaultState"]) {
-				throw new Error(`Cannot specify "${this.constructor.name}.defaultState". (initial-state is already set using BaseComponentWithConnect function)`)
+			if (this.constructor["initialState"]) {
+				throw new Error(`Cannot specify "${this.constructor.name}.initialState". (initial-state is already set using BaseComponentWithConnect function)`)
 			}
 		}
 	}
@@ -373,11 +376,25 @@ export function BaseComponentWithConnector<PassedProps, ConnectProps, State>(con
 		constructor(props) {
 			super(props);
 			this.state = initialState;
-			if (this.constructor["defaultState"]) {
-				throw new Error(`Cannot specify "${this.constructor.name}.defaultState". (initial-state is already set using BaseComponentWithConnect function)`)
-			}
+			Assert(this.constructor["initialState"] == null, `Cannot specify "${this.constructor.name}.initialState". (initial-state is already set using BaseComponentWithConnect function)`);
+			//Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentWithConnect function)`);
 		}
 	}
 	//return BaseComponentEnhanced;
 	return BaseComponentEnhanced as any as new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>;
+}
+
+export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props, initialState: State = null, initialStash: Stash = null) {
+	class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
+		static defaultProps = defaultProps;
+		constructor(props) {
+			super(props);
+			this.state = initialState;
+			this.stash = initialStash;
+			Assert(this.constructor["initialState"] == null, `Cannot specify "${this.constructor.name}.initialState". (initial-state is already set using BaseComponentPlus function)`);
+			Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentPlus function)`);
+		}
+	}
+	//return BaseComponentPlus;
+	return BaseComponentPlus as any as new(..._)=>BaseComponent<Props, State, Stash>;
 }

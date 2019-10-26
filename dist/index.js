@@ -848,6 +848,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 exports.BaseComponentWithConnector = BaseComponentWithConnector;
+exports.BaseComponentPlus = BaseComponentPlus;
 
 var _react = __webpack_require__(7);
 
@@ -906,8 +907,9 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         if (_this.constructor.name == "RadiumEnhancer") {
             (0, _reactAutobind2.default)(Object.getPrototypeOf(_this));
         }
-        //this.state = this.state || this.defaultState || {} as any;
-        _this.state = _this.constructor["defaultState"] || {};
+        _this.state = _this.constructor["initialState"] || {};
+        //this.stash = this.constructor["initialStash"] || {} as any;
+        _this.stash = _this.constructor["initialStash"];
         // if using PreRender, wrap render func
         if (_this.PreRender != BaseComponent.prototype.PreRender) {
             var oldRender = _this.render;
@@ -1404,9 +1406,19 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         key: "PostRender",
         value: function PostRender(source) {}
     }, {
-        key: "PropsAndStash",
+        key: "PropsState",
+        get: function get() {
+            return (0, _General.E)(this.props, this.state);
+        }
+    }, {
+        key: "PropsStash",
         get: function get() {
             return (0, _General.E)(this.props, this.stash);
+        }
+    }, {
+        key: "PropsStateStash",
+        get: function get() {
+            return (0, _General.E)(this.props, this.state, this.stash);
         }
     }, {
         key: "DOM",
@@ -1454,8 +1466,8 @@ __decorate([_General.Sealed], BaseComponent.prototype, "componentDidUpdate", nul
         constructor(props) {
             super(props);
             this.state = initialState;
-            if (this.constructor["defaultState"]) {
-                throw new Error(`Cannot specify "${this.constructor.name}.defaultState". (initial-state is already set using BaseComponentWithConnect function)`)
+            if (this.constructor["initialState"]) {
+                throw new Error(`Cannot specify "${this.constructor.name}.initialState". (initial-state is already set using BaseComponentWithConnect function)`)
             }
         }
     }
@@ -1481,8 +1493,8 @@ export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>
         constructor(props) {
             super(props);
             this.state = initialState;
-            if (this.constructor["defaultState"]) {
-                throw new Error(`Cannot specify "${this.constructor.name}.defaultState". (initial-state is already set using BaseComponentWithConnect function)`)
+            if (this.constructor["initialState"]) {
+                throw new Error(`Cannot specify "${this.constructor.name}.initialState". (initial-state is already set using BaseComponentWithConnect function)`)
             }
         }
     }
@@ -1499,9 +1511,8 @@ function BaseComponentWithConnector(connector, initialState) {
             var _this7 = _possibleConstructorReturn(this, (BaseComponentEnhanced.__proto__ || Object.getPrototypeOf(BaseComponentEnhanced)).call(this, props));
 
             _this7.state = initialState;
-            if (_this7.constructor["defaultState"]) {
-                throw new Error("Cannot specify \"" + _this7.constructor.name + ".defaultState\". (initial-state is already set using BaseComponentWithConnect function)");
-            }
+            (0, _General.Assert)(_this7.constructor["initialState"] == null, "Cannot specify \"" + _this7.constructor.name + ".initialState\". (initial-state is already set using BaseComponentWithConnect function)");
+            //Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentWithConnect function)`);
             return _this7;
         }
 
@@ -1511,6 +1522,32 @@ function BaseComponentWithConnector(connector, initialState) {
 
 
     return BaseComponentEnhanced;
+}
+function BaseComponentPlus(defaultProps) {
+    var initialState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    var initialStash = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+    var BaseComponentPlus = function (_BaseComponent2) {
+        _inherits(BaseComponentPlus, _BaseComponent2);
+
+        function BaseComponentPlus(props) {
+            _classCallCheck(this, BaseComponentPlus);
+
+            var _this8 = _possibleConstructorReturn(this, (BaseComponentPlus.__proto__ || Object.getPrototypeOf(BaseComponentPlus)).call(this, props));
+
+            _this8.state = initialState;
+            _this8.stash = initialStash;
+            (0, _General.Assert)(_this8.constructor["initialState"] == null, "Cannot specify \"" + _this8.constructor.name + ".initialState\". (initial-state is already set using BaseComponentPlus function)");
+            (0, _General.Assert)(_this8.constructor["initialStash"] == null, "Cannot specify \"" + _this8.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentPlus function)");
+            return _this8;
+        }
+
+        return BaseComponentPlus;
+    }(BaseComponent);
+
+    BaseComponentPlus.defaultProps = defaultProps;
+    //return BaseComponentPlus;
+    return BaseComponentPlus;
 }
 
 /***/ }),
