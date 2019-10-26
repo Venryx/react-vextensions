@@ -56,15 +56,13 @@ export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Prop
 		this.stash = stash;
 
 		// maybe temp; expose stash object into "state" as well (for inspection in react-devtools)
-		/* if (this.state["stashExposer"] != this.stashExposer) {
-			//this.SetState({ stashExposer: this.stashExposer } as any);
-			this.state["stashExposer"] = this.stashExposer;
-		}
-		this.stashExposer.VKeys().forEach(key=> { delete this.stashExposer[key]; });
-		this.stashExposer.Extend(this.stash); */
-		this.state["stash"] = this.stash;
+		//this.state["stash"] = this.stash;
+		//Object.defineProperty(this.state, "stash", {value: this.stash, enumerable: false, configurable: true}); // make non-enumerable, so shallow-[compare/equals] doesn't see it (problem: then hidden in react-devtools)
+		if (this.state["stash"] == null) this.state["stash"] = {};
+		// mutate the existing "state.stash" with the new data; this way the reference is the same, so the change isn't detected by shallow-[compare/equals] 
+		this.state["stash"].VKeys().forEach(key=> { delete this.state["stash"][key]; });
+		this.state["stash"].Extend(this.stash);
 	}
-	//stashExposer = {} as any;
 
 	refs;
 	//timers = [] as Timer[];
