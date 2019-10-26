@@ -1759,6 +1759,7 @@ function SimpleShouldUpdate() {
         return ApplyToClass;
     }
     function ApplyToClass(targetClass) {
+        (0, _General.Assert)(targetClass.prototype.shouldComponentUpdate == null, "Cannot apply SimpleShouldUpdate to class \"" + targetClass.name + "\", because it already has a shouldComponentUpdate method present.");
         targetClass.prototype.shouldComponentUpdate = function (newProps, newState) {
             /*if (options.logChangedWhen...) {
                 Log("Changed: " + this.props.Props().Where(a=>a.value !== newProps[a.name]).Select(a=>a.name) + ";" + g.ToJSON(this.props) + ";" + g.ToJSON(newProps));
