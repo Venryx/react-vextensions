@@ -158,43 +158,6 @@ function Excluding(obj, ...propNames) {
 	return result;
 }
 
-export class SimpleShouldUpdate_Options {
-	propsToIgnore = null as string[];
-	stateToIgnore = null as string[];
-	useShouldUpdateProp = false;
-}
-export function SimpleShouldUpdate(target: Function);
-export function SimpleShouldUpdate(options: Partial<SimpleShouldUpdate_Options>);
-export function SimpleShouldUpdate(...args) {
-	let options = new SimpleShouldUpdate_Options();
-	if (typeof args[0] == "function") {
-		ApplyToClass(args[0]);
-	} else {
-		options = E(options, args[0]);
-		return ApplyToClass;
-	}
-
-	function ApplyToClass(targetClass: Function) {
-		targetClass.prototype.shouldComponentUpdate = function(newProps, newState) {
-			/*if (options.logChangedWhen...) {
-				Log("Changed: " + this.props.Props().Where(a=>a.value !== newProps[a.name]).Select(a=>a.name) + ";" + g.ToJSON(this.props) + ";" + g.ToJSON(newProps));
-			}*/
-
-			if (options.useShouldUpdateProp) {
-				let {shouldUpdate} = newProps;
-				if (typeof shouldUpdate == "boolean") return shouldUpdate;
-				if (typeof shouldUpdate == "function") return shouldUpdate(newProps, newState);
-			}
-			return ShallowChanged(this.props, newProps, {propsToIgnore: options.propsToIgnore}) || ShallowChanged(this.state, newState, {propsToIgnore: options.stateToIgnore});
-		}
-	}
-}
-
-// for PostRender() func
-export function Instant(target, name) {
-	target[name].instant = true;
-}
-
 export function ShallowEquals(objA, objB, options?: {propsToIgnore?: string[]}) {
 	if (objA === objB) return true;
 
@@ -362,4 +325,17 @@ export function FilterOutUnrecognizedProps(props: Object, elementType: string, a
 		 (propName in testerElement) || (propName.toLowerCase() in testerElement) || reactSpecialProps.indexOf(propName) != -1 || (allowDataProps && propName.startsWith("data-"))
 	).forEach(propName=>filteredProps[propName] = props[propName]);
 	return filteredProps;
+}
+
+export function Assert(condition, messageOrMessageFunc?: string | Function): condition is true {
+	if (condition) return;
+
+	var message = (messageOrMessageFunc as any) instanceof Function ? (messageOrMessageFunc as any)() : messageOrMessageFunc;
+
+	//JSVE.logFunc(`Assert failed) ${message}\n\nStackTrace) ${GetStackTraceStr()}`);
+	console.error("Assert failed) " + message);
+
+	let skipError = false; // add flag which you can use to skip the error, when paused in debugger
+	debugger;
+	if (!skipError) throw new Error("Assert failed) " + message);
 }

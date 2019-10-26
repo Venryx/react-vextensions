@@ -112,30 +112,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _General = __webpack_require__(2);
-
-Object.keys(_General).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _General[key];
-    }
-  });
-});
-
-var _ClassBasedStyle = __webpack_require__(5);
-
-Object.keys(_ClassBasedStyle).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _ClassBasedStyle[key];
-    }
-  });
-});
-
 var _BaseComponent = __webpack_require__(8);
 
 Object.keys(_BaseComponent).forEach(function (key) {
@@ -160,6 +136,42 @@ Object.keys(_BaseHooks).forEach(function (key) {
   });
 });
 
+var _ClassBasedStyle = __webpack_require__(5);
+
+Object.keys(_ClassBasedStyle).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _ClassBasedStyle[key];
+    }
+  });
+});
+
+var _Decorators = __webpack_require__(12);
+
+Object.keys(_Decorators).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _Decorators[key];
+    }
+  });
+});
+
+var _General = __webpack_require__(2);
+
+Object.keys(_General).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _General[key];
+    }
+  });
+});
+
 /***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -170,7 +182,7 @@ Object.keys(_BaseHooks).forEach(function (key) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.SimpleShouldUpdate_Options = exports.basePropFullKeys = undefined;
+exports.basePropFullKeys = undefined;
 exports.E = E;
 exports.ToJSON = ToJSON;
 exports.FromJSON = FromJSON;
@@ -181,8 +193,6 @@ exports.FindReact = FindReact;
 exports.GetInnerComp = GetInnerComp;
 exports.BasicStyles = BasicStyles;
 exports.ApplyBasicStyles = ApplyBasicStyles;
-exports.SimpleShouldUpdate = SimpleShouldUpdate;
-exports.Instant = Instant;
 exports.ShallowEquals = ShallowEquals;
 exports.ShallowChanged = ShallowChanged;
 exports.AddGlobalElement = AddGlobalElement;
@@ -191,6 +201,7 @@ exports.HasSealedProps = HasSealedProps;
 exports.EnsureSealedPropsArentOverriden = EnsureSealedPropsArentOverriden;
 exports.Sealed = Sealed;
 exports.FilterOutUnrecognizedProps = FilterOutUnrecognizedProps;
+exports.Assert = Assert;
 
 var _reactDom = __webpack_require__(3);
 
@@ -202,13 +213,13 @@ var _classnames2 = _interopRequireDefault(_classnames);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function E(e1, e2, e3, e4, e5, e6, e7, e8) {
     var result = {};
@@ -416,42 +427,6 @@ function Excluding(obj) {
     }
 
     return result;
-}
-
-var SimpleShouldUpdate_Options = exports.SimpleShouldUpdate_Options = function SimpleShouldUpdate_Options() {
-    _classCallCheck(this, SimpleShouldUpdate_Options);
-
-    this.propsToIgnore = null;
-    this.stateToIgnore = null;
-    this.useShouldUpdateProp = false;
-};
-
-function SimpleShouldUpdate() {
-    var options = new SimpleShouldUpdate_Options();
-    if (typeof (arguments.length <= 0 ? undefined : arguments[0]) == "function") {
-        ApplyToClass(arguments.length <= 0 ? undefined : arguments[0]);
-    } else {
-        options = E(options, arguments.length <= 0 ? undefined : arguments[0]);
-        return ApplyToClass;
-    }
-    function ApplyToClass(targetClass) {
-        targetClass.prototype.shouldComponentUpdate = function (newProps, newState) {
-            /*if (options.logChangedWhen...) {
-                Log("Changed: " + this.props.Props().Where(a=>a.value !== newProps[a.name]).Select(a=>a.name) + ";" + g.ToJSON(this.props) + ";" + g.ToJSON(newProps));
-            }*/
-            if (options.useShouldUpdateProp) {
-                var shouldUpdate = newProps.shouldUpdate;
-
-                if (typeof shouldUpdate == "boolean") return shouldUpdate;
-                if (typeof shouldUpdate == "function") return shouldUpdate(newProps, newState);
-            }
-            return ShallowChanged(this.props, newProps, { propsToIgnore: options.propsToIgnore }) || ShallowChanged(this.state, newState, { propsToIgnore: options.stateToIgnore });
-        };
-    }
-}
-// for PostRender() func
-function Instant(target, name) {
-    target[name].instant = true;
 }
 function ShallowEquals(objA, objB, options) {
     if (objA === objB) return true;
@@ -685,6 +660,15 @@ function FilterOutUnrecognizedProps(props, elementType) {
     });
     return filteredProps;
 }
+function Assert(condition, messageOrMessageFunc) {
+    if (condition) return;
+    var message = messageOrMessageFunc instanceof Function ? messageOrMessageFunc() : messageOrMessageFunc;
+    //JSVE.logFunc(`Assert failed) ${message}\n\nStackTrace) ${GetStackTraceStr()}`);
+    console.error("Assert failed) " + message);
+    var skipError = false; // add flag which you can use to skip the error, when paused in debugger
+    debugger;
+    if (!skipError) throw new Error("Assert failed) " + message);
+}
 
 /***/ }),
 /* 3 */
@@ -914,7 +898,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         _this.changeListeners = [];
         _this.autoRemoveChangeListeners = true;
         _this.mounted = false;
-        _this.warnOfTransientCallbackProp = true;
+        _this.warnOfTransientObjectProps_options = null;
         (0, _General.EnsureSealedPropsArentOverriden)(_this, BaseComponent);
         (0, _reactAutobind2.default)(_this);
         // if had @Radium decorator, then "this" is actually an instance of a class-specific "RadiumEnhancer" derived-class
@@ -1327,7 +1311,8 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
             if (this.autoRemoveChangeListeners) {
                 this.RemoveChangeListeners();
             }
-            if (window["DEV"] && this.warnOfTransientCallbackProp) {
+            var warnOptions = this.warnOfTransientObjectProps_options || this.constructor["warnOfTransientObjectProps_options"];
+            if (window["DEV"] && warnOptions) {
                 var _iteratorNormalCompletion7 = true;
                 var _didIteratorError7 = false;
                 var _iteratorError7 = undefined;
@@ -1338,8 +1323,12 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                             key = _step7$value[0],
                             value = _step7$value[1];
 
-                        if (value instanceof Function && value != this.props[key] && value.memoized == null) {
-                            console.warn("Transient callback-prop detected. @Comp(" + this.constructor.name + ") @Prop(" + key + ") @Value:", value);
+                        if (warnOptions.ignoreProps && warnOptions.ignoreProps.indexOf(key) != -1) continue;
+                        var isObject = value instanceof Object || (typeof value === "undefined" ? "undefined" : _typeof(value)) == "object" && value != null;
+                        if (isObject && value != this.props[key] && value.memoized == null) {
+                            var isFunction = value instanceof Function;
+                            if (!isFunction && !warnOptions.warnForNonFunctions) continue;
+                            console.warn("Transient " + (isFunction ? "callback" : "object") + "-prop detected. @Comp(" + this.constructor.name + ") @Prop(" + key + ") @Value:", value);
                         }
                     }
                     /* let changedProps = this.GetPropChanges(newProps, this.props, false);
@@ -1733,6 +1722,82 @@ function UseCallback(callback, deps) {
     return (0, _react.useCallback)(callback, deps);
 }
 function TODO() {}
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.WarnOfTransientObjectProps_Options = exports.SimpleShouldUpdate_Options = undefined;
+exports.SimpleShouldUpdate = SimpleShouldUpdate;
+exports.WarnOfTransientObjectProps = WarnOfTransientObjectProps;
+exports.Instant = Instant;
+
+var _General = __webpack_require__(2);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SimpleShouldUpdate_Options = exports.SimpleShouldUpdate_Options = function SimpleShouldUpdate_Options() {
+    _classCallCheck(this, SimpleShouldUpdate_Options);
+
+    this.propsToIgnore = null;
+    this.stateToIgnore = null;
+    this.useShouldUpdateProp = false;
+};
+
+function SimpleShouldUpdate() {
+    var options = new SimpleShouldUpdate_Options();
+    if (typeof (arguments.length <= 0 ? undefined : arguments[0]) == "function") {
+        ApplyToClass(arguments.length <= 0 ? undefined : arguments[0]);
+    } else {
+        options = (0, _General.E)(options, arguments.length <= 0 ? undefined : arguments[0]);
+        return ApplyToClass;
+    }
+    function ApplyToClass(targetClass) {
+        targetClass.prototype.shouldComponentUpdate = function (newProps, newState) {
+            /*if (options.logChangedWhen...) {
+                Log("Changed: " + this.props.Props().Where(a=>a.value !== newProps[a.name]).Select(a=>a.name) + ";" + g.ToJSON(this.props) + ";" + g.ToJSON(newProps));
+            }*/
+            if (options.useShouldUpdateProp) {
+                var shouldUpdate = newProps.shouldUpdate;
+
+                if (typeof shouldUpdate == "boolean") return shouldUpdate;
+                if (typeof shouldUpdate == "function") return shouldUpdate(newProps, newState);
+            }
+            return (0, _General.ShallowChanged)(this.props, newProps, { propsToIgnore: options.propsToIgnore }) || (0, _General.ShallowChanged)(this.state, newState, { propsToIgnore: options.stateToIgnore });
+        };
+    }
+}
+
+var WarnOfTransientObjectProps_Options = exports.WarnOfTransientObjectProps_Options = function WarnOfTransientObjectProps_Options() {
+    _classCallCheck(this, WarnOfTransientObjectProps_Options);
+
+    this.ignoreProps = null;
+    this.warnForNonFunctions = false;
+};
+
+function WarnOfTransientObjectProps() {
+    //Assert(targetClass instanceof Function, `Must decorate a class directly. (no "()" in "@WarnOfTransientObjectProps" line)`);
+    var options = new WarnOfTransientObjectProps_Options();
+    if (typeof (arguments.length <= 0 ? undefined : arguments[0]) == "function") {
+        ApplyToClass(arguments.length <= 0 ? undefined : arguments[0]);
+    } else {
+        options = (0, _General.E)(options, arguments.length <= 0 ? undefined : arguments[0]);
+        return ApplyToClass;
+    }
+    function ApplyToClass(targetClass) {
+        targetClass["warnOfTransientObjectProps_options"] = options;
+    }
+}
+// for PostRender() func
+function Instant(target, name) {
+    target[name].instant = true;
+}
 
 /***/ })
 /******/ ]);

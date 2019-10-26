@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import autoBind from "react-autobind";
 import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, ToJSON, EnsureSealedPropsArentOverriden, E } from "./General";
+import {WarnOfTransientObjectProps_Options} from "./Decorators";
 
 export enum RenderSource {
 	Mount, // first render, after creation
@@ -245,17 +246,22 @@ export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Prop
 		this.mounted = false;
 	}
 	
-	warnOfTransientCallbackProp = true;
+	warnOfTransientObjectProps_options: WarnOfTransientObjectProps_Options = null;
 	ComponentWillReceiveProps(newProps: any[]): void {};
 	@Sealed UNSAFE_componentWillReceiveProps(newProps) {
 		if (this.autoRemoveChangeListeners) {
 			this.RemoveChangeListeners();
 		}
 		
-		if (window["DEV"] && this.warnOfTransientCallbackProp) {
+		let warnOptions = this.warnOfTransientObjectProps_options || this.constructor["warnOfTransientObjectProps_options"] as WarnOfTransientObjectProps_Options;
+		if (window["DEV"] && warnOptions) {
 			for (let [key, value] of Object["entries"](newProps)) {
-				if (value instanceof Function && value != this.props[key] && value.memoized == null) {
-					console.warn(`Transient callback-prop detected. @Comp(${this.constructor.name}) @Prop(${key}) @Value:`, value);
+				if (warnOptions.ignoreProps && warnOptions.ignoreProps.indexOf(key) != -1) continue;
+				let isObject = value instanceof Object || (typeof value == "object" && value != null);
+				if (isObject && value != this.props[key] && value.memoized == null) {
+					let isFunction = value instanceof Function;
+					if (!isFunction && !warnOptions.warnForNonFunctions) continue;
+					console.warn(`Transient ${isFunction ? "callback" : "object"}-prop detected. @Comp(${this.constructor.name}) @Prop(${key}) @Value:`, value);
 				}
 			}
 			/* let changedProps = this.GetPropChanges(newProps, this.props, false);

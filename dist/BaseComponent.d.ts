@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BaseProps } from "./General";
+import { WarnOfTransientObjectProps_Options } from "./Decorators";
 export declare enum RenderSource {
     Mount = 0,
     PropChange = 1,
@@ -60,7 +61,7 @@ export declare class BaseComponent<Props, State = {}, Stash = {}> extends Compon
     componentDidMount(...args: any[]): void;
     ComponentWillUnmount(): void;
     componentWillUnmount(): void;
-    warnOfTransientCallbackProp: boolean;
+    warnOfTransientObjectProps_options: WarnOfTransientObjectProps_Options;
     ComponentWillReceiveProps(newProps: any[]): void;
     UNSAFE_componentWillReceiveProps(newProps: any): void;
     ComponentDidUpdate(...args: any[]): void;

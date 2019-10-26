@@ -52,14 +52,6 @@ export declare var basePropFullKeys: {
 };
 export declare function BasicStyles(props: any): any;
 export declare function ApplyBasicStyles(target: React.ComponentClass<any>): void;
-export declare class SimpleShouldUpdate_Options {
-    propsToIgnore: string[];
-    stateToIgnore: string[];
-    useShouldUpdateProp: boolean;
-}
-export declare function SimpleShouldUpdate(target: Function): any;
-export declare function SimpleShouldUpdate(options: Partial<SimpleShouldUpdate_Options>): any;
-export declare function Instant(target: any, name: any): void;
 export declare function ShallowEquals(objA: any, objB: any, options?: {
     propsToIgnore?: string[];
 }): boolean;
@@ -74,3 +66,4 @@ export declare function HasSealedProps(target: new (..._: any[]) => any): any;
 export declare function EnsureSealedPropsArentOverriden(compInstance: any, classWherePropsSealed: new (..._: any[]) => any): void;
 export declare function Sealed(target: Object, key: string): void;
 export declare function FilterOutUnrecognizedProps(props: Object, elementType: string, allowDataProps?: boolean): {};
+export declare function Assert(condition: any, messageOrMessageFunc?: string | Function): condition is true;
