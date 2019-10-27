@@ -11,7 +11,6 @@ export declare class BaseComponent<Props, State = {}, Stash = {}> extends Compon
     static componentCurrentlyRendering: BaseComponent<any>;
     renderCount: number;
     constructor(props: any);
-    initialState: Partial<State>;
     stash: Stash;
     readonly PropsState: Readonly<Props & BaseProps> & Readonly<{
         children?: React.ReactNode;
@@ -22,9 +21,10 @@ export declare class BaseComponent<Props, State = {}, Stash = {}> extends Compon
     readonly PropsStateStash: Readonly<Props & BaseProps> & Readonly<{
         children?: React.ReactNode;
     }> & Readonly<State> & Stash;
-    Stash(newStashData: Stash, replaceStash?: boolean): void;
+    Stash(newStashData: Stash, replaceData?: boolean): void;
     debug: any;
-    Debug(newDebugData: any): void;
+    Debug(newDebugData: any, replaceData?: boolean): void;
+    AttachReactDevToolsHelpers(stash?: boolean, debug?: boolean): void;
     refs: any;
     readonly DOM: Element;
     readonly DOM_HTML: HTMLElement;
@@ -81,5 +81,5 @@ export declare class BaseComponent<Props, State = {}, Stash = {}> extends Compon
     PreRender(): void;
     PostRender(source?: RenderSource): void;
 }
-export declare function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?: any, props?: PassedProps) => ConnectProps, initialState: State): new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State, {}>;
+export declare function BaseComponentWithConnector<PassedProps, ConnectProps, State, Stash>(connector: (state?: any, props?: PassedProps) => ConnectProps, initialState: State, initialStash?: Stash): new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State, {}>;
 export declare function BaseComponentPlus<Props, State, Stash>(defaultProps: Props, initialState?: State, initialStash?: Stash): new (..._: any[]) => BaseComponent<Props, State, Stash>;

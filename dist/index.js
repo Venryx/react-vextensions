@@ -894,6 +894,10 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         var _this = _possibleConstructorReturn(this, (BaseComponent.__proto__ || Object.getPrototypeOf(BaseComponent)).call(this, props));
 
         _this.renderCount = 0;
+        //initialState: Partial<State>;
+        //state = {} as State; // redefined here, so we can set the initial-state to {} (instead of undefined)
+        _this.stash = {};
+        _this.debug = {};
         // helper for debugging
         _this.GetPropChanges_lastValues = {};
         _this.GetStateChanges_lastValues = {};
@@ -908,9 +912,11 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         if (_this.constructor.name == "RadiumEnhancer") {
             (0, _reactAutobind2.default)(Object.getPrototypeOf(_this));
         }
-        _this.state = _this.constructor["initialState"] || {};
-        //this.stash = this.constructor["initialStash"] || {} as any;
-        _this.stash = _this.constructor["initialStash"];
+        _this.state = {}; // this.state starts as undefined, so set it to {} to match with this.stash and this.debug
+        Object.assign(_this.state, _this.constructor["initialState"]);
+        //this.Stash(this.constructor["initialStash"]);
+        Object.assign(_this.stash, _this.constructor["initialStash"]);
+        _this.AttachReactDevToolsHelpers();
         // if using PreRender, wrap render func
         /* if (this.PreRender != BaseComponent.prototype.PreRender) {
             let oldRender = this.render;
@@ -952,36 +958,33 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         value: function Stash(newStashData) {
             var _this2 = this;
 
-            var replaceStash = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+            var replaceData = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-            if (replaceStash) {
-                this.stash = newStashData;
-            } else {
-                this.stash = (0, _General.E)(this.stash, newStashData);
-            }
-            // maybe temp; expose stash object into "state" as well (for inspection in react-devtools)
-            //this.state["@stash"] = this.stash;
-            //Object.defineProperty(this.state, "stash", {value: this.stash, enumerable: false, configurable: true}); // make non-enumerable, so shallow-[compare/equals] doesn't see it (problem: then hidden in react-devtools)
-            if (this.state["@stash"] == null) this.state["@stash"] = {};
-            // mutate the existing "state.stash" with the new data; this way the reference is the same, so the change isn't detected by shallow-[compare/equals] 
-            this.state["@stash"].VKeys().forEach(function (key) {
-                delete _this2.state["@stash"][key];
+            if (replaceData) Object.keys(this.stash).forEach(function (key) {
+                delete _this2.stash[key];
             });
-            this.state["@stash"].Extend(this.stash);
+            Object.assign(this.stash, newStashData);
         }
     }, {
         key: "Debug",
         value: function Debug(newDebugData) {
             var _this3 = this;
 
-            this.debug = (0, _General.E)(this.debug, newDebugData);
-            // maybe temp; expose debug object into "state" as well (for inspection in react-devtools)
-            if (this.state["@debug"] == null) this.state["@debug"] = {};
-            // mutate the existing "state.debug" with the new data; this way the reference is the same, so the change isn't detected by shallow-[compare/equals] 
-            this.state["@debug"].VKeys().forEach(function (key) {
-                delete _this3.state["@debug"][key];
+            var replaceData = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+            if (replaceData) Object.keys(this.debug).forEach(function (key) {
+                delete _this3.debug[key];
             });
-            this.state["@debug"].Extend(this.debug);
+            Object.assign(this.debug, newDebugData);
+        }
+    }, {
+        key: "AttachReactDevToolsHelpers",
+        value: function AttachReactDevToolsHelpers() {
+            var stash = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+            var debug = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+            this.state["@stash"] = this.stash;
+            this.state["@debug"] = this.debug;
         }
         //timers = [] as Timer[];
 
@@ -1548,6 +1551,8 @@ export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>
 }*/
 // Note: We can't auto-apply the actual Connect decorator, because here can only be the *base* for the user-component, not *wrap* it (which is needed for the react-redux "Connected(Comp)" component)
 function BaseComponentWithConnector(connector, initialState) {
+    var initialStash = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
     var BaseComponentEnhanced = function (_BaseComponent) {
         _inherits(BaseComponentEnhanced, _BaseComponent);
 
@@ -1556,9 +1561,10 @@ function BaseComponentWithConnector(connector, initialState) {
 
             var _this9 = _possibleConstructorReturn(this, (BaseComponentEnhanced.__proto__ || Object.getPrototypeOf(BaseComponentEnhanced)).call(this, props));
 
-            _this9.state = (0, _General.E)(initialState);
+            Object.assign(_this9.state, initialState);
+            Object.assign(_this9.stash, initialStash);
             (0, _General.Assert)(_this9.constructor["initialState"] == null, "Cannot specify \"" + _this9.constructor.name + ".initialState\". (initial-state is already set using BaseComponentWithConnect function)");
-            //Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentWithConnect function)`);
+            (0, _General.Assert)(_this9.constructor["initialStash"] == null, "Cannot specify \"" + _this9.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentWithConnect function)");
             return _this9;
         }
 
@@ -1581,8 +1587,8 @@ function BaseComponentPlus(defaultProps) {
 
             var _this10 = _possibleConstructorReturn(this, (BaseComponentPlus.__proto__ || Object.getPrototypeOf(BaseComponentPlus)).call(this, props));
 
-            _this10.state = (0, _General.E)(initialState);
-            _this10.stash = (0, _General.E)(initialStash);
+            Object.assign(_this10.state, initialState);
+            Object.assign(_this10.stash, initialStash);
             (0, _General.Assert)(_this10.constructor["initialState"] == null, "Cannot specify \"" + _this10.constructor.name + ".initialState\". (initial-state is already set using BaseComponentPlus function)");
             (0, _General.Assert)(_this10.constructor["initialStash"] == null, "Cannot specify \"" + _this10.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentPlus function)");
             return _this10;

@@ -23,9 +23,12 @@ export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Prop
 		if (this.constructor.name == "RadiumEnhancer") {
 			autoBind(Object.getPrototypeOf(this));
 		}
-		this.state = this.constructor["initialState"] || {} as any;
-		//this.stash = this.constructor["initialStash"] || {} as any;
-		this.stash = this.constructor["initialStash"];
+
+		this.state = {} as any; // this.state starts as undefined, so set it to {} to match with this.stash and this.debug
+		Object.assign(this.state, this.constructor["initialState"]);
+		//this.Stash(this.constructor["initialStash"]);
+		Object.assign(this.stash, this.constructor["initialStash"]);
+		this.AttachReactDevToolsHelpers();
 		
 		// if using PreRender, wrap render func
 		/* if (this.PreRender != BaseComponent.prototype.PreRender) {
@@ -64,37 +67,27 @@ export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Prop
 		};*/
 	}
 
-	initialState: Partial<State>;
+	//initialState: Partial<State>;
+	//state = {} as State; // redefined here, so we can set the initial-state to {} (instead of undefined)
 
-	stash: Stash;
+	stash = {} as Stash;
 	get PropsState() { return E(this.props, this.state); }
 	get PropsStash() { return E(this.props, this.stash); }
 	get PropsStateStash() { return E(this.props, this.state, this.stash); }
-	Stash(newStashData: Stash, replaceStash = false) {
-		if (replaceStash) {
-			this.stash = newStashData;
-		} else {
-			this.stash = E(this.stash, newStashData);
-		}
-
-		// maybe temp; expose stash object into "state" as well (for inspection in react-devtools)
-		//this.state["@stash"] = this.stash;
-		//Object.defineProperty(this.state, "stash", {value: this.stash, enumerable: false, configurable: true}); // make non-enumerable, so shallow-[compare/equals] doesn't see it (problem: then hidden in react-devtools)
-		if (this.state["@stash"] == null) this.state["@stash"] = {};
-		// mutate the existing "state.stash" with the new data; this way the reference is the same, so the change isn't detected by shallow-[compare/equals] 
-		this.state["@stash"].VKeys().forEach(key=> { delete this.state["@stash"][key]; });
-		this.state["@stash"].Extend(this.stash);
+	Stash(newStashData: Stash, replaceData = false) {
+		if (replaceData) Object.keys(this.stash).forEach(key=> { delete this.stash[key]; });
+		Object.assign(this.stash, newStashData);
 	}
 
-	debug: any;
-	Debug(newDebugData: any) {
-		this.debug = E(this.debug, newDebugData);
+	debug = {} as any;
+	Debug(newDebugData: any, replaceData = false) {
+		if (replaceData) Object.keys(this.debug).forEach(key=> { delete this.debug[key]; });
+		Object.assign(this.debug, newDebugData);
+	}
 
-		// maybe temp; expose debug object into "state" as well (for inspection in react-devtools)
-		if (this.state["@debug"] == null) this.state["@debug"] = {};
-		// mutate the existing "state.debug" with the new data; this way the reference is the same, so the change isn't detected by shallow-[compare/equals] 
-		this.state["@debug"].VKeys().forEach(key=> { delete this.state["@debug"][key]; });
-		this.state["@debug"].Extend(this.debug);
+	AttachReactDevToolsHelpers(stash = true, debug = true) {
+		this.state["@stash"] = this.stash;
+		this.state["@debug"] = this.debug;
 	}
 
 	refs;
@@ -412,13 +405,14 @@ export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>
 }*/
 
 // Note: We can't auto-apply the actual Connect decorator, because here can only be the *base* for the user-component, not *wrap* it (which is needed for the react-redux "Connected(Comp)" component)
-export function BaseComponentWithConnector<PassedProps, ConnectProps, State>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State) {
-	class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State> {
+export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Stash>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State, initialStash: Stash = null) {
+	class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
 		constructor(props) {
 			super(props);
-			this.state = E(initialState);
+			Object.assign(this.state, initialState);
+			Object.assign(this.stash, initialStash);
 			Assert(this.constructor["initialState"] == null, `Cannot specify "${this.constructor.name}.initialState". (initial-state is already set using BaseComponentWithConnect function)`);
-			//Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentWithConnect function)`);
+			Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentWithConnect function)`);
 		}
 	}
 	//return BaseComponentEnhanced;
@@ -430,8 +424,8 @@ export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props, init
 		static defaultProps = defaultProps;
 		constructor(props) {
 			super(props);
-			this.state = E(initialState);
-			this.stash = E(initialStash);
+			Object.assign(this.state, initialState);
+			Object.assign(this.stash, initialStash);
 			Assert(this.constructor["initialState"] == null, `Cannot specify "${this.constructor.name}.initialState". (initial-state is already set using BaseComponentPlus function)`);
 			Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentPlus function)`);
 		}
