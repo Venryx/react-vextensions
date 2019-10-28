@@ -7,7 +7,7 @@ export declare enum RenderSource {
     SetState = 2,
     Update = 3
 }
-export declare class BaseComponent<Props, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
+export declare class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
     static componentCurrentlyRendering: BaseComponent<any>;
     renderCount: number;
     constructor(props: any);
@@ -82,4 +82,4 @@ export declare class BaseComponent<Props, State = {}, Stash = {}> extends Compon
     PostRender(source?: RenderSource): void;
 }
 export declare function BaseComponentWithConnector<PassedProps, ConnectProps, State, Stash>(connector: (state?: any, props?: PassedProps) => ConnectProps, initialState: State, initialStash?: Stash): new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State, {}>;
-export declare function BaseComponentPlus<Props, State, Stash>(defaultProps: Props, initialState?: State, initialStash?: Stash): new (..._: any[]) => BaseComponent<Props, State, Stash>;
+export declare function BaseComponentPlus<Props, State, Stash>(defaultProps?: Props, initialState?: State, initialStash?: Stash): new (..._: any[]) => BaseComponent<Props, State, Stash>;

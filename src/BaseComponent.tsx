@@ -10,7 +10,7 @@ export enum RenderSource {
 	Update, // from this.Update()
 }
 //@HasSealedProps // instead of using this decorator, we just include the "EnsureSealedPropsArentOverriden(this, BaseComponent);" line directly (to reduce nesting / depth of class-prototype chain)	
-export class BaseComponent<Props, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
+export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
 	static componentCurrentlyRendering: BaseComponent<any>;
 
 	renderCount = 0;
@@ -419,7 +419,7 @@ export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Sta
 	return BaseComponentEnhanced as any as new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>;
 }
 
-export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props, initialState: State = null, initialStash: Stash = null) {
+export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props = {} as any, initialState: State = null, initialStash: Stash = null) {
 	class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
 		static defaultProps = defaultProps;
 		constructor(props) {
