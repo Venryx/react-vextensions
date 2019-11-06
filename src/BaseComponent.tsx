@@ -13,7 +13,12 @@ export enum RenderSource {
 export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
 	static componentCurrentlyRendering: BaseComponent<any>;
 
+	// debug info (statics are updated by all instances)
+	static renderCount = 0;
+	static lastRenderTime = -1;
 	renderCount = 0;
+	lastRenderTime = -1;
+	
 	constructor(props) {
 		super(props);
 		EnsureSealedPropsArentOverriden(this, BaseComponent);
@@ -45,8 +50,15 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 			this.constructor.prototype.render = function(this: BaseComponent) {
 				this.PreRender();
 				BaseComponent.componentCurrentlyRendering = this;
+
+				let now = Date.now();
 				//this.renderCount = (this.renderCount|0) + 1;
 				this.renderCount++;
+				this.lastRenderTime = now;
+				//this.constructor["renderCount"] = (this.constructor["renderCount"]|0) + 1;
+				this.constructor["renderCount"]++;
+				this.constructor["lastRenderTime"] = now;
+				
 				this.Debug({["@RenderIndex"]: this.renderCount});
 				let result = oldRender.apply(this, arguments);
 				BaseComponent.componentCurrentlyRendering = null;
@@ -108,8 +120,9 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 	}
 
 	// helper for debugging
-	private GetPropChanges_lastValues = {};
-	GetPropChanges(newProps = this.props, oldProps = this.GetPropChanges_lastValues, setLastValues = true) {
+	//private GetPropChanges_lastValues = {};
+	_GetPropChanges_lastValues = {};
+	GetPropChanges(newProps = this.props, oldProps = this._GetPropChanges_lastValues, setLastValues = true) {
 		let oldAndNewKeys = RemoveDuplicates(Object.keys(newProps).concat(Object.keys(oldProps)));
 		let changedKeys = oldAndNewKeys.filter(key=>!Object.is(newProps[key], oldProps[key]));
 
@@ -117,11 +130,12 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		for (let key of changedKeys) {
 			result.push({key, oldVal: oldProps[key], newVal: newProps[key]});
 		}
-		if (setLastValues) this.GetPropChanges_lastValues = {...newProps as any};
+		if (setLastValues) this._GetPropChanges_lastValues = {...newProps as any};
 		return result;
 	}
-	private GetStateChanges_lastValues = {};
-	GetStateChanges(newState = this.state, oldState = this.GetStateChanges_lastValues, setLastValues = true) {
+	//private GetStateChanges_lastValues = {};
+	_GetStateChanges_lastValues = {};
+	GetStateChanges(newState = this.state, oldState = this._GetStateChanges_lastValues, setLastValues = true) {
 		let oldAndNewKeys = RemoveDuplicates(Object.keys(newState).concat(Object.keys(oldState)));
 		let changedKeys = oldAndNewKeys.filter(key=>!Object.is(newState[key], oldState[key]));
 
@@ -129,7 +143,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		for (let key of changedKeys) {
 			result.push({key, oldVal: oldState[key], newVal: newState[key]});
 		}
-		if (setLastValues) this.GetStateChanges_lastValues = {...newState as any};
+		if (setLastValues) this._GetStateChanges_lastValues = {...newState as any};
 		return result;
 	}
 
@@ -269,7 +283,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		/*let {Ref} = this.props;
 		if (Ref) Ref(this);*/
 		this.mounted = true;
-		this.CallPostRender();
+		this._CallPostRender();
 	}
 
 	ComponentWillUnmount(): void {};
@@ -321,12 +335,13 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		this.ComponentDidMountOrUpdate(this.ComponentDidMountOrUpdate_lastProps, this.ComponentDidMountOrUpdate_lastState);
 		this.ComponentDidMountOrUpdate_lastProps = this.props as any;
 		this.ComponentDidMountOrUpdate_lastState = this.state;
-		this.CallPostRender();
+		this._CallPostRender();
 	}
 
 	// whether the current/upcoming render was triggered by a mount or prop-change (as opposed to setState() or forceUpdate())
 	lastRender_source: RenderSource;
-	private CallPostRender() {
+	//private CallPostRender() {
+	_CallPostRender() {
 		if (this.PostRender == BaseComponent.prototype.PostRender) return;
 
 		let renderSource = this.lastRender_source;
@@ -407,7 +422,7 @@ export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>
 
 // Note: We can't auto-apply the actual Connect decorator, because here can only be the *base* for the user-component, not *wrap* it (which is needed for the react-redux "Connected(Comp)" component)
 export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Stash>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State, initialStash: Stash = null) {
-	class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
+	return class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
 		constructor(props) {
 			super(props);
 			Object.assign(this.state, initialState);
@@ -417,11 +432,11 @@ export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Sta
 		}
 	}
 	//return BaseComponentEnhanced;
-	return BaseComponentEnhanced as any as new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>;
+	//return BaseComponentEnhanced as new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>;
 }
 
 export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props = {} as any, initialState: State = null, initialStash: Stash = null) {
-	class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
+	return class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
 		static defaultProps = defaultProps;
 		constructor(props) {
 			super(props);
@@ -432,5 +447,5 @@ export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props = {} 
 		}
 	}
 	//return BaseComponentPlus;
-	return BaseComponentPlus as any as new(..._)=>BaseComponent<Props, State, Stash>;
+	//return BaseComponentPlus as new(..._)=>BaseComponent<Props, State, Stash>;
 }

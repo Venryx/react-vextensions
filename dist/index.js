@@ -239,13 +239,16 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         var _this = _possibleConstructorReturn(this, (BaseComponent.__proto__ || Object.getPrototypeOf(BaseComponent)).call(this, props));
 
         _this.renderCount = 0;
+        _this.lastRenderTime = -1;
         //initialState: Partial<State>;
         //state = {} as State; // redefined here, so we can set the initial-state to {} (instead of undefined)
         _this.stash = {};
         _this.debug = {};
         // helper for debugging
-        _this.GetPropChanges_lastValues = {};
-        _this.GetStateChanges_lastValues = {};
+        //private GetPropChanges_lastValues = {};
+        _this._GetPropChanges_lastValues = {};
+        //private GetStateChanges_lastValues = {};
+        _this._GetStateChanges_lastValues = {};
         _this.changeListeners = [];
         _this.autoRemoveChangeListeners = true;
         _this.mounted = false;
@@ -276,8 +279,13 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
             _this.constructor.prototype.render = function () {
                 this.PreRender();
                 BaseComponent.componentCurrentlyRendering = this;
+                var now = Date.now();
                 //this.renderCount = (this.renderCount|0) + 1;
                 this.renderCount++;
+                this.lastRenderTime = now;
+                //this.constructor["renderCount"] = (this.constructor["renderCount"]|0) + 1;
+                this.constructor["renderCount"]++;
+                this.constructor["lastRenderTime"] = now;
                 this.Debug(_defineProperty({}, "@RenderIndex", this.renderCount));
                 var result = oldRender.apply(this, arguments);
                 BaseComponent.componentCurrentlyRendering = null;
@@ -338,7 +346,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         key: "GetPropChanges",
         value: function GetPropChanges() {
             var newProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.props;
-            var oldProps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.GetPropChanges_lastValues;
+            var oldProps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this._GetPropChanges_lastValues;
             var setLastValues = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
             var oldAndNewKeys = (0, _General.RemoveDuplicates)(Object.keys(newProps).concat(Object.keys(oldProps)));
@@ -371,14 +379,14 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 }
             }
 
-            if (setLastValues) this.GetPropChanges_lastValues = Object.assign({}, newProps);
+            if (setLastValues) this._GetPropChanges_lastValues = Object.assign({}, newProps);
             return result;
         }
     }, {
         key: "GetStateChanges",
         value: function GetStateChanges() {
             var newState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.state;
-            var oldState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.GetStateChanges_lastValues;
+            var oldState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this._GetStateChanges_lastValues;
             var setLastValues = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
             var oldAndNewKeys = (0, _General.RemoveDuplicates)(Object.keys(newState).concat(Object.keys(oldState)));
@@ -411,7 +419,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 }
             }
 
-            if (setLastValues) this.GetStateChanges_lastValues = Object.assign({}, newState);
+            if (setLastValues) this._GetStateChanges_lastValues = Object.assign({}, newState);
             return result;
         }
         //forceUpdate(_: ()=>"Do not call this. Call Update() instead.") {
@@ -682,7 +690,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
             /*let {Ref} = this.props;
             if (Ref) Ref(this);*/
             this.mounted = true;
-            this.CallPostRender();
+            this._CallPostRender();
         }
     }, {
         key: "ComponentWillUnmount",
@@ -764,11 +772,13 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
             this.ComponentDidMountOrUpdate(this.ComponentDidMountOrUpdate_lastProps, this.ComponentDidMountOrUpdate_lastState);
             this.ComponentDidMountOrUpdate_lastProps = this.props;
             this.ComponentDidMountOrUpdate_lastState = this.state;
-            this.CallPostRender();
+            this._CallPostRender();
         }
+        //private CallPostRender() {
+
     }, {
-        key: "CallPostRender",
-        value: function CallPostRender() {
+        key: "_CallPostRender",
+        value: function _CallPostRender() {
             var _this8 = this;
 
             if (this.PostRender == BaseComponent.prototype.PostRender) return;
@@ -845,7 +855,11 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
 
     return BaseComponent;
 }(_react.Component);
+// debug info (statics are updated by all instances)
 
+
+BaseComponent.renderCount = 0;
+BaseComponent.lastRenderTime = -1;
 __decorate([_General.Sealed], BaseComponent.prototype, "UNSAFE_componentWillMount", null);
 __decorate([_General.Sealed], BaseComponent.prototype, "componentDidMount", null);
 __decorate([_General.Sealed], BaseComponent.prototype, "componentWillUnmount", null);
@@ -899,7 +913,7 @@ export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>
 function BaseComponentWithConnector(connector, initialState) {
     var initialStash = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
-    var BaseComponentEnhanced = function (_BaseComponent) {
+    return function (_BaseComponent) {
         _inherits(BaseComponentEnhanced, _BaseComponent);
 
         function BaseComponentEnhanced(props) {
@@ -917,16 +931,15 @@ function BaseComponentWithConnector(connector, initialState) {
         return BaseComponentEnhanced;
     }(BaseComponent);
     //return BaseComponentEnhanced;
-
-
-    return BaseComponentEnhanced;
+    //return BaseComponentEnhanced as new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>;
 }
 function BaseComponentPlus() {
     var defaultProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var initialState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     var initialStash = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
-    var BaseComponentPlus = function (_BaseComponent2) {
+    var _a;
+    return _a = function (_BaseComponent2) {
         _inherits(BaseComponentPlus, _BaseComponent2);
 
         function BaseComponentPlus(props) {
@@ -942,11 +955,9 @@ function BaseComponentPlus() {
         }
 
         return BaseComponentPlus;
-    }(BaseComponent);
-
-    BaseComponentPlus.defaultProps = defaultProps;
+    }(BaseComponent), _a.defaultProps = defaultProps, _a;
     //return BaseComponentPlus;
-    return BaseComponentPlus;
+    //return BaseComponentPlus as new(..._)=>BaseComponent<Props, State, Stash>;
 }
 
 /***/ }),
