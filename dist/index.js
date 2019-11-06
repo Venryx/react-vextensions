@@ -112,7 +112,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _BaseComponent = __webpack_require__(8);
+var _BaseComponent = __webpack_require__(2);
 
 Object.keys(_BaseComponent).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -124,7 +124,7 @@ Object.keys(_BaseComponent).forEach(function (key) {
   });
 });
 
-var _BaseHooks = __webpack_require__(11);
+var _BaseHooks = __webpack_require__(9);
 
 Object.keys(_BaseHooks).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -136,7 +136,7 @@ Object.keys(_BaseHooks).forEach(function (key) {
   });
 });
 
-var _ClassBasedStyle = __webpack_require__(5);
+var _ClassBasedStyle = __webpack_require__(10);
 
 Object.keys(_ClassBasedStyle).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -160,7 +160,7 @@ Object.keys(_Decorators).forEach(function (key) {
   });
 });
 
-var _General = __webpack_require__(2);
+var _General = __webpack_require__(6);
 
 Object.keys(_General).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -182,663 +182,6 @@ Object.keys(_General).forEach(function (key) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.basePropFullKeys = undefined;
-exports.E = E;
-exports.ToJSON = ToJSON;
-exports.FromJSON = FromJSON;
-exports.AsMultiline = AsMultiline;
-exports.RemoveDuplicates = RemoveDuplicates;
-exports.GetDOM = GetDOM;
-exports.FindReact = FindReact;
-exports.GetInnerComp = GetInnerComp;
-exports.BasicStyles = BasicStyles;
-exports.ApplyBasicStyles = ApplyBasicStyles;
-exports.ShallowEquals = ShallowEquals;
-exports.ShallowChanged = ShallowChanged;
-exports.AddGlobalElement = AddGlobalElement;
-exports.AddGlobalStyle = AddGlobalStyle;
-exports.HasSealedProps = HasSealedProps;
-exports.EnsureSealedPropsArentOverriden = EnsureSealedPropsArentOverriden;
-exports.Sealed = Sealed;
-exports.FilterOutUnrecognizedProps = FilterOutUnrecognizedProps;
-exports.Assert = Assert;
-
-var _reactDom = __webpack_require__(3);
-
-var _reactDom2 = _interopRequireDefault(_reactDom);
-
-var _classnames = __webpack_require__(4);
-
-var _classnames2 = _interopRequireDefault(_classnames);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function E(e1, e2, e3, e4, e5, e6, e7, e8) {
-    var result = {};
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-        for (var _iterator = arguments[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var extend = _step.value;
-
-            result.Extend(extend);
-        }
-    } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
-            }
-        } finally {
-            if (_didIteratorError) {
-                throw _iteratorError;
-            }
-        }
-    }
-
-    return result;
-    //return StyleSheet.create(result);
-}
-function ToJSON(obj) {
-    return JSON.stringify(obj);
-}
-function FromJSON(json) {
-    return JSON.parse(json);
-}
-function AsMultiline(str) {
-    var desiredIndent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-    var result = str.substring(str.indexOf("\n") + 1, str.lastIndexOf("\n"));
-    if (desiredIndent != null) {
-        var firstLineIndent = (result.match(/^\t+/) || [""])[0].length;
-        if (firstLineIndent) {
-            var lines = result.split("\n");
-            // remove X tabs from start of each line (where X is firstLineIndent)
-            lines = lines.map(function (line) {
-                return line.replace(new RegExp("^\t{0," + firstLineIndent + "}"), "");
-            });
-            result = lines.join("\n");
-        }
-    }
-    return result;
-}
-;
-function RemoveDuplicates(items) {
-    var result = [];
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
-
-    try {
-        for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var item = _step2.value;
-
-            if (result.indexOf(item) == -1) {
-                result.push(item);
-            }
-        }
-    } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                _iterator2.return();
-            }
-        } finally {
-            if (_didIteratorError2) {
-                throw _iteratorError2;
-            }
-        }
-    }
-
-    return result;
-}
-//var ReactInstanceMap = require("react/lib/ReactInstanceMap");
-function GetDOM(comp) {
-    if (comp == null || comp["mounted"] === false) return null; // mounted is a prop on BaseComponents
-    return _reactDom2.default.findDOMNode(comp);
-}
-function FindReact(dom) {
-    if (dom == null) return null;
-    var key = Object.keys(dom).find(function (key) {
-        return key.startsWith("__reactInternalInstance$");
-    });
-    var internalInstance = dom[key];
-    if (internalInstance == null) return null;
-    if (internalInstance.return) {
-        // react 16+
-        return internalInstance._debugOwner ? internalInstance._debugOwner.stateNode : internalInstance.return.stateNode;
-    } else {
-        // react <16
-        //return internalInstance._currentElement._owner._instance as React.Component<any, any>;
-        return internalInstance._currentElement._owner._instance;
-    }
-}
-// needed for wrapper-components that don't provide way of accessing inner-component
-function GetInnerComp(wrapperComp) {
-    // in old react-redux versions, if you use `connect([...], {withRef: true})`, a function will be available at wrapper.getWrappedInstance(); use that if available
-    if (wrapperComp && wrapperComp["getWrappedInstance"]) return wrapperComp["getWrappedInstance"]();
-    return FindReact(GetDOM(wrapperComp));
-}
-var basePropFullKeys = exports.basePropFullKeys = {
-    m: "margin", ml: "marginLeft", mr: "marginRight", mt: "marginTop", mb: "marginBottom",
-    mlr: null, mtb: null,
-    p: "padding", pl: "paddingLeft", pr: "paddingRight", pt: "paddingTop", pb: "paddingBottom",
-    plr: null, ptb: null,
-    sel: null,
-    ct: null,
-    //tabLabel: null, active: null,
-    page: null, match: null,
-    firebase: null
-};
-function RemoveBasePropKeys(restObj) {
-    for (var key in basePropFullKeys) {
-        delete restObj[key];
-    }
-}
-function BasicStyles(props) {
-    var result = {};
-    for (var key in props) {
-        if (basePropFullKeys[key] != null) {
-            var fullKey = basePropFullKeys[key];
-            result[fullKey] = props[key];
-        } else if (key == "mlr") {
-            result.marginLeft = props[key];
-            result.marginRight = props[key];
-        } else if (key == "mtb") {
-            result.marginTop = props[key];
-            result.marginBottom = props[key];
-        } else if (key == "plr") {
-            result.paddingLeft = props[key];
-            result.paddingRight = props[key];
-        } else if (key == "ptb") {
-            result.paddingTop = props[key];
-            result.paddingBottom = props[key];
-        }
-    }
-    return result;
-}
-function ApplyBasicStyles(target) {
-    var oldRender = target.prototype.render;
-    target.prototype.render = function () {
-        var result = oldRender.call(this);
-        var props = this.props;
-        var className = (0, _classnames2.default)({ selectable: props.sel, clickThrough: props.ct }, result.props.className);
-        if (className) {
-            result.props.className = className;
-        }
-        result.props.style = E(result.props.style, BasicStyles(props));
-        RemoveBasePropKeys(result.props);
-        return result;
-    };
-}
-/*export function ApplyBasicStyles(target: React.ComponentClass<any>, funcName: string) {
-    let oldRender = target.prototype.render;
-    target.prototype.render = function() {
-        let result = oldRender.call(this) as JSX.Element;
-        result.props.style = E(BasicStyles(result.props), result.props.style);
-        RemoveBasePropKeys(result.props);
-        return result;
-    }
-}*/
-function Excluding(obj) {
-    var result = E(obj);
-
-    for (var _len = arguments.length, propNames = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        propNames[_key - 1] = arguments[_key];
-    }
-
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
-
-    try {
-        for (var _iterator3 = propNames[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-            var propName = _step3.value;
-
-            delete result[propName];
-        }
-    } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                _iterator3.return();
-            }
-        } finally {
-            if (_didIteratorError3) {
-                throw _iteratorError3;
-            }
-        }
-    }
-
-    return result;
-}
-function ShallowEquals(objA, objB, options) {
-    if (objA === objB) return true;
-    var keysA = Object.keys(objA || {});
-    var keysB = Object.keys(objB || {});
-    if (keysA.length !== keysB.length) return false;
-    // Test for A's keys different from B.
-    var hasOwn = Object.prototype.hasOwnProperty;
-    for (var i = 0; i < keysA.length; i++) {
-        var key = keysA[i];
-        if (options && options.propsToIgnore && options.propsToIgnore.indexOf(key) != -1) continue;
-        if (!hasOwn.call(objB, key) || objA[key] !== objB[key]) return false;
-        var valA = objA[key];
-        var valB = objB[key];
-        if (valA !== valB) return false;
-    }
-    return true;
-}
-function ShallowChanged(objA, objB, options) {
-    if (options && options.propsToCompareMoreDeeply && options.propsToCompareMoreDeeply.length) {
-        if (ShallowChanged(objA.Excluding.apply(objA, _toConsumableArray(options.propsToCompareMoreDeeply)), objB.Excluding.apply(objB, _toConsumableArray(options.propsToCompareMoreDeeply)))) {
-            return true;
-        }
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
-
-        try {
-            for (var _iterator4 = options.propsToCompareMoreDeeply[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                var key = _step4.value;
-
-                // for "children", shallow-compare at two levels deeper
-                if (key == "children") {
-                    var _iteratorNormalCompletion5 = true;
-                    var _didIteratorError5 = false;
-                    var _iteratorError5 = undefined;
-
-                    try {
-                        for (var _iterator5 = (objA.children || {}).VKeys().concat((objB.children || {}).VKeys())[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                            var childKey = _step5.value;
-
-                            if (ShallowChanged(objA.children[childKey], objB.children[childKey])) return true;
-                        }
-                    } catch (err) {
-                        _didIteratorError5 = true;
-                        _iteratorError5 = err;
-                    } finally {
-                        try {
-                            if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                                _iterator5.return();
-                            }
-                        } finally {
-                            if (_didIteratorError5) {
-                                throw _iteratorError5;
-                            }
-                        }
-                    }
-                } else {
-                    if (ShallowChanged(objA[key], objB[key])) return true;
-                }
-            }
-        } catch (err) {
-            _didIteratorError4 = true;
-            _iteratorError4 = err;
-        } finally {
-            try {
-                if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                    _iterator4.return();
-                }
-            } finally {
-                if (_didIteratorError4) {
-                    throw _iteratorError4;
-                }
-            }
-        }
-
-        return false;
-    }
-    return !ShallowEquals(objA, objB, options && options.propsToIgnore ? { propsToIgnore: options.propsToIgnore } : null);
-}
-//require("./GlobalStyles");
-var loaded = false;
-function AddGlobalElement(html) {
-    var asMultiline = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
-    if (asMultiline) {
-        html = AsMultiline(html, 0);
-    }
-    var proceed = function proceed() {
-        loaded = true;
-        //let nodeType = html.trim().substring(1, html.trim().IndexOfAny(" ", ">"));
-        //let nodeType = html.match(`<([a-zA-Z-]+)`)[1];
-        var nodeType = html.match("<([^ >]+)")[1];
-        var element = document.createElement(nodeType);
-        document.querySelector("#hidden_early").appendChild(element);
-        element.outerHTML = html;
-    };
-    if (loaded) {
-        proceed();
-    } else {
-        window.addEventListener("load", proceed);
-    }
-}
-;
-function AddGlobalStyle(str) {
-    var asMultiline = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
-    if (asMultiline) {
-        str = AsMultiline(str, 0);
-    }
-    AddGlobalElement("\n\t\t<style>\n\t\t" + str + "\n\t\t</style>\n\t");
-}
-;
-/*AddGlobalStyle(`
-*:not(.ignoreBaseCSS) {
-    color: rgba(255,255,255,.7);
-}
-`);*/
-/*#* Tunnels into Radium wrapper-class, and retrieves the original class, letting you access its static props. */
-/*export function PreRadium<T>(typeGetterFunc: ()=>T, setFunc: Function): T {
-    WaitXThenRun(0, ()=> {
-        debugger;
-        let type = typeGetterFunc() as any;
-        setFunc(type.DecoratedComponent);
-    });
-    return {} as any;
-}*/
-/*export function PreRadium<T>(_: T, wrapperClass: Function): T {
-    return (wrapperClass as any).DecoratedComponent;
-}*/
-/*export function GetErrorMessagesUnderElement(element: HTMLElement) {
-    return $(element).find(":invalid").ToList().map(node=>(node[0] as any).validationMessage || `Invalid value.`);
-    return element.querySelector(":invalid").ToList().map(node=>(node[0] as any).validationMessage || `Invalid value.`);
-}*/
-/** As an alternative to adding this decorator to your class, consider just adding the line "EnsureSealedPropsArentOverriden(this, MyClass);" into its constructor. */
-function HasSealedProps(target) {
-    /*let oldConstructor = target.constructor;
-    target.constructor = function() {
-        for (let key in target["prototype"]) {
-            let method = target["prototype"][key];
-            if (method.sealed && this[key] != method) {
-                throw new Error(`Cannot override sealed method "${key}".`);
-            }
-        }
-        return oldConstructor.apply(this, arguments);
-    };*/
-    /*class WrapperClass {
-        constructor(...args) {
-            for (let key of Object.getOwnPropertyNames(target.prototype)) {
-                //let method = target.prototype[key];
-                let method = Object.getOwnPropertyDescriptor(target.prototype, key).value;
-                if (method instanceof Function && method.sealed && this[key] != method) {
-                    throw new Error(`Cannot override sealed method "${key}".`);
-                }
-            }
-            return new target(...args);
-        }
-    }
-    WrapperClass.prototype = target.prototype;
-    return WrapperClass as any;*/
-    return function (_target) {
-        _inherits(WrapperClass, _target);
-
-        function WrapperClass() {
-            var _ref;
-
-            _classCallCheck(this, WrapperClass);
-
-            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-                args[_key2] = arguments[_key2];
-            }
-
-            var _this = _possibleConstructorReturn(this, (_ref = WrapperClass.__proto__ || Object.getPrototypeOf(WrapperClass)).call.apply(_ref, [this].concat(args)));
-
-            EnsureSealedPropsArentOverriden(_this, target);
-            return _this;
-        }
-
-        return WrapperClass;
-    }(target);
-}
-function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSealed) {
-    var _iteratorNormalCompletion6 = true;
-    var _didIteratorError6 = false;
-    var _iteratorError6 = undefined;
-
-    try {
-        for (var _iterator6 = Object.getOwnPropertyNames(classWherePropsSealed.prototype)[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-            var key = _step6.value;
-
-            //let method = classWherePropsSealed.prototype[key];
-            var method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, key).value;
-            if (method instanceof Function && method.sealed && compInstance[key] != method) {
-                throw new Error("Cannot override sealed method \"" + key + "\".");
-            }
-        }
-    } catch (err) {
-        _didIteratorError6 = true;
-        _iteratorError6 = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                _iterator6.return();
-            }
-        } finally {
-            if (_didIteratorError6) {
-                throw _iteratorError6;
-            }
-        }
-    }
-}
-function Sealed(target, key) {
-    target[key].sealed = true;
-}
-var reactSpecialProps = ["key", "children", "dangerouslySetInnerHTML"];
-var elementTypeInstances = {};
-function FilterOutUnrecognizedProps(props, elementType) {
-    var allowDataProps = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-
-    //if (process.env.NODE_ENV !== 'development') { return props; }
-    if (elementTypeInstances[elementType] == null) {
-        elementTypeInstances[elementType] = document.createElement(elementType);
-    }
-    var testerElement = elementTypeInstances[elementType];
-    // filter out any keys which don't exist in React's special-props or the tester
-    var filteredProps = {};
-    Object.keys(props).filter(function (propName) {
-        return propName in testerElement || propName.toLowerCase() in testerElement || reactSpecialProps.indexOf(propName) != -1 || allowDataProps && propName.startsWith("data-");
-    }).forEach(function (propName) {
-        return filteredProps[propName] = props[propName];
-    });
-    return filteredProps;
-}
-function Assert(condition, messageOrMessageFunc) {
-    if (condition) return;
-    var message = messageOrMessageFunc instanceof Function ? messageOrMessageFunc() : messageOrMessageFunc;
-    //JSVE.logFunc(`Assert failed) ${message}\n\nStackTrace) ${GetStackTraceStr()}`);
-    console.error("Assert failed) " + message);
-    var skipError = false; // add flag which you can use to skip the error, when paused in debugger
-    debugger;
-    if (!skipError) throw new Error("Assert failed) " + message);
-}
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = require("react-dom");
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
-  Copyright (c) 2017 Jed Watson.
-  Licensed under the MIT License (MIT), see
-  http://jedwatson.github.io/classnames
-*/
-/* global define */
-
-(function () {
-	'use strict';
-
-	var hasOwn = {}.hasOwnProperty;
-
-	function classNames () {
-		var classes = [];
-
-		for (var i = 0; i < arguments.length; i++) {
-			var arg = arguments[i];
-			if (!arg) continue;
-
-			var argType = typeof arg;
-
-			if (argType === 'string' || argType === 'number') {
-				classes.push(arg);
-			} else if (Array.isArray(arg) && arg.length) {
-				var inner = classNames.apply(null, arg);
-				if (inner) {
-					classes.push(inner);
-				}
-			} else if (argType === 'object') {
-				for (var key in arg) {
-					if (hasOwn.call(arg, key) && arg[key]) {
-						classes.push(key);
-					}
-				}
-			}
-		}
-
-		return classes.join(' ');
-	}
-
-	if (typeof module !== 'undefined' && module.exports) {
-		classNames.default = classNames;
-		module.exports = classNames;
-	} else if (true) {
-		// register as 'classnames', consistent with npm package name
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
-			return classNames;
-		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {}
-}());
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.pseudoStyleTypes = undefined;
-exports.ConvertStyleObjectToCSSString = ConvertStyleObjectToCSSString;
-exports.ClassBasedStyle = ClassBasedStyle;
-exports.ClassBasedStyles = ClassBasedStyles;
-
-var _General = __webpack_require__(2);
-
-var _server = __webpack_require__(6);
-
-var _server2 = _interopRequireDefault(_server);
-
-var _react = __webpack_require__(7);
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var classBasedStyleKeys = {};
-var pseudoStyleTypes = exports.pseudoStyleTypes = ["hover"];
-function ConvertStyleObjectToCSSString(styleObj) {
-    var str = _server2.default.renderToString(_react2.default.createElement("div", { style: styleObj }));
-    var styleStrMatch = str.match(/style="(.+?)" data-reactroot/);
-    if (styleStrMatch == null) return null;
-    var styleStr = styleStrMatch[1] + ";"; // add final semicolon; new versions of React leave it out for some reason
-    return styleStr;
-}
-/**
- * Creates a global <style> element with the given style (if not yet created), under a derived-from-style-data class-name. Returns that class-name for components to use.
- * If pseudoStyleType is provided (eg. "hover"), that pseudo-style-type will be appended to the selector, thus having the style only apply for the given state (eg. only on element hover).
-*/
-function ClassBasedStyle(style, pseudoStyleType) {
-    var styleText = ConvertStyleObjectToCSSString(style);
-    var styleKey = (0, _General.ToJSON)(pseudoStyleType + "---" + styleText); // get a unique identifier for this particular class-based-style
-    styleKey = styleKey.replace(/[^a-zA-Z0-9-]/g, ""); // make sure key is a valid class-name
-    // if <style> element for the given style-composite has not been created yet, create it 
-    if (classBasedStyleKeys[styleKey] == null) {
-        classBasedStyleKeys[styleKey] = true;
-        (0, _General.AddGlobalStyle)("\n\t\t\t." + styleKey + (pseudoStyleType ? ":" + pseudoStyleType : "") + " {\n\t\t\t\t" + styleText.replace(/([^ ]+?);/g, "$1 !important;") + "\n\t\t\t}\n\t\t");
-    }
-    return styleKey;
-}
-/** Searches styleComposite for pseudo-selectors (eg: ":hover"), and extracts each one into a class-based-style, then returns those class-names as a space-separated string. */
-function ClassBasedStyles(styleComposite) {
-    var classNames = [];
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-        for (var _iterator = pseudoStyleTypes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var type = _step.value;
-
-            if (styleComposite[":" + type]) {
-                classNames.push(ClassBasedStyle(styleComposite[":" + type], type));
-            }
-        }
-    } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
-            }
-        } finally {
-            if (_didIteratorError) {
-                throw _iteratorError;
-            }
-        }
-    }
-
-    return classNames.join(" ");
-}
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-module.exports = require("react-dom/server");
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-module.exports = require("react");
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
 exports.BaseComponent = exports.RenderSource = undefined;
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -850,17 +193,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 exports.BaseComponentWithConnector = BaseComponentWithConnector;
 exports.BaseComponentPlus = BaseComponentPlus;
 
-var _react = __webpack_require__(7);
+var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactAutobind = __webpack_require__(9);
+var _reactAutobind = __webpack_require__(4);
 
 var _reactAutobind2 = _interopRequireDefault(_reactAutobind);
 
-var _General = __webpack_require__(2);
+var _General = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -933,6 +278,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 BaseComponent.componentCurrentlyRendering = this;
                 //this.renderCount = (this.renderCount|0) + 1;
                 this.renderCount++;
+                this.Debug(_defineProperty({}, "@RenderIndex", this.renderCount));
                 var result = oldRender.apply(this, arguments);
                 BaseComponent.componentCurrentlyRendering = null;
                 return result;
@@ -1604,14 +950,20 @@ function BaseComponentPlus() {
 }
 
 /***/ }),
-/* 9 */
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = require("react");
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(10);
+module.exports = __webpack_require__(5);
 
 
 /***/ }),
-/* 10 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1688,7 +1040,568 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 11 */
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.basePropFullKeys = undefined;
+exports.E = E;
+exports.ToJSON = ToJSON;
+exports.FromJSON = FromJSON;
+exports.AsMultiline = AsMultiline;
+exports.RemoveDuplicates = RemoveDuplicates;
+exports.GetDOM = GetDOM;
+exports.FindReact = FindReact;
+exports.GetInnerComp = GetInnerComp;
+exports.BasicStyles = BasicStyles;
+exports.ApplyBasicStyles = ApplyBasicStyles;
+exports.ShallowEquals = ShallowEquals;
+exports.ShallowChanged = ShallowChanged;
+exports.AddGlobalElement = AddGlobalElement;
+exports.AddGlobalStyle = AddGlobalStyle;
+exports.HasSealedProps = HasSealedProps;
+exports.EnsureSealedPropsArentOverriden = EnsureSealedPropsArentOverriden;
+exports.Sealed = Sealed;
+exports.FilterOutUnrecognizedProps = FilterOutUnrecognizedProps;
+exports.Assert = Assert;
+
+var _reactDom = __webpack_require__(7);
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _classnames = __webpack_require__(8);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function E(e1, e2, e3, e4, e5, e6, e7, e8) {
+    var result = {};
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = arguments[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var extend = _step.value;
+
+            result.Extend(extend);
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
+    return result;
+    //return StyleSheet.create(result);
+}
+function ToJSON(obj) {
+    return JSON.stringify(obj);
+}
+function FromJSON(json) {
+    return JSON.parse(json);
+}
+function AsMultiline(str) {
+    var desiredIndent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+    var result = str.substring(str.indexOf("\n") + 1, str.lastIndexOf("\n"));
+    if (desiredIndent != null) {
+        var firstLineIndent = (result.match(/^\t+/) || [""])[0].length;
+        if (firstLineIndent) {
+            var lines = result.split("\n");
+            // remove X tabs from start of each line (where X is firstLineIndent)
+            lines = lines.map(function (line) {
+                return line.replace(new RegExp("^\t{0," + firstLineIndent + "}"), "");
+            });
+            result = lines.join("\n");
+        }
+    }
+    return result;
+}
+;
+function RemoveDuplicates(items) {
+    var result = [];
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+        for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var item = _step2.value;
+
+            if (result.indexOf(item) == -1) {
+                result.push(item);
+            }
+        }
+    } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
+            }
+        } finally {
+            if (_didIteratorError2) {
+                throw _iteratorError2;
+            }
+        }
+    }
+
+    return result;
+}
+//var ReactInstanceMap = require("react/lib/ReactInstanceMap");
+function GetDOM(comp) {
+    if (comp == null || comp["mounted"] === false) return null; // mounted is a prop on BaseComponents
+    return _reactDom2.default.findDOMNode(comp);
+}
+function FindReact(dom) {
+    if (dom == null) return null;
+    var key = Object.keys(dom).find(function (key) {
+        return key.startsWith("__reactInternalInstance$");
+    });
+    var internalInstance = dom[key];
+    if (internalInstance == null) return null;
+    if (internalInstance.return) {
+        // react 16+
+        return internalInstance._debugOwner ? internalInstance._debugOwner.stateNode : internalInstance.return.stateNode;
+    } else {
+        // react <16
+        //return internalInstance._currentElement._owner._instance as React.Component<any, any>;
+        return internalInstance._currentElement._owner._instance;
+    }
+}
+// needed for wrapper-components that don't provide way of accessing inner-component
+function GetInnerComp(wrapperComp) {
+    // in old react-redux versions, if you use `connect([...], {withRef: true})`, a function will be available at wrapper.getWrappedInstance(); use that if available
+    if (wrapperComp && wrapperComp["getWrappedInstance"]) return wrapperComp["getWrappedInstance"]();
+    return FindReact(GetDOM(wrapperComp));
+}
+var basePropFullKeys = exports.basePropFullKeys = {
+    m: "margin", ml: "marginLeft", mr: "marginRight", mt: "marginTop", mb: "marginBottom",
+    mlr: null, mtb: null,
+    p: "padding", pl: "paddingLeft", pr: "paddingRight", pt: "paddingTop", pb: "paddingBottom",
+    plr: null, ptb: null,
+    sel: null,
+    ct: null,
+    //tabLabel: null, active: null,
+    page: null, match: null,
+    firebase: null
+};
+function RemoveBasePropKeys(restObj) {
+    for (var key in basePropFullKeys) {
+        delete restObj[key];
+    }
+}
+function BasicStyles(props) {
+    var result = {};
+    for (var key in props) {
+        if (basePropFullKeys[key] != null) {
+            var fullKey = basePropFullKeys[key];
+            result[fullKey] = props[key];
+        } else if (key == "mlr") {
+            result.marginLeft = props[key];
+            result.marginRight = props[key];
+        } else if (key == "mtb") {
+            result.marginTop = props[key];
+            result.marginBottom = props[key];
+        } else if (key == "plr") {
+            result.paddingLeft = props[key];
+            result.paddingRight = props[key];
+        } else if (key == "ptb") {
+            result.paddingTop = props[key];
+            result.paddingBottom = props[key];
+        }
+    }
+    return result;
+}
+function ApplyBasicStyles(target) {
+    var oldRender = target.prototype.render;
+    target.prototype.render = function () {
+        var result = oldRender.call(this);
+        var props = this.props;
+        var className = (0, _classnames2.default)({ selectable: props.sel, clickThrough: props.ct }, result.props.className);
+        if (className) {
+            result.props.className = className;
+        }
+        result.props.style = E(result.props.style, BasicStyles(props));
+        RemoveBasePropKeys(result.props);
+        return result;
+    };
+}
+/*export function ApplyBasicStyles(target: React.ComponentClass<any>, funcName: string) {
+    let oldRender = target.prototype.render;
+    target.prototype.render = function() {
+        let result = oldRender.call(this) as JSX.Element;
+        result.props.style = E(BasicStyles(result.props), result.props.style);
+        RemoveBasePropKeys(result.props);
+        return result;
+    }
+}*/
+function Excluding(obj) {
+    var result = E(obj);
+
+    for (var _len = arguments.length, propNames = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        propNames[_key - 1] = arguments[_key];
+    }
+
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+        for (var _iterator3 = propNames[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var propName = _step3.value;
+
+            delete result[propName];
+        }
+    } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                _iterator3.return();
+            }
+        } finally {
+            if (_didIteratorError3) {
+                throw _iteratorError3;
+            }
+        }
+    }
+
+    return result;
+}
+function ShallowEquals(objA, objB, options) {
+    if (objA === objB) return true;
+    var keysA = Object.keys(objA || {});
+    var keysB = Object.keys(objB || {});
+    if (keysA.length !== keysB.length) return false;
+    // Test for A's keys different from B.
+    var hasOwn = Object.prototype.hasOwnProperty;
+    for (var i = 0; i < keysA.length; i++) {
+        var key = keysA[i];
+        if (options && options.propsToIgnore && options.propsToIgnore.indexOf(key) != -1) continue;
+        if (!hasOwn.call(objB, key) || objA[key] !== objB[key]) return false;
+        var valA = objA[key];
+        var valB = objB[key];
+        if (valA !== valB) return false;
+    }
+    return true;
+}
+function ShallowChanged(objA, objB, options) {
+    if (options && options.propsToCompareMoreDeeply && options.propsToCompareMoreDeeply.length) {
+        if (ShallowChanged(objA.Excluding.apply(objA, _toConsumableArray(options.propsToCompareMoreDeeply)), objB.Excluding.apply(objB, _toConsumableArray(options.propsToCompareMoreDeeply)))) {
+            return true;
+        }
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
+
+        try {
+            for (var _iterator4 = options.propsToCompareMoreDeeply[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                var key = _step4.value;
+
+                // for "children", shallow-compare at two levels deeper
+                if (key == "children") {
+                    var _iteratorNormalCompletion5 = true;
+                    var _didIteratorError5 = false;
+                    var _iteratorError5 = undefined;
+
+                    try {
+                        for (var _iterator5 = (objA.children || {}).VKeys().concat((objB.children || {}).VKeys())[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                            var childKey = _step5.value;
+
+                            if (ShallowChanged(objA.children[childKey], objB.children[childKey])) return true;
+                        }
+                    } catch (err) {
+                        _didIteratorError5 = true;
+                        _iteratorError5 = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                                _iterator5.return();
+                            }
+                        } finally {
+                            if (_didIteratorError5) {
+                                throw _iteratorError5;
+                            }
+                        }
+                    }
+                } else {
+                    if (ShallowChanged(objA[key], objB[key])) return true;
+                }
+            }
+        } catch (err) {
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                    _iterator4.return();
+                }
+            } finally {
+                if (_didIteratorError4) {
+                    throw _iteratorError4;
+                }
+            }
+        }
+
+        return false;
+    }
+    return !ShallowEquals(objA, objB, options && options.propsToIgnore ? { propsToIgnore: options.propsToIgnore } : null);
+}
+//require("./GlobalStyles");
+var loaded = false;
+function AddGlobalElement(html) {
+    var asMultiline = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+    if (asMultiline) {
+        html = AsMultiline(html, 0);
+    }
+    var proceed = function proceed() {
+        loaded = true;
+        //let nodeType = html.trim().substring(1, html.trim().IndexOfAny(" ", ">"));
+        //let nodeType = html.match(`<([a-zA-Z-]+)`)[1];
+        var nodeType = html.match("<([^ >]+)")[1];
+        var element = document.createElement(nodeType);
+        document.querySelector("#hidden_early").appendChild(element);
+        element.outerHTML = html;
+    };
+    if (loaded) {
+        proceed();
+    } else {
+        window.addEventListener("load", proceed);
+    }
+}
+;
+function AddGlobalStyle(str) {
+    var asMultiline = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+    if (asMultiline) {
+        str = AsMultiline(str, 0);
+    }
+    AddGlobalElement("\n\t\t<style>\n\t\t" + str + "\n\t\t</style>\n\t");
+}
+;
+/*AddGlobalStyle(`
+*:not(.ignoreBaseCSS) {
+    color: rgba(255,255,255,.7);
+}
+`);*/
+/*#* Tunnels into Radium wrapper-class, and retrieves the original class, letting you access its static props. */
+/*export function PreRadium<T>(typeGetterFunc: ()=>T, setFunc: Function): T {
+    WaitXThenRun(0, ()=> {
+        debugger;
+        let type = typeGetterFunc() as any;
+        setFunc(type.DecoratedComponent);
+    });
+    return {} as any;
+}*/
+/*export function PreRadium<T>(_: T, wrapperClass: Function): T {
+    return (wrapperClass as any).DecoratedComponent;
+}*/
+/*export function GetErrorMessagesUnderElement(element: HTMLElement) {
+    return $(element).find(":invalid").ToList().map(node=>(node[0] as any).validationMessage || `Invalid value.`);
+    return element.querySelector(":invalid").ToList().map(node=>(node[0] as any).validationMessage || `Invalid value.`);
+}*/
+/** As an alternative to adding this decorator to your class, consider just adding the line "EnsureSealedPropsArentOverriden(this, MyClass);" into its constructor. */
+function HasSealedProps(target) {
+    /*let oldConstructor = target.constructor;
+    target.constructor = function() {
+        for (let key in target["prototype"]) {
+            let method = target["prototype"][key];
+            if (method.sealed && this[key] != method) {
+                throw new Error(`Cannot override sealed method "${key}".`);
+            }
+        }
+        return oldConstructor.apply(this, arguments);
+    };*/
+    /*class WrapperClass {
+        constructor(...args) {
+            for (let key of Object.getOwnPropertyNames(target.prototype)) {
+                //let method = target.prototype[key];
+                let method = Object.getOwnPropertyDescriptor(target.prototype, key).value;
+                if (method instanceof Function && method.sealed && this[key] != method) {
+                    throw new Error(`Cannot override sealed method "${key}".`);
+                }
+            }
+            return new target(...args);
+        }
+    }
+    WrapperClass.prototype = target.prototype;
+    return WrapperClass as any;*/
+    return function (_target) {
+        _inherits(WrapperClass, _target);
+
+        function WrapperClass() {
+            var _ref;
+
+            _classCallCheck(this, WrapperClass);
+
+            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                args[_key2] = arguments[_key2];
+            }
+
+            var _this = _possibleConstructorReturn(this, (_ref = WrapperClass.__proto__ || Object.getPrototypeOf(WrapperClass)).call.apply(_ref, [this].concat(args)));
+
+            EnsureSealedPropsArentOverriden(_this, target);
+            return _this;
+        }
+
+        return WrapperClass;
+    }(target);
+}
+function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSealed) {
+    var _iteratorNormalCompletion6 = true;
+    var _didIteratorError6 = false;
+    var _iteratorError6 = undefined;
+
+    try {
+        for (var _iterator6 = Object.getOwnPropertyNames(classWherePropsSealed.prototype)[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+            var key = _step6.value;
+
+            //let method = classWherePropsSealed.prototype[key];
+            var method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, key).value;
+            if (method instanceof Function && method.sealed && compInstance[key] != method) {
+                throw new Error("Cannot override sealed method \"" + key + "\".");
+            }
+        }
+    } catch (err) {
+        _didIteratorError6 = true;
+        _iteratorError6 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                _iterator6.return();
+            }
+        } finally {
+            if (_didIteratorError6) {
+                throw _iteratorError6;
+            }
+        }
+    }
+}
+function Sealed(target, key) {
+    target[key].sealed = true;
+}
+var reactSpecialProps = ["key", "children", "dangerouslySetInnerHTML"];
+var elementTypeInstances = {};
+function FilterOutUnrecognizedProps(props, elementType) {
+    var allowDataProps = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+    //if (process.env.NODE_ENV !== 'development') { return props; }
+    if (elementTypeInstances[elementType] == null) {
+        elementTypeInstances[elementType] = document.createElement(elementType);
+    }
+    var testerElement = elementTypeInstances[elementType];
+    // filter out any keys which don't exist in React's special-props or the tester
+    var filteredProps = {};
+    Object.keys(props).filter(function (propName) {
+        return propName in testerElement || propName.toLowerCase() in testerElement || reactSpecialProps.indexOf(propName) != -1 || allowDataProps && propName.startsWith("data-");
+    }).forEach(function (propName) {
+        return filteredProps[propName] = props[propName];
+    });
+    return filteredProps;
+}
+function Assert(condition, messageOrMessageFunc) {
+    if (condition) return;
+    var message = messageOrMessageFunc instanceof Function ? messageOrMessageFunc() : messageOrMessageFunc;
+    //JSVE.logFunc(`Assert failed) ${message}\n\nStackTrace) ${GetStackTraceStr()}`);
+    console.error("Assert failed) " + message);
+    var skipError = false; // add flag which you can use to skip the error, when paused in debugger
+    debugger;
+    if (!skipError) throw new Error("Assert failed) " + message);
+}
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-dom");
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+  Copyright (c) 2017 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames () {
+		var classes = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes.push(arg);
+			} else if (Array.isArray(arg) && arg.length) {
+				var inner = classNames.apply(null, arg);
+				if (inner) {
+					classes.push(inner);
+				}
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes.push(key);
+					}
+				}
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		classNames.default = classNames;
+		module.exports = classNames;
+	} else if (true) {
+		// register as 'classnames', consistent with npm package name
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+			return classNames;
+		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {}
+}());
+
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1703,7 +1616,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 exports.Wrap = Wrap;
 
-var _react = __webpack_require__(7);
+var _react = __webpack_require__(3);
 
 Object.defineProperty(exports, "UseEffect", {
     enumerable: true,
@@ -1814,6 +1727,96 @@ function UseCallback(callback, deps) {
 function TODO() {}
 
 /***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.pseudoStyleTypes = undefined;
+exports.ConvertStyleObjectToCSSString = ConvertStyleObjectToCSSString;
+exports.ClassBasedStyle = ClassBasedStyle;
+exports.ClassBasedStyles = ClassBasedStyles;
+
+var _General = __webpack_require__(6);
+
+var _server = __webpack_require__(11);
+
+var _server2 = _interopRequireDefault(_server);
+
+var _react = __webpack_require__(3);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var classBasedStyleKeys = {};
+var pseudoStyleTypes = exports.pseudoStyleTypes = ["hover"];
+function ConvertStyleObjectToCSSString(styleObj) {
+    var str = _server2.default.renderToString(_react2.default.createElement("div", { style: styleObj }));
+    var styleStrMatch = str.match(/style="(.+?)" data-reactroot/);
+    if (styleStrMatch == null) return null;
+    var styleStr = styleStrMatch[1] + ";"; // add final semicolon; new versions of React leave it out for some reason
+    return styleStr;
+}
+/**
+ * Creates a global <style> element with the given style (if not yet created), under a derived-from-style-data class-name. Returns that class-name for components to use.
+ * If pseudoStyleType is provided (eg. "hover"), that pseudo-style-type will be appended to the selector, thus having the style only apply for the given state (eg. only on element hover).
+*/
+function ClassBasedStyle(style, pseudoStyleType) {
+    var styleText = ConvertStyleObjectToCSSString(style);
+    var styleKey = (0, _General.ToJSON)(pseudoStyleType + "---" + styleText); // get a unique identifier for this particular class-based-style
+    styleKey = styleKey.replace(/[^a-zA-Z0-9-]/g, ""); // make sure key is a valid class-name
+    // if <style> element for the given style-composite has not been created yet, create it 
+    if (classBasedStyleKeys[styleKey] == null) {
+        classBasedStyleKeys[styleKey] = true;
+        (0, _General.AddGlobalStyle)("\n\t\t\t." + styleKey + (pseudoStyleType ? ":" + pseudoStyleType : "") + " {\n\t\t\t\t" + styleText.replace(/([^ ]+?);/g, "$1 !important;") + "\n\t\t\t}\n\t\t");
+    }
+    return styleKey;
+}
+/** Searches styleComposite for pseudo-selectors (eg: ":hover"), and extracts each one into a class-based-style, then returns those class-names as a space-separated string. */
+function ClassBasedStyles(styleComposite) {
+    var classNames = [];
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = pseudoStyleTypes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var type = _step.value;
+
+            if (styleComposite[":" + type]) {
+                classNames.push(ClassBasedStyle(styleComposite[":" + type], type));
+            }
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
+    return classNames.join(" ");
+}
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+module.exports = require("react-dom/server");
+
+/***/ }),
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1828,7 +1831,7 @@ exports.SimpleShouldUpdate = SimpleShouldUpdate;
 exports.WarnOfTransientObjectProps = WarnOfTransientObjectProps;
 exports.Instant = Instant;
 
-var _General = __webpack_require__(2);
+var _General = __webpack_require__(6);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 

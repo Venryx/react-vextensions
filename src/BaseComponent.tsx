@@ -42,11 +42,12 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		// wrap the derived-class' render function, to include some extra code
 		if (!this.constructor.prototype.render.modifiedByBaseComponent) {
 			let oldRender = this.constructor.prototype.render;
-			this.constructor.prototype.render = function() {
+			this.constructor.prototype.render = function(this: BaseComponent) {
 				this.PreRender();
 				BaseComponent.componentCurrentlyRendering = this;
 				//this.renderCount = (this.renderCount|0) + 1;
 				this.renderCount++;
+				this.Debug({["@RenderIndex"]: this.renderCount});
 				let result = oldRender.apply(this, arguments);
 				BaseComponent.componentCurrentlyRendering = null;
 				return result;
