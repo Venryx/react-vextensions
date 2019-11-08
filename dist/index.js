@@ -124,7 +124,7 @@ Object.keys(_BaseComponent).forEach(function (key) {
   });
 });
 
-var _BaseHooks = __webpack_require__(9);
+var _BaseHooks = __webpack_require__(10);
 
 Object.keys(_BaseHooks).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -136,7 +136,7 @@ Object.keys(_BaseHooks).forEach(function (key) {
   });
 });
 
-var _ClassBasedStyle = __webpack_require__(10);
+var _ClassBasedStyle = __webpack_require__(11);
 
 Object.keys(_ClassBasedStyle).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -148,7 +148,7 @@ Object.keys(_ClassBasedStyle).forEach(function (key) {
   });
 });
 
-var _Decorators = __webpack_require__(12);
+var _Decorators = __webpack_require__(13);
 
 Object.keys(_Decorators).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -202,6 +202,8 @@ var _reactAutobind = __webpack_require__(4);
 var _reactAutobind2 = _interopRequireDefault(_reactAutobind);
 
 var _General = __webpack_require__(6);
+
+var _FromJSVE = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -505,7 +507,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                     var oldState_forNewStateKeys = Object.keys(newState).reduce(function (result, key) {
                         return result[key] = _this7.state[key], result;
                     }, {});
-                    if ((0, _General.ToJSON)(newState) == (0, _General.ToJSON)(oldState_forNewStateKeys)) return [];
+                    if ((0, _FromJSVE.ToJSON)(newState) == (0, _FromJSVE.ToJSON)(oldState_forNewStateKeys)) return [];
                 } else {
                     //if (ShallowEquals(newState, oldState_forNewStateKeys)) return [];
                     // use a looser comparison (we want a missing prop to be equivalent to null and undefined)
@@ -813,17 +815,17 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     }, {
         key: "PropsState",
         get: function get() {
-            return (0, _General.E)(this.props, this.state);
+            return (0, _FromJSVE.E)(this.props, this.state);
         }
     }, {
         key: "PropsStash",
         get: function get() {
-            return (0, _General.E)(this.props, this.stash);
+            return (0, _FromJSVE.E)(this.props, this.stash);
         }
     }, {
         key: "PropsStateStash",
         get: function get() {
-            return (0, _General.E)(this.props, this.state, this.stash);
+            return (0, _FromJSVE.E)(this.props, this.state, this.stash);
         }
     }, {
         key: "DOM",
@@ -923,8 +925,8 @@ function BaseComponentWithConnector(connector, initialState) {
 
             Object.assign(_this9.state, initialState);
             Object.assign(_this9.stash, initialStash);
-            (0, _General.Assert)(_this9.constructor["initialState"] == null, "Cannot specify \"" + _this9.constructor.name + ".initialState\". (initial-state is already set using BaseComponentWithConnect function)");
-            (0, _General.Assert)(_this9.constructor["initialStash"] == null, "Cannot specify \"" + _this9.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentWithConnect function)");
+            (0, _FromJSVE.Assert)(_this9.constructor["initialState"] == null, "Cannot specify \"" + _this9.constructor.name + ".initialState\". (initial-state is already set using BaseComponentWithConnect function)");
+            (0, _FromJSVE.Assert)(_this9.constructor["initialStash"] == null, "Cannot specify \"" + _this9.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentWithConnect function)");
             return _this9;
         }
 
@@ -949,8 +951,8 @@ function BaseComponentPlus() {
 
             Object.assign(_this10.state, initialState);
             Object.assign(_this10.stash, initialStash);
-            (0, _General.Assert)(_this10.constructor["initialState"] == null, "Cannot specify \"" + _this10.constructor.name + ".initialState\". (initial-state is already set using BaseComponentPlus function)");
-            (0, _General.Assert)(_this10.constructor["initialStash"] == null, "Cannot specify \"" + _this10.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentPlus function)");
+            (0, _FromJSVE.Assert)(_this10.constructor["initialState"] == null, "Cannot specify \"" + _this10.constructor.name + ".initialState\". (initial-state is already set using BaseComponentPlus function)");
+            (0, _FromJSVE.Assert)(_this10.constructor["initialStash"] == null, "Cannot specify \"" + _this10.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentPlus function)");
             return _this10;
         }
 
@@ -1060,11 +1062,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.basePropFullKeys = undefined;
-exports.E = E;
-exports.ToJSON = ToJSON;
-exports.FromJSON = FromJSON;
-exports.AsMultiline = AsMultiline;
+exports.RunWithRenderingBatched = exports.basePropFullKeys = undefined;
 exports.RemoveDuplicates = RemoveDuplicates;
 exports.GetDOM = GetDOM;
 exports.FindReact = FindReact;
@@ -1079,7 +1077,7 @@ exports.HasSealedProps = HasSealedProps;
 exports.EnsureSealedPropsArentOverriden = EnsureSealedPropsArentOverriden;
 exports.Sealed = Sealed;
 exports.FilterOutUnrecognizedProps = FilterOutUnrecognizedProps;
-exports.Assert = Assert;
+exports.CombineRefs = CombineRefs;
 
 var _reactDom = __webpack_require__(7);
 
@@ -1088,6 +1086,8 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 var _classnames = __webpack_require__(8);
 
 var _classnames2 = _interopRequireDefault(_classnames);
+
+var _FromJSVE = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1099,17 +1099,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-function E(e1, e2, e3, e4, e5, e6, e7, e8) {
-    var result = {};
+function RemoveDuplicates(items) {
+    var result = [];
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
 
     try {
-        for (var _iterator = arguments[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var extend = _step.value;
+        for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var item = _step.value;
 
-            result.Extend(extend);
+            if (result.indexOf(item) == -1) {
+                result.push(item);
+            }
         }
     } catch (err) {
         _didIteratorError = true;
@@ -1122,62 +1124,6 @@ function E(e1, e2, e3, e4, e5, e6, e7, e8) {
         } finally {
             if (_didIteratorError) {
                 throw _iteratorError;
-            }
-        }
-    }
-
-    return result;
-    //return StyleSheet.create(result);
-}
-function ToJSON(obj) {
-    return JSON.stringify(obj);
-}
-function FromJSON(json) {
-    return JSON.parse(json);
-}
-function AsMultiline(str) {
-    var desiredIndent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-    var result = str.substring(str.indexOf("\n") + 1, str.lastIndexOf("\n"));
-    if (desiredIndent != null) {
-        var firstLineIndent = (result.match(/^\t+/) || [""])[0].length;
-        if (firstLineIndent) {
-            var lines = result.split("\n");
-            // remove X tabs from start of each line (where X is firstLineIndent)
-            lines = lines.map(function (line) {
-                return line.replace(new RegExp("^\t{0," + firstLineIndent + "}"), "");
-            });
-            result = lines.join("\n");
-        }
-    }
-    return result;
-}
-;
-function RemoveDuplicates(items) {
-    var result = [];
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
-
-    try {
-        for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var item = _step2.value;
-
-            if (result.indexOf(item) == -1) {
-                result.push(item);
-            }
-        }
-    } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                _iterator2.return();
-            }
-        } finally {
-            if (_didIteratorError2) {
-                throw _iteratorError2;
             }
         }
     }
@@ -1258,7 +1204,7 @@ function ApplyBasicStyles(target) {
         if (className) {
             result.props.className = className;
         }
-        result.props.style = E(result.props.style, BasicStyles(props));
+        result.props.style = (0, _FromJSVE.E)(result.props.style, BasicStyles(props));
         RemoveBasePropKeys(result.props);
         return result;
     };
@@ -1272,40 +1218,6 @@ function ApplyBasicStyles(target) {
         return result;
     }
 }*/
-function Excluding(obj) {
-    var result = E(obj);
-
-    for (var _len = arguments.length, propNames = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        propNames[_key - 1] = arguments[_key];
-    }
-
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
-
-    try {
-        for (var _iterator3 = propNames[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-            var propName = _step3.value;
-
-            delete result[propName];
-        }
-    } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                _iterator3.return();
-            }
-        } finally {
-            if (_didIteratorError3) {
-                throw _iteratorError3;
-            }
-        }
-    }
-
-    return result;
-}
 function ShallowEquals(objA, objB, options) {
     if (objA === objB) return true;
     var keysA = Object.keys(objA || {});
@@ -1328,37 +1240,37 @@ function ShallowChanged(objA, objB, options) {
         if (ShallowChanged(objA.Excluding.apply(objA, _toConsumableArray(options.propsToCompareMoreDeeply)), objB.Excluding.apply(objB, _toConsumableArray(options.propsToCompareMoreDeeply)))) {
             return true;
         }
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
 
         try {
-            for (var _iterator4 = options.propsToCompareMoreDeeply[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                var key = _step4.value;
+            for (var _iterator2 = options.propsToCompareMoreDeeply[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                var key = _step2.value;
 
                 // for "children", shallow-compare at two levels deeper
                 if (key == "children") {
-                    var _iteratorNormalCompletion5 = true;
-                    var _didIteratorError5 = false;
-                    var _iteratorError5 = undefined;
+                    var _iteratorNormalCompletion3 = true;
+                    var _didIteratorError3 = false;
+                    var _iteratorError3 = undefined;
 
                     try {
-                        for (var _iterator5 = (objA.children || {}).VKeys().concat((objB.children || {}).VKeys())[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                            var childKey = _step5.value;
+                        for (var _iterator3 = (objA.children || {}).VKeys().concat((objB.children || {}).VKeys())[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                            var childKey = _step3.value;
 
                             if (ShallowChanged(objA.children[childKey], objB.children[childKey])) return true;
                         }
                     } catch (err) {
-                        _didIteratorError5 = true;
-                        _iteratorError5 = err;
+                        _didIteratorError3 = true;
+                        _iteratorError3 = err;
                     } finally {
                         try {
-                            if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                                _iterator5.return();
+                            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                                _iterator3.return();
                             }
                         } finally {
-                            if (_didIteratorError5) {
-                                throw _iteratorError5;
+                            if (_didIteratorError3) {
+                                throw _iteratorError3;
                             }
                         }
                     }
@@ -1367,16 +1279,16 @@ function ShallowChanged(objA, objB, options) {
                 }
             }
         } catch (err) {
-            _didIteratorError4 = true;
-            _iteratorError4 = err;
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
         } finally {
             try {
-                if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                    _iterator4.return();
+                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                    _iterator2.return();
                 }
             } finally {
-                if (_didIteratorError4) {
-                    throw _iteratorError4;
+                if (_didIteratorError2) {
+                    throw _iteratorError2;
                 }
             }
         }
@@ -1391,7 +1303,7 @@ function AddGlobalElement(html) {
     var asMultiline = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
     if (asMultiline) {
-        html = AsMultiline(html, 0);
+        html = (0, _FromJSVE.AsMultiline)(html, 0);
     }
     var proceed = function proceed() {
         loaded = true;
@@ -1413,7 +1325,7 @@ function AddGlobalStyle(str) {
     var asMultiline = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
     if (asMultiline) {
-        str = AsMultiline(str, 0);
+        str = (0, _FromJSVE.AsMultiline)(str, 0);
     }
     AddGlobalElement("\n\t\t<style>\n\t\t" + str + "\n\t\t</style>\n\t");
 }
@@ -1473,8 +1385,8 @@ function HasSealedProps(target) {
 
             _classCallCheck(this, WrapperClass);
 
-            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-                args[_key2] = arguments[_key2];
+            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                args[_key] = arguments[_key];
             }
 
             var _this = _possibleConstructorReturn(this, (_ref = WrapperClass.__proto__ || Object.getPrototypeOf(WrapperClass)).call.apply(_ref, [this].concat(args)));
@@ -1487,13 +1399,13 @@ function HasSealedProps(target) {
     }(target);
 }
 function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSealed) {
-    var _iteratorNormalCompletion6 = true;
-    var _didIteratorError6 = false;
-    var _iteratorError6 = undefined;
+    var _iteratorNormalCompletion4 = true;
+    var _didIteratorError4 = false;
+    var _iteratorError4 = undefined;
 
     try {
-        for (var _iterator6 = Object.getOwnPropertyNames(classWherePropsSealed.prototype)[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-            var key = _step6.value;
+        for (var _iterator4 = Object.getOwnPropertyNames(classWherePropsSealed.prototype)[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var key = _step4.value;
 
             //let method = classWherePropsSealed.prototype[key];
             var method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, key).value;
@@ -1502,16 +1414,16 @@ function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSealed) {
             }
         }
     } catch (err) {
-        _didIteratorError6 = true;
-        _iteratorError6 = err;
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
     } finally {
         try {
-            if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                _iterator6.return();
+            if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                _iterator4.return();
             }
         } finally {
-            if (_didIteratorError6) {
-                throw _iteratorError6;
+            if (_didIteratorError4) {
+                throw _iteratorError4;
             }
         }
     }
@@ -1538,14 +1450,44 @@ function FilterOutUnrecognizedProps(props, elementType) {
     });
     return filteredProps;
 }
-function Assert(condition, messageOrMessageFunc) {
-    if (condition) return;
-    var message = messageOrMessageFunc instanceof Function ? messageOrMessageFunc() : messageOrMessageFunc;
-    //JSVE.logFunc(`Assert failed) ${message}\n\nStackTrace) ${GetStackTraceStr()}`);
-    console.error("Assert failed) " + message);
-    var skipError = false; // add flag which you can use to skip the error, when paused in debugger
-    debugger;
-    if (!skipError) throw new Error("Assert failed) " + message);
+var RunWithRenderingBatched = exports.RunWithRenderingBatched = (0, _FromJSVE.WrapWithGo)(function (func) {
+    _reactDom2.default.unstable_batchedUpdates(func);
+});
+function CombineRefs() {
+    for (var _len2 = arguments.length, refs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        refs[_key2] = arguments[_key2];
+    }
+
+    return function (comp) {
+        var _iteratorNormalCompletion5 = true;
+        var _didIteratorError5 = false;
+        var _iteratorError5 = undefined;
+
+        try {
+            for (var _iterator5 = refs[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                var ref = _step5.value;
+
+                if (typeof ref == "function") {
+                    ref(comp);
+                } else {
+                    ref["current"] = comp; // not sure if correct
+                }
+            }
+        } catch (err) {
+            _didIteratorError5 = true;
+            _iteratorError5 = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                    _iterator5.return();
+                }
+            } finally {
+                if (_didIteratorError5) {
+                    throw _iteratorError5;
+                }
+            }
+        }
+    };
 }
 
 /***/ }),
@@ -1621,6 +1563,92 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.E = E;
+exports.ToJSON = ToJSON;
+exports.FromJSON = FromJSON;
+exports.AsMultiline = AsMultiline;
+exports.Assert = Assert;
+exports.WrapWithGo = WrapWithGo;
+function E(e1, e2, e3, e4, e5, e6, e7, e8) {
+    var result = {};
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = arguments[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var extend = _step.value;
+
+            result.Extend(extend);
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
+    return result;
+    //return StyleSheet.create(result);
+}
+function ToJSON(obj) {
+    return JSON.stringify(obj);
+}
+function FromJSON(json) {
+    return JSON.parse(json);
+}
+function AsMultiline(str) {
+    var desiredIndent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+    var result = str.substring(str.indexOf("\n") + 1, str.lastIndexOf("\n"));
+    if (desiredIndent != null) {
+        var firstLineIndent = (result.match(/^\t+/) || [""])[0].length;
+        if (firstLineIndent) {
+            var lines = result.split("\n");
+            // remove X tabs from start of each line (where X is firstLineIndent)
+            lines = lines.map(function (line) {
+                return line.replace(new RegExp("^\t{0," + firstLineIndent + "}"), "");
+            });
+            result = lines.join("\n");
+        }
+    }
+    return result;
+}
+;
+function Assert(condition, messageOrMessageFunc) {
+    if (condition) return;
+    var message = messageOrMessageFunc instanceof Function ? messageOrMessageFunc() : messageOrMessageFunc;
+    //JSVE.logFunc(`Assert failed) ${message}\n\nStackTrace) ${GetStackTraceStr()}`);
+    console.error("Assert failed) " + message);
+    var skipError = false; // add flag which you can use to skip the error, when paused in debugger
+    debugger;
+    if (!skipError) throw new Error("Assert failed) " + message);
+}
+function WrapWithGo(func) {
+    Object.defineProperty(func, "Go", {
+        set: func
+    });
+    return func;
+}
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.UseMemo = exports.UseImperativeHandle = exports.UseEffect = exports.inRenderFunc = exports.WrapOptions = undefined;
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
@@ -1653,7 +1681,7 @@ exports.TODO = TODO;
 
 var _react2 = _interopRequireDefault(_react);
 
-var _ = __webpack_require__(1);
+var _FromJSVE = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1685,7 +1713,7 @@ function Wrap() {
         ;
         options = args[0];
         renderFunc = args[1];
-    }options = (0, _.E)(new WrapOptions(), options);
+    }options = (0, _FromJSVE.E)(new WrapOptions(), options);
     var result = function result() {
         exports.inRenderFunc = inRenderFunc = true;
         var result = renderFunc.apply(this, arguments);
@@ -1738,7 +1766,7 @@ function UseCallback(callback, deps) {
 function TODO() {}
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1754,13 +1782,15 @@ exports.ClassBasedStyles = ClassBasedStyles;
 
 var _General = __webpack_require__(6);
 
-var _server = __webpack_require__(11);
+var _server = __webpack_require__(12);
 
 var _server2 = _interopRequireDefault(_server);
 
 var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
+
+var _FromJSVE = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1779,7 +1809,7 @@ function ConvertStyleObjectToCSSString(styleObj) {
 */
 function ClassBasedStyle(style, pseudoStyleType) {
     var styleText = ConvertStyleObjectToCSSString(style);
-    var styleKey = (0, _General.ToJSON)(pseudoStyleType + "---" + styleText); // get a unique identifier for this particular class-based-style
+    var styleKey = (0, _FromJSVE.ToJSON)(pseudoStyleType + "---" + styleText); // get a unique identifier for this particular class-based-style
     styleKey = styleKey.replace(/[^a-zA-Z0-9-]/g, ""); // make sure key is a valid class-name
     // if <style> element for the given style-composite has not been created yet, create it 
     if (classBasedStyleKeys[styleKey] == null) {
@@ -1822,13 +1852,13 @@ function ClassBasedStyles(styleComposite) {
 }
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 module.exports = require("react-dom/server");
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1842,7 +1872,9 @@ exports.SimpleShouldUpdate = SimpleShouldUpdate;
 exports.WarnOfTransientObjectProps = WarnOfTransientObjectProps;
 exports.Instant = Instant;
 
-var _General = __webpack_require__(6);
+var _FromJSVE = __webpack_require__(9);
+
+var _ = __webpack_require__(1);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1859,11 +1891,11 @@ function SimpleShouldUpdate() {
     if (typeof (arguments.length <= 0 ? undefined : arguments[0]) == "function") {
         ApplyToClass(arguments.length <= 0 ? undefined : arguments[0]);
     } else {
-        options = (0, _General.E)(options, arguments.length <= 0 ? undefined : arguments[0]);
+        options = (0, _FromJSVE.E)(options, arguments.length <= 0 ? undefined : arguments[0]);
         return ApplyToClass;
     }
     function ApplyToClass(targetClass) {
-        (0, _General.Assert)(targetClass.prototype.shouldComponentUpdate == null, "Cannot apply SimpleShouldUpdate to class \"" + targetClass.name + "\", because it already has a shouldComponentUpdate method present.");
+        (0, _FromJSVE.Assert)(targetClass.prototype.shouldComponentUpdate == null, "Cannot apply SimpleShouldUpdate to class \"" + targetClass.name + "\", because it already has a shouldComponentUpdate method present.");
         targetClass.prototype.shouldComponentUpdate = function (newProps, newState) {
             /*if (options.logChangedWhen...) {
                 Log("Changed: " + this.props.Props().Where(a=>a.value !== newProps[a.name]).Select(a=>a.name) + ";" + g.ToJSON(this.props) + ";" + g.ToJSON(newProps));
@@ -1874,7 +1906,7 @@ function SimpleShouldUpdate() {
                 if (typeof shouldUpdate == "boolean") return shouldUpdate;
                 if (typeof shouldUpdate == "function") return shouldUpdate(newProps, newState);
             }
-            return (0, _General.ShallowChanged)(this.props, newProps, { propsToIgnore: options.propsToIgnore }) || (0, _General.ShallowChanged)(this.state, newState, { propsToIgnore: options.stateToIgnore });
+            return (0, _.ShallowChanged)(this.props, newProps, { propsToIgnore: options.propsToIgnore }) || (0, _.ShallowChanged)(this.state, newState, { propsToIgnore: options.stateToIgnore });
         };
     }
 }
@@ -1892,7 +1924,7 @@ function WarnOfTransientObjectProps() {
     if (typeof (arguments.length <= 0 ? undefined : arguments[0]) == "function") {
         ApplyToClass(arguments.length <= 0 ? undefined : arguments[0]);
     } else {
-        options = (0, _General.E)(options, arguments.length <= 0 ? undefined : arguments[0]);
+        options = (0, _FromJSVE.E)(options, arguments.length <= 0 ? undefined : arguments[0]);
         return ApplyToClass;
     }
     function ApplyToClass(targetClass) {

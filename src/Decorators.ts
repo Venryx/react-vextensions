@@ -1,4 +1,5 @@
-import {E, ShallowChanged, Assert} from "./General";
+import {E, Assert} from "./Internals/FromJSVE";
+import {ShallowChanged} from ".";
 
 export class SimpleShouldUpdate_Options {
 	propsToIgnore = null as string[];

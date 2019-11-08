@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import autoBind from "react-autobind";
-import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, ToJSON, EnsureSealedPropsArentOverriden, E, Assert, ShallowEquals } from "./General";
+import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, EnsureSealedPropsArentOverriden, ShallowEquals } from "./General";
 import {WarnOfTransientObjectProps_Options} from "./Decorators";
+import {E, ToJSON, Assert} from "./Internals/FromJSVE";
 
 export enum RenderSource {
 	Mount, // first render, after creation
