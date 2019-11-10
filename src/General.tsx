@@ -260,12 +260,19 @@ export function HasSealedProps(target: new(..._)=>any) {
 		}
 	}) as any;
 }
-export function EnsureSealedPropsArentOverriden(compInstance: any, classWherePropsSealed: new(..._)=>any) {
-	for (let key of Object.getOwnPropertyNames(classWherePropsSealed.prototype)) {
+export function EnsureSealedPropsArentOverriden(compInstance: any, classWherePropsSealed: new(..._)=>any, fixNote?: (methodName: string)=>string, allowMobXOverriding = false) {
+	for (let methodName of Object.getOwnPropertyNames(classWherePropsSealed.prototype)) {
 		//let method = classWherePropsSealed.prototype[key];
-		let method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, key).value;
-		if (method instanceof Function && method.sealed && compInstance[key] != method) {
-			throw new Error(`Cannot override sealed method "${key}".`);
+		let method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, methodName).value;
+		if (method instanceof Function && method.sealed && compInstance[methodName] != method) {
+			if (allowMobXOverriding) {
+				let classProto = compInstance.constructor.prototype;
+				let mobxMixinsKey = Object.getOwnPropertySymbols(classProto).find(a=>a.toString() == "Symbol(patchMixins)");
+				let mobxMixins = classProto[mobxMixinsKey];
+				if (mobxMixins && mobxMixins[methodName] != null) continue;
+			}
+
+			throw new Error(`Cannot override sealed method "${methodName}".${fixNote ? fixNote(methodName) : ""}`);
 		}
 	}
 }

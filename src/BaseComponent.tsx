@@ -4,6 +4,32 @@ import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, EnsureSeal
 import {WarnOfTransientObjectProps_Options} from "./Decorators";
 import {E, ToJSON, Assert} from "./Internals/FromJSVE";
 
+// projects using mobx need this, so they can use a custom decorator to apply our "Comp.render" patch prior to mobx-react's patch (mobx-react's needs to be last/outermost)
+export function EnsureClassProtoRenderFunctionIsWrapped(classProto: any) {
+	// wrap the derived-class' render function, to include some extra code
+	if (!classProto.render_modifiedByBaseComponent) {
+		let oldRender = classProto.render;
+		classProto.render = function(this: BaseComponent) {
+			this.PreRender();
+			BaseComponent.componentCurrentlyRendering = this;
+
+			let now = Date.now();
+			//this.renderCount = (this.renderCount|0) + 1;
+			this.renderCount++;
+			this.lastRenderTime = now;
+			//this.constructor["renderCount"] = (this.constructor["renderCount"]|0) + 1;
+			this.constructor["renderCount"]++;
+			this.constructor["lastRenderTime"] = now;
+			
+			this.Debug({["@RenderIndex"]: this.renderCount});
+			let result = oldRender.apply(this, arguments);
+			BaseComponent.componentCurrentlyRendering = null;
+			return result;
+		};
+		classProto.render_modifiedByBaseComponent = true;
+	}
+}
+
 export enum RenderSource {
 	Mount, // first render, after creation
 	PropChange, // from prop-change, and ancestor re-renders (e.g. ancestor.forceUpdate(), ancestor.setState())
@@ -22,7 +48,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 	
 	constructor(props) {
 		super(props);
-		EnsureSealedPropsArentOverriden(this, BaseComponent);
+		EnsureSealedPropsArentOverriden(this, BaseComponent, ()=>` (usual fix: make method name uppercase)`, true);
 		autoBind(this);
 		// if had @Radium decorator, then "this" is actually an instance of a class-specific "RadiumEnhancer" derived-class
 		//		so reach in to original class, and set up auto-binding for its prototype members as well
@@ -45,28 +71,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 			};
 		} */
 
-		// wrap the derived-class' render function, to include some extra code
-		if (!this.constructor.prototype.render.modifiedByBaseComponent) {
-			let oldRender = this.constructor.prototype.render;
-			this.constructor.prototype.render = function(this: BaseComponent) {
-				this.PreRender();
-				BaseComponent.componentCurrentlyRendering = this;
-
-				let now = Date.now();
-				//this.renderCount = (this.renderCount|0) + 1;
-				this.renderCount++;
-				this.lastRenderTime = now;
-				//this.constructor["renderCount"] = (this.constructor["renderCount"]|0) + 1;
-				this.constructor["renderCount"]++;
-				this.constructor["lastRenderTime"] = now;
-				
-				this.Debug({["@RenderIndex"]: this.renderCount});
-				let result = oldRender.apply(this, arguments);
-				BaseComponent.componentCurrentlyRendering = null;
-				return result;
-			};
-			this.constructor.prototype.render.modifiedByBaseComponent = true;
-		}
+		EnsureClassProtoRenderFunctionIsWrapped(this.constructor.prototype);
 
 		// you know what, let's just always wrap the render() method, in this project; solves the annoying firebase-gobbling-errors issue
 		/*let oldRender = this.render;

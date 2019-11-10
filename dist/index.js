@@ -190,6 +190,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+exports.EnsureClassProtoRenderFunctionIsWrapped = EnsureClassProtoRenderFunctionIsWrapped;
 exports.BaseComponentWithConnector = BaseComponentWithConnector;
 exports.BaseComponentPlus = BaseComponentPlus;
 
@@ -207,13 +208,13 @@ var _FromJSVE = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var __decorate = undefined && undefined.__decorate || function (decorators, target, key, desc) {
     var c = arguments.length,
@@ -223,6 +224,30 @@ var __decorate = undefined && undefined.__decorate || function (decorators, targ
         if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     }return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
+// projects using mobx need this, so they can use a custom decorator to apply our "Comp.render" patch prior to mobx-react's patch (mobx-react's needs to be last/outermost)
+function EnsureClassProtoRenderFunctionIsWrapped(classProto) {
+    // wrap the derived-class' render function, to include some extra code
+    if (!classProto.render_modifiedByBaseComponent) {
+        var oldRender = classProto.render;
+        classProto.render = function () {
+            this.PreRender();
+            BaseComponent.componentCurrentlyRendering = this;
+            var now = Date.now();
+            //this.renderCount = (this.renderCount|0) + 1;
+            this.renderCount++;
+            this.lastRenderTime = now;
+            //this.constructor["renderCount"] = (this.constructor["renderCount"]|0) + 1;
+            this.constructor["renderCount"]++;
+            this.constructor["lastRenderTime"] = now;
+            this.Debug(_defineProperty({}, "@RenderIndex", this.renderCount));
+            var result = oldRender.apply(this, arguments);
+            BaseComponent.componentCurrentlyRendering = null;
+            return result;
+        };
+        classProto.render_modifiedByBaseComponent = true;
+    }
+}
 var RenderSource = exports.RenderSource = undefined;
 (function (RenderSource) {
     RenderSource[RenderSource["Mount"] = 0] = "Mount";
@@ -255,7 +280,9 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         _this.autoRemoveChangeListeners = true;
         _this.mounted = false;
         _this.warnOfTransientObjectProps_options = null;
-        (0, _General.EnsureSealedPropsArentOverriden)(_this, BaseComponent);
+        (0, _General.EnsureSealedPropsArentOverriden)(_this, BaseComponent, function () {
+            return " (usual fix: make method name uppercase)";
+        }, true);
         (0, _reactAutobind2.default)(_this);
         // if had @Radium decorator, then "this" is actually an instance of a class-specific "RadiumEnhancer" derived-class
         //		so reach in to original class, and set up auto-binding for its prototype members as well
@@ -275,26 +302,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 return oldRender.apply(this, arguments);
             };
         } */
-        // wrap the derived-class' render function, to include some extra code
-        if (!_this.constructor.prototype.render.modifiedByBaseComponent) {
-            var oldRender = _this.constructor.prototype.render;
-            _this.constructor.prototype.render = function () {
-                this.PreRender();
-                BaseComponent.componentCurrentlyRendering = this;
-                var now = Date.now();
-                //this.renderCount = (this.renderCount|0) + 1;
-                this.renderCount++;
-                this.lastRenderTime = now;
-                //this.constructor["renderCount"] = (this.constructor["renderCount"]|0) + 1;
-                this.constructor["renderCount"]++;
-                this.constructor["lastRenderTime"] = now;
-                this.Debug(_defineProperty({}, "@RenderIndex", this.renderCount));
-                var result = oldRender.apply(this, arguments);
-                BaseComponent.componentCurrentlyRendering = null;
-                return result;
-            };
-            _this.constructor.prototype.render.modifiedByBaseComponent = true;
-        }
+        EnsureClassProtoRenderFunctionIsWrapped(_this.constructor.prototype);
         // you know what, let's just always wrap the render() method, in this project; solves the annoying firebase-gobbling-errors issue
         /*let oldRender = this.render;
         this.render = function() {
@@ -1405,19 +1413,28 @@ function HasSealedProps(target) {
         return WrapperClass;
     }(target);
 }
-function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSealed) {
+function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSealed, fixNote) {
+    var allowMobXOverriding = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
     var _iteratorNormalCompletion4 = true;
     var _didIteratorError4 = false;
     var _iteratorError4 = undefined;
 
     try {
         for (var _iterator4 = Object.getOwnPropertyNames(classWherePropsSealed.prototype)[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-            var key = _step4.value;
+            var methodName = _step4.value;
 
             //let method = classWherePropsSealed.prototype[key];
-            var method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, key).value;
-            if (method instanceof Function && method.sealed && compInstance[key] != method) {
-                throw new Error("Cannot override sealed method \"" + key + "\".");
+            var method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, methodName).value;
+            if (method instanceof Function && method.sealed && compInstance[methodName] != method) {
+                if (allowMobXOverriding) {
+                    var classProto = compInstance.constructor.prototype;
+                    var mobxMixinsKey = Object.getOwnPropertySymbols(classProto).find(function (a) {
+                        return a.toString() == "Symbol(patchMixins)";
+                    });
+                    var mobxMixins = classProto[mobxMixinsKey];
+                    if (mobxMixins && mobxMixins[methodName] != null) continue;
+                }
+                throw new Error("Cannot override sealed method \"" + methodName + "\"." + (fixNote ? fixNote(methodName) : ""));
             }
         }
     } catch (err) {

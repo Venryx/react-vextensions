@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { BaseProps } from "./General";
 import { WarnOfTransientObjectProps_Options } from "./Decorators";
+export declare function EnsureClassProtoRenderFunctionIsWrapped(classProto: any): void;
 export declare enum RenderSource {
     Mount = 0,
     PropChange = 1,
