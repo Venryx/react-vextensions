@@ -915,7 +915,8 @@ export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>
 function BaseComponentWithConnector(connector, initialState) {
     var initialStash = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
-    return function (_BaseComponent) {
+    //return class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
+    var BaseComponentEnhanced = function (_BaseComponent) {
         _inherits(BaseComponentEnhanced, _BaseComponent);
 
         function BaseComponentEnhanced(props) {
@@ -932,16 +933,19 @@ function BaseComponentWithConnector(connector, initialState) {
 
         return BaseComponentEnhanced;
     }(BaseComponent);
-    //return BaseComponentEnhanced;
+    // we have to cast as the below, otherwise library comps using BaseComponentPlus, cause typescript errors in user projects (JSX element type 'X' is not a constructor function for JSX elements.)
     //return BaseComponentEnhanced as new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>;
+
+
+    return BaseComponentEnhanced; // add class statics back in
 }
 function BaseComponentPlus() {
     var defaultProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var initialState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
     var initialStash = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
-    var _a;
-    return _a = function (_BaseComponent2) {
+    // return class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
+    var BaseComponentPlus = function (_BaseComponent2) {
         _inherits(BaseComponentPlus, _BaseComponent2);
 
         function BaseComponentPlus(props) {
@@ -957,9 +961,12 @@ function BaseComponentPlus() {
         }
 
         return BaseComponentPlus;
-    }(BaseComponent), _a.defaultProps = defaultProps, _a;
-    //return BaseComponentPlus;
+    }(BaseComponent);
+
+    BaseComponentPlus.defaultProps = defaultProps;
+    // we have to cast as the below, otherwise library comps using BaseComponentPlus, cause typescript errors in user projects (JSX element type 'X' is not a constructor function for JSX elements.)
     //return BaseComponentPlus as new(..._)=>BaseComponent<Props, State, Stash>;
+    return BaseComponentPlus; // add class statics back in
 }
 
 /***/ }),

@@ -423,7 +423,8 @@ export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>
 
 // Note: We can't auto-apply the actual Connect decorator, because here can only be the *base* for the user-component, not *wrap* it (which is needed for the react-redux "Connected(Comp)" component)
 export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Stash>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State, initialStash: Stash = null) {
-	return class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
+	//return class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
+	class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
 		constructor(props) {
 			super(props);
 			Object.assign(this.state, initialState);
@@ -432,12 +433,14 @@ export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Sta
 			Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentWithConnect function)`);
 		}
 	}
-	//return BaseComponentEnhanced;
+	// we have to cast as the below, otherwise library comps using BaseComponentPlus, cause typescript errors in user projects (JSX element type 'X' is not a constructor function for JSX elements.)
 	//return BaseComponentEnhanced as new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>;
+	return BaseComponentEnhanced as (new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>) & {renderCount: number, lastRenderTime: number}; // add class statics back in
 }
 
 export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props = {} as any, initialState: State = null, initialStash: Stash = null) {
-	return class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
+	// return class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
+	class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
 		static defaultProps = defaultProps;
 		constructor(props) {
 			super(props);
@@ -447,6 +450,7 @@ export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props = {} 
 			Assert(this.constructor["initialStash"] == null, `Cannot specify "${this.constructor.name}.initialStash". (initial-stash is already set using BaseComponentPlus function)`);
 		}
 	}
-	//return BaseComponentPlus;
+	// we have to cast as the below, otherwise library comps using BaseComponentPlus, cause typescript errors in user projects (JSX element type 'X' is not a constructor function for JSX elements.)
 	//return BaseComponentPlus as new(..._)=>BaseComponent<Props, State, Stash>;
+	return BaseComponentPlus as (new(..._)=>BaseComponent<Props, State, Stash>) & {renderCount: number, lastRenderTime: number}; // add class statics back in
 }
