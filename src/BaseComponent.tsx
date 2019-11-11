@@ -86,6 +86,18 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		};*/
 	}
 
+	// make interface for this.props, so that we can keep it unfrozen (so we can use ApplyBasicStyles)
+	/* _props: Readonly<Props & BaseProps>;
+	get props(): Readonly<Props & BaseProps> {
+		return this._props;
+	}
+	set props(val) {
+		let newProps = val as any;
+		if (Object.isFrozen(newProps)) newProps = E(newProps);
+		if (newProps.style && Object.isFrozen(newProps.style)) newProps.style = E(newProps.style);
+		this._props = newProps;
+	} */
+
 	//initialState: Partial<State>;
 	//state = {} as State; // redefined here, so we can set the initial-state to {} (instead of undefined)
 

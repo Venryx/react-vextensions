@@ -103,9 +103,17 @@ export function BasicStyles(props) {
 export function ApplyBasicStyles(target: React.ComponentClass<any>) {
 	let oldRender = target.prototype.render;
 	target.prototype.render = function() {
-		let result = oldRender.call(this) as JSX.Element;
-
 		let props = this.props;
+		// unfreeze props
+		/* if (Object.isFrozen(props)) this.props = E(props);
+		if (props.style && Object.isFrozen(props.style)) props.style = E(props.style); */
+
+		let result = oldRender.call(this) as JSX.Element;
+		// unfreeze result
+		if (Object.isFrozen(result)) result = E(result);
+		if (Object.isFrozen(result.props)) result.props = E(result.props);
+		//if (result.props.style && Object.isFrozen(result.props.style)) result.props.style = E(result.props.style);
+
 		let className = classNames({selectable: props.sel, clickThrough: props.ct}, result.props.className);
 		if (className) {
 			result.props.className = className;

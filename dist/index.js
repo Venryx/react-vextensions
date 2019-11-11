@@ -267,6 +267,17 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
 
         _this.renderCount = 0;
         _this.lastRenderTime = -1;
+        // make interface for this.props, so that we can keep it unfrozen (so we can use ApplyBasicStyles)
+        /* _props: Readonly<Props & BaseProps>;
+        get props(): Readonly<Props & BaseProps> {
+            return this._props;
+        }
+        set props(val) {
+            let newProps = val as any;
+            if (Object.isFrozen(newProps)) newProps = E(newProps);
+            if (newProps.style && Object.isFrozen(newProps.style)) newProps.style = E(newProps.style);
+            this._props = newProps;
+        } */
         //initialState: Partial<State>;
         //state = {} as State; // redefined here, so we can set the initial-state to {} (instead of undefined)
         _this.stash = {};
@@ -1213,8 +1224,15 @@ function BasicStyles(props) {
 function ApplyBasicStyles(target) {
     var oldRender = target.prototype.render;
     target.prototype.render = function () {
-        var result = oldRender.call(this);
         var props = this.props;
+        // unfreeze props
+        /* if (Object.isFrozen(props)) this.props = E(props);
+        if (props.style && Object.isFrozen(props.style)) props.style = E(props.style); */
+        var result = oldRender.call(this);
+        // unfreeze result
+        if (Object.isFrozen(result)) result = (0, _FromJSVE.E)(result);
+        if (Object.isFrozen(result.props)) result.props = (0, _FromJSVE.E)(result.props);
+        //if (result.props.style && Object.isFrozen(result.props.style)) result.props.style = E(result.props.style);
         var className = (0, _classnames2.default)({ selectable: props.sel, clickThrough: props.ct }, result.props.className);
         if (className) {
             result.props.className = className;
