@@ -21,26 +21,42 @@ export function GetDOM(comp: Component<any, any>) {
 	if (comp == null || comp["mounted"] === false) return null; // mounted is a prop on BaseComponents
 	return ReactDOM.findDOMNode(comp) as Element;
 }
-export function FindReact(dom) {
-	if (dom == null) return null;
-	let key = Object.keys(dom).find(key=>key.startsWith("__reactInternalInstance$"));
-	let internalInstance = dom[key];
-	if (internalInstance == null) return null;
+export function FindReact(dom, traverseUp = 0) {
+	const key = Object.keys(dom).find(key=>key.startsWith("__reactInternalInstance$"));
+	const domFiber = dom[key];
+	if (domFiber == null) return null;
 
-	if (internalInstance.return) { // react 16+
-		return internalInstance._debugOwner
-			? internalInstance._debugOwner.stateNode
-			: internalInstance.return.stateNode;
-	} else { // react <16
-		//return internalInstance._currentElement._owner._instance as React.Component<any, any>;
-		return internalInstance._currentElement._owner._instance as BaseComponent<any, any>;
+	// react <16
+	if (domFiber._currentElement) {
+		let compFiber = domFiber._currentElement._owner;
+		for (let i = 0; i < traverseUp; i++) {
+			compFiber = compFiber._currentElement._owner;
+		}
+		return compFiber._instance;
 	}
+
+	// react 16+
+	const GetCompFiber = fiber=>{
+		//return fiber._debugOwner; // this also works, but is __DEV__ only
+		let parentFiber = fiber.return;
+		while (typeof parentFiber.type == "string") {
+			parentFiber = parentFiber.return;
+		}
+		return parentFiber;
+	};
+	let compFiber = GetCompFiber(domFiber);
+	for (let i = 0; i < traverseUp; i++) {
+		compFiber = GetCompFiber(compFiber);
+	}
+	return compFiber.stateNode;
 }
 // needed for wrapper-components that don't provide way of accessing inner-component
 export function GetInnerComp(wrapperComp: React.Component<any, any>) {
 	// in old react-redux versions, if you use `connect([...], {withRef: true})`, a function will be available at wrapper.getWrappedInstance(); use that if available
 	if (wrapperComp && wrapperComp["getWrappedInstance"]) return wrapperComp["getWrappedInstance"]();
-	return FindReact(GetDOM(wrapperComp)) as any;
+	const dom = GetDOM(wrapperComp);
+	if (dom == null) return null;
+	return FindReact(dom) as any;
 }
 
 export type numberOrSuch = number | string;

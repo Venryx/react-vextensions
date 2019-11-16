@@ -1162,26 +1162,43 @@ function GetDOM(comp) {
     return _reactDom2.default.findDOMNode(comp);
 }
 function FindReact(dom) {
-    if (dom == null) return null;
+    var traverseUp = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
     var key = Object.keys(dom).find(function (key) {
         return key.startsWith("__reactInternalInstance$");
     });
-    var internalInstance = dom[key];
-    if (internalInstance == null) return null;
-    if (internalInstance.return) {
-        // react 16+
-        return internalInstance._debugOwner ? internalInstance._debugOwner.stateNode : internalInstance.return.stateNode;
-    } else {
-        // react <16
-        //return internalInstance._currentElement._owner._instance as React.Component<any, any>;
-        return internalInstance._currentElement._owner._instance;
+    var domFiber = dom[key];
+    if (domFiber == null) return null;
+    // react <16
+    if (domFiber._currentElement) {
+        var _compFiber = domFiber._currentElement._owner;
+        for (var i = 0; i < traverseUp; i++) {
+            _compFiber = _compFiber._currentElement._owner;
+        }
+        return _compFiber._instance;
     }
+    // react 16+
+    var GetCompFiber = function GetCompFiber(fiber) {
+        //return fiber._debugOwner; // this also works, but is __DEV__ only
+        var parentFiber = fiber.return;
+        while (typeof parentFiber.type == "string") {
+            parentFiber = parentFiber.return;
+        }
+        return parentFiber;
+    };
+    var compFiber = GetCompFiber(domFiber);
+    for (var _i = 0; _i < traverseUp; _i++) {
+        compFiber = GetCompFiber(compFiber);
+    }
+    return compFiber.stateNode;
 }
 // needed for wrapper-components that don't provide way of accessing inner-component
 function GetInnerComp(wrapperComp) {
     // in old react-redux versions, if you use `connect([...], {withRef: true})`, a function will be available at wrapper.getWrappedInstance(); use that if available
     if (wrapperComp && wrapperComp["getWrappedInstance"]) return wrapperComp["getWrappedInstance"]();
-    return FindReact(GetDOM(wrapperComp));
+    var dom = GetDOM(wrapperComp);
+    if (dom == null) return null;
+    return FindReact(dom);
 }
 var basePropFullKeys = exports.basePropFullKeys = {
     m: "margin", ml: "marginLeft", mr: "marginRight", mt: "marginTop", mb: "marginBottom",
