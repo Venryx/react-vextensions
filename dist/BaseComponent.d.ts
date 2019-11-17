@@ -49,8 +49,6 @@ export declare class BaseComponent<Props = {}, State = {}, Stash = {}> extends C
     }[];
     forceUpdate(): void;
     Update(postUpdate?: any): void;
-    Clear(postClear?: any): void;
-    ClearThenUpdate(): void;
     /** Shortcut for "()=>(this.forceUpdate(), this.ComponentWillMountOrReceiveProps(props))". */
     UpdateAndReceive(props: any): () => void;
     setState(): "Do not call this. Call SetState() instead.";

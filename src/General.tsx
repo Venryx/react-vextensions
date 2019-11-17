@@ -195,17 +195,29 @@ export function ShallowChanged(objA, objB, options?: {propsToIgnore?: string[], 
 //require("./GlobalStyles");
 
 let loaded = false;
+let globalElementHolder: HTMLDivElement;
 export function AddGlobalElement(html: string, asMultiline = true) {
 	if (asMultiline) {
 		html = AsMultiline(html, 0);
 	}
 	let proceed = ()=> {
 		loaded = true;
+
+		if (globalElementHolder == null) {
+			globalElementHolder = document.querySelector("#hidden_early");
+			if (globalElementHolder == null) {
+				globalElementHolder = document.createElement("div");
+				globalElementHolder.id = "hidden_early";
+				Object.assign(globalElementHolder.style, {position: "absolute", left: -1000, top: -1000, width: 1000, height: 1000, overflow: "hidden"});
+				document.body.prepend(globalElementHolder);
+			}
+		}
+
 		//let nodeType = html.trim().substring(1, html.trim().IndexOfAny(" ", ">"));
 		//let nodeType = html.match(`<([a-zA-Z-]+)`)[1];
 		let nodeType = html.match(`<([^ >]+)`)[1];
 		let element = document.createElement(nodeType);
-		document.querySelector("#hidden_early").appendChild(element);
+		globalElementHolder.appendChild(element);
 		element.outerHTML = html;
 	};
 	if (loaded) {

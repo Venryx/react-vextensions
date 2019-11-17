@@ -177,7 +177,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		//this.forceUpdate(postUpdate);
 		Component.prototype.forceUpdate.call(this, postUpdate);
 	}
-	Clear(postClear?) {
+	/*Clear(postClear?) {
 		var oldRender = this.render;
 		this.render = function() {
 			this.render = oldRender;
@@ -190,7 +190,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 	ClearThenUpdate() {
 		//this.Clear(this.Update);
 		this.Clear(()=>this.Update());
-	}
+	}*/
 	/** Shortcut for "()=>(this.forceUpdate(), this.ComponentWillMountOrReceiveProps(props))". */
 	UpdateAndReceive(props) {
 		return ()=> {

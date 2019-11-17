@@ -460,46 +460,34 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
             //this.forceUpdate(postUpdate);
             _react.Component.prototype.forceUpdate.call(this, postUpdate);
         }
-    }, {
-        key: "Clear",
-        value: function Clear(postClear) {
+        /*Clear(postClear?) {
             var oldRender = this.render;
-            this.render = function () {
-                var _this4 = this;
-
+            this.render = function() {
                 this.render = oldRender;
                 //WaitXThenRun(0, this.Update);
-                setTimeout(function () {
-                    return _this4.Update();
-                });
-                return _react2.default.createElement("div", null);
+                setTimeout(()=>this.Update());
+                return <div/>;
             };
             postClear();
         }
-    }, {
-        key: "ClearThenUpdate",
-        value: function ClearThenUpdate() {
-            var _this5 = this;
-
+        ClearThenUpdate() {
             //this.Clear(this.Update);
-            this.Clear(function () {
-                return _this5.Update();
-            });
-        }
+            this.Clear(()=>this.Update());
+        }*/
         /** Shortcut for "()=>(this.forceUpdate(), this.ComponentWillMountOrReceiveProps(props))". */
 
     }, {
         key: "UpdateAndReceive",
         value: function UpdateAndReceive(props) {
-            var _this6 = this,
+            var _this4 = this,
                 _arguments = arguments;
 
             return function () {
                 //if (!this.Mounted) return;
                 //this.forceUpdate();
-                _react.Component.prototype.forceUpdate.apply(_this6, _arguments);
-                if (_this6.autoRemoveChangeListeners) _this6.RemoveChangeListeners();
-                _this6.ComponentWillMountOrReceiveProps(props);
+                _react.Component.prototype.forceUpdate.apply(_this4, _arguments);
+                if (_this4.autoRemoveChangeListeners) _this4.RemoveChangeListeners();
+                _this4.ComponentWillMountOrReceiveProps(props);
             };
         }
         //setState(_: ()=>"Do not call this. Call SetState() instead.") {
@@ -515,7 +503,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     }, {
         key: "SetState",
         value: function SetState(newState, callback) {
-            var _this7 = this;
+            var _this5 = this;
 
             var cancelIfStateSame = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
             var jsonCompare = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
@@ -524,7 +512,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 if (jsonCompare) {
                     // we only care about new-state's keys -- setState() leaves unmentioned keys untouched
                     var oldState_forNewStateKeys = Object.keys(newState).reduce(function (result, key) {
-                        return result[key] = _this7.state[key], result;
+                        return result[key] = _this5.state[key], result;
                     }, {});
                     if ((0, _FromJSVE.ToJSON)(newState) == (0, _FromJSVE.ToJSON)(oldState_forNewStateKeys)) return [];
                 } else {
@@ -800,7 +788,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
     }, {
         key: "_CallPostRender",
         value: function _CallPostRender() {
-            var _this8 = this;
+            var _this6 = this;
 
             if (this.PostRender == BaseComponent.prototype.PostRender) return;
             var renderSource = this.lastRender_source;
@@ -816,8 +804,8 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 setTimeout(function () {
                     return window.requestAnimationFrame(function () {
                         //WaitXThenRun(0, ()=>g.requestIdleCallback(()=> {
-                        if (!_this8.mounted) return;
-                        _this8.PostRender(renderSource);
+                        if (!_this6.mounted) return;
+                        _this6.PostRender(renderSource);
                     });
                 });
                 /*WaitXThenRun(0, ()=> {
@@ -941,13 +929,13 @@ function BaseComponentWithConnector(connector, initialState) {
         function BaseComponentEnhanced(props) {
             _classCallCheck(this, BaseComponentEnhanced);
 
-            var _this9 = _possibleConstructorReturn(this, (BaseComponentEnhanced.__proto__ || Object.getPrototypeOf(BaseComponentEnhanced)).call(this, props));
+            var _this7 = _possibleConstructorReturn(this, (BaseComponentEnhanced.__proto__ || Object.getPrototypeOf(BaseComponentEnhanced)).call(this, props));
 
-            Object.assign(_this9.state, initialState);
-            Object.assign(_this9.stash, initialStash);
-            (0, _FromJSVE.Assert)(_this9.constructor["initialState"] == null, "Cannot specify \"" + _this9.constructor.name + ".initialState\". (initial-state is already set using BaseComponentWithConnect function)");
-            (0, _FromJSVE.Assert)(_this9.constructor["initialStash"] == null, "Cannot specify \"" + _this9.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentWithConnect function)");
-            return _this9;
+            Object.assign(_this7.state, initialState);
+            Object.assign(_this7.stash, initialStash);
+            (0, _FromJSVE.Assert)(_this7.constructor["initialState"] == null, "Cannot specify \"" + _this7.constructor.name + ".initialState\". (initial-state is already set using BaseComponentWithConnect function)");
+            (0, _FromJSVE.Assert)(_this7.constructor["initialStash"] == null, "Cannot specify \"" + _this7.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentWithConnect function)");
+            return _this7;
         }
 
         return BaseComponentEnhanced;
@@ -970,13 +958,13 @@ function BaseComponentPlus() {
         function BaseComponentPlus(props) {
             _classCallCheck(this, BaseComponentPlus);
 
-            var _this10 = _possibleConstructorReturn(this, (BaseComponentPlus.__proto__ || Object.getPrototypeOf(BaseComponentPlus)).call(this, props));
+            var _this8 = _possibleConstructorReturn(this, (BaseComponentPlus.__proto__ || Object.getPrototypeOf(BaseComponentPlus)).call(this, props));
 
-            Object.assign(_this10.state, initialState);
-            Object.assign(_this10.stash, initialStash);
-            (0, _FromJSVE.Assert)(_this10.constructor["initialState"] == null, "Cannot specify \"" + _this10.constructor.name + ".initialState\". (initial-state is already set using BaseComponentPlus function)");
-            (0, _FromJSVE.Assert)(_this10.constructor["initialStash"] == null, "Cannot specify \"" + _this10.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentPlus function)");
-            return _this10;
+            Object.assign(_this8.state, initialState);
+            Object.assign(_this8.stash, initialStash);
+            (0, _FromJSVE.Assert)(_this8.constructor["initialState"] == null, "Cannot specify \"" + _this8.constructor.name + ".initialState\". (initial-state is already set using BaseComponentPlus function)");
+            (0, _FromJSVE.Assert)(_this8.constructor["initialStash"] == null, "Cannot specify \"" + _this8.constructor.name + ".initialStash\". (initial-stash is already set using BaseComponentPlus function)");
+            return _this8;
         }
 
         return BaseComponentPlus;
@@ -1349,6 +1337,7 @@ function ShallowChanged(objA, objB, options) {
 }
 //require("./GlobalStyles");
 var loaded = false;
+var globalElementHolder = void 0;
 function AddGlobalElement(html) {
     var asMultiline = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
@@ -1357,11 +1346,20 @@ function AddGlobalElement(html) {
     }
     var proceed = function proceed() {
         loaded = true;
+        if (globalElementHolder == null) {
+            globalElementHolder = document.querySelector("#hidden_early");
+            if (globalElementHolder == null) {
+                globalElementHolder = document.createElement("div");
+                globalElementHolder.id = "hidden_early";
+                Object.assign(globalElementHolder.style, { position: "absolute", left: -1000, top: -1000, width: 1000, height: 1000, overflow: "hidden" });
+                document.body.prepend(globalElementHolder);
+            }
+        }
         //let nodeType = html.trim().substring(1, html.trim().IndexOfAny(" ", ">"));
         //let nodeType = html.match(`<([a-zA-Z-]+)`)[1];
         var nodeType = html.match("<([^ >]+)")[1];
         var element = document.createElement(nodeType);
-        document.querySelector("#hidden_early").appendChild(element);
+        globalElementHolder.appendChild(element);
         element.outerHTML = html;
     };
     if (loaded) {
