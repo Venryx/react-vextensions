@@ -124,7 +124,7 @@ Object.keys(_BaseComponent).forEach(function (key) {
   });
 });
 
-var _BaseHooks = __webpack_require__(10);
+var _BaseHooks = __webpack_require__(8);
 
 Object.keys(_BaseHooks).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -136,7 +136,7 @@ Object.keys(_BaseHooks).forEach(function (key) {
   });
 });
 
-var _ClassBasedStyle = __webpack_require__(11);
+var _ClassBasedStyle = __webpack_require__(9);
 
 Object.keys(_ClassBasedStyle).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -148,7 +148,7 @@ Object.keys(_ClassBasedStyle).forEach(function (key) {
   });
 });
 
-var _Decorators = __webpack_require__(13);
+var _Decorators = __webpack_require__(11);
 
 Object.keys(_Decorators).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -160,7 +160,7 @@ Object.keys(_Decorators).forEach(function (key) {
   });
 });
 
-var _General = __webpack_require__(6);
+var _General = __webpack_require__(4);
 
 Object.keys(_General).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -198,13 +198,9 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactAutobind = __webpack_require__(4);
+var _General = __webpack_require__(4);
 
-var _reactAutobind2 = _interopRequireDefault(_reactAutobind);
-
-var _General = __webpack_require__(6);
-
-var _FromJSVE = __webpack_require__(9);
+var _FromJSVE = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -291,15 +287,16 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         _this.autoRemoveChangeListeners = true;
         _this.mounted = false;
         _this.warnOfTransientObjectProps_options = null;
+        if (BaseComponent.constructorExtensionFunc) BaseComponent.constructorExtensionFunc(_this, props);
         (0, _General.EnsureSealedPropsArentOverriden)(_this, BaseComponent, function () {
             return " (usual fix: make method name uppercase)";
         }, true);
-        (0, _reactAutobind2.default)(_this);
+        /*autoBind(this);
         // if had @Radium decorator, then "this" is actually an instance of a class-specific "RadiumEnhancer" derived-class
         //		so reach in to original class, and set up auto-binding for its prototype members as well
-        if (_this.constructor.name == "RadiumEnhancer") {
-            (0, _reactAutobind2.default)(Object.getPrototypeOf(_this));
-        }
+        if (this.constructor.name == "RadiumEnhancer") {
+            autoBind(Object.getPrototypeOf(this));
+        }*/
         _this.state = {}; // this.state starts as undefined, so set it to {} to match with this.stash and this.debug
         Object.assign(_this.state, _this.constructor["initialState"]);
         //this.Stash(this.constructor["initialStash"]);
@@ -986,90 +983,6 @@ module.exports = require("react");
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(5);
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-exports['default'] = autoBind;
-var wontBind = ['constructor', 'render', 'componentWillMount', 'componentDidMount', 'componentWillReceiveProps', 'shouldComponentUpdate', 'componentWillUpdate', 'componentDidUpdate', 'componentWillUnmount'];
-
-var toBind = [];
-
-function autoBind(context) {
-  if (context === undefined) {
-    console.error('Autobind error: No context provided.');
-    return;
-  }
-
-  var objPrototype = Object.getPrototypeOf(context);
-
-  if (arguments.length > 1) {
-    // If a list of methods to bind is provided, use it.
-    toBind = Array.prototype.slice.call(arguments, 1);
-  } else {
-    // If no list of methods to bind is provided, bind all available methods in class.
-    toBind = Object.getOwnPropertyNames(objPrototype);
-  }
-
-  toBind.forEach(function (method) {
-    var descriptor = Object.getOwnPropertyDescriptor(objPrototype, method);
-
-    if (descriptor === undefined) {
-      console.warn('Autobind: "' + method + '" method not found in class.');
-      return;
-    }
-
-    // Return if it's special case function or if not a function at all
-    if (wontBind.indexOf(method) !== -1 || typeof descriptor.value !== 'function') {
-      return;
-    }
-
-    Object.defineProperty(objPrototype, method, boundMethod(objPrototype, method, descriptor));
-  });
-}
-
-/**
-* From autobind-decorator (https://github.com/andreypopp/autobind-decorator/tree/master)
-* Return a descriptor removing the value and returning a getter
-* The getter will return a .bind version of the function
-* and memoize the result against a symbol on the instance
-*/
-function boundMethod(objPrototype, method, descriptor) {
-  var fn = descriptor.value;
-
-  return {
-    configurable: true,
-    get: function get() {
-      if (this === objPrototype || this.hasOwnProperty(method)) {
-        return fn;
-      }
-
-      var boundFn = fn.bind(this);
-      Object.defineProperty(this, method, {
-        value: boundFn,
-        configurable: true,
-        writable: true
-      });
-      return boundFn;
-    }
-  };
-}
-module.exports = exports['default'];
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
 "use strict";
 
 
@@ -1093,15 +1006,15 @@ exports.Sealed = Sealed;
 exports.FilterOutUnrecognizedProps = FilterOutUnrecognizedProps;
 exports.CombineRefs = CombineRefs;
 
-var _reactDom = __webpack_require__(7);
+var _reactDom = __webpack_require__(5);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _classnames = __webpack_require__(8);
+var _classnames = __webpack_require__(6);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _FromJSVE = __webpack_require__(9);
+var _FromJSVE = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1548,13 +1461,13 @@ function CombineRefs() {
 }
 
 /***/ }),
-/* 7 */
+/* 5 */
 /***/ (function(module, exports) {
 
 module.exports = require("react-dom");
 
 /***/ }),
-/* 8 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -1611,7 +1524,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 
 /***/ }),
-/* 9 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1697,7 +1610,7 @@ function WrapWithGo(func) {
 }
 
 /***/ }),
-/* 10 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1738,7 +1651,7 @@ exports.TODO = TODO;
 
 var _react2 = _interopRequireDefault(_react);
 
-var _FromJSVE = __webpack_require__(9);
+var _FromJSVE = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1823,7 +1736,7 @@ function UseCallback(callback, deps) {
 function TODO() {}
 
 /***/ }),
-/* 11 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1837,9 +1750,9 @@ exports.ConvertStyleObjectToCSSString = ConvertStyleObjectToCSSString;
 exports.ClassBasedStyle = ClassBasedStyle;
 exports.ClassBasedStyles = ClassBasedStyles;
 
-var _General = __webpack_require__(6);
+var _General = __webpack_require__(4);
 
-var _server = __webpack_require__(12);
+var _server = __webpack_require__(10);
 
 var _server2 = _interopRequireDefault(_server);
 
@@ -1847,7 +1760,7 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _FromJSVE = __webpack_require__(9);
+var _FromJSVE = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1909,13 +1822,13 @@ function ClassBasedStyles(styleComposite) {
 }
 
 /***/ }),
-/* 12 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = require("react-dom/server");
 
 /***/ }),
-/* 13 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1929,7 +1842,7 @@ exports.SimpleShouldUpdate = SimpleShouldUpdate;
 exports.WarnOfTransientObjectProps = WarnOfTransientObjectProps;
 exports.Instant = Instant;
 
-var _FromJSVE = __webpack_require__(9);
+var _FromJSVE = __webpack_require__(7);
 
 var _ = __webpack_require__(1);
 

@@ -9,6 +9,7 @@ export declare enum RenderSource {
     Update = 3
 }
 export declare class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
+    static constructorExtensionFunc: (instance: BaseComponent, props: any) => void;
     static componentCurrentlyRendering: BaseComponent<any>;
     static renderCount: number;
     static lastRenderTime: number;

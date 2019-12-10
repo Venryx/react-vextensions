@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import autoBind from "react-autobind";
 import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, EnsureSealedPropsArentOverriden, ShallowEquals } from "./General";
 import {WarnOfTransientObjectProps_Options} from "./Decorators";
 import {E, ToJSON, Assert} from "./Internals/FromJSVE";
@@ -38,6 +37,7 @@ export enum RenderSource {
 }
 //@HasSealedProps // instead of using this decorator, we just include the "EnsureSealedPropsArentOverriden(this, BaseComponent);" line directly (to reduce nesting / depth of class-prototype chain)	
 export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
+	static constructorExtensionFunc: (instance: BaseComponent, props: any)=>void;
 	static componentCurrentlyRendering: BaseComponent<any>;
 
 	// debug info (statics are updated by all instances)
@@ -48,13 +48,14 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 	
 	constructor(props) {
 		super(props);
+		if (BaseComponent.constructorExtensionFunc) BaseComponent.constructorExtensionFunc(this, props);
 		EnsureSealedPropsArentOverriden(this, BaseComponent, ()=>` (usual fix: make method name uppercase)`, true);
-		autoBind(this);
+		/*autoBind(this);
 		// if had @Radium decorator, then "this" is actually an instance of a class-specific "RadiumEnhancer" derived-class
 		//		so reach in to original class, and set up auto-binding for its prototype members as well
 		if (this.constructor.name == "RadiumEnhancer") {
 			autoBind(Object.getPrototypeOf(this));
-		}
+		}*/
 
 		this.state = {} as any; // this.state starts as undefined, so set it to {} to match with this.stash and this.debug
 		Object.assign(this.state, this.constructor["initialState"]);
