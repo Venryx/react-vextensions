@@ -75,6 +75,10 @@ export declare class BaseComponent<Props = {}, State = {}, Stash = {}> extends C
     ComponentWillUnmount(): void;
     componentWillUnmount(): void;
     warnOfTransientObjectProps_options: WarnOfTransientObjectProps_Options;
+    lastPropChange_info: {
+        oldProps: Props;
+        newProps: Props;
+    };
     ComponentWillReceiveProps(newProps: any[]): void;
     UNSAFE_componentWillReceiveProps(newProps: any): void;
     ComponentDidUpdate(...args: any[]): void;

@@ -287,6 +287,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         _this.autoRemoveChangeListeners = true;
         _this.mounted = false;
         _this.warnOfTransientObjectProps_options = null;
+        _this.lastPropChange_info = null;
         if (BaseComponent.constructorExtensionFunc) BaseComponent.constructorExtensionFunc(_this, props);
         (0, _General.EnsureSealedPropsArentOverriden)(_this, BaseComponent, function () {
             return " (usual fix: make method name uppercase)";
@@ -767,6 +768,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
             this.ComponentWillReceiveProps(newProps);
             this.ComponentWillMountOrReceiveProps(newProps, false);
             this.lastRender_source = RenderSource.PropChange;
+            this.lastPropChange_info = { oldProps: this.props, newProps: newProps };
         }
     }, {
         key: "ComponentDidUpdate",

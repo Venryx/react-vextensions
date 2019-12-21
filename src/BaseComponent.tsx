@@ -318,6 +318,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 	}
 	
 	warnOfTransientObjectProps_options: WarnOfTransientObjectProps_Options = null;
+	lastPropChange_info = null as {oldProps: Props, newProps: Props};
 	ComponentWillReceiveProps(newProps: any[]): void {};
 	@Sealed UNSAFE_componentWillReceiveProps(newProps) {
 		if (this.autoRemoveChangeListeners) {
@@ -347,6 +348,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		this.ComponentWillReceiveProps(newProps);
 		this.ComponentWillMountOrReceiveProps(newProps, false);
 		this.lastRender_source = RenderSource.PropChange;
+		this.lastPropChange_info = {oldProps: this.props, newProps};
 	}
 	ComponentDidUpdate(...args: any[]): void {};
 	@Sealed componentDidUpdate(...args) {
