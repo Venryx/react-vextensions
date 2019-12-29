@@ -124,7 +124,7 @@ Object.keys(_BaseComponent).forEach(function (key) {
   });
 });
 
-var _BaseHooks = __webpack_require__(8);
+var _BaseHooks = __webpack_require__(9);
 
 Object.keys(_BaseHooks).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -136,7 +136,7 @@ Object.keys(_BaseHooks).forEach(function (key) {
   });
 });
 
-var _ClassBasedStyle = __webpack_require__(9);
+var _ClassBasedStyle = __webpack_require__(10);
 
 Object.keys(_ClassBasedStyle).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -148,7 +148,7 @@ Object.keys(_ClassBasedStyle).forEach(function (key) {
   });
 });
 
-var _Decorators = __webpack_require__(11);
+var _Decorators = __webpack_require__(12);
 
 Object.keys(_Decorators).forEach(function (key) {
   if (key === "default" || key === "__esModule") return;
@@ -368,38 +368,9 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
             var oldProps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this._GetPropChanges_lastValues;
             var setLastValues = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
-            var oldAndNewKeys = (0, _General.RemoveDuplicates)(Object.keys(newProps).concat(Object.keys(oldProps)));
-            var changedKeys = oldAndNewKeys.filter(function (key) {
-                return !Object.is(newProps[key], oldProps[key]);
-            });
-            var result = [];
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = changedKeys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var key = _step.value;
-
-                    result.push({ key: key, oldVal: oldProps[key], newVal: newProps[key] });
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-
+            var changes = (0, _FromJSVE.GetPropChanges)(oldProps, newProps);
             if (setLastValues) this._GetPropChanges_lastValues = Object.assign({}, newProps);
-            return result;
+            return changes;
         }
     }, {
         key: "GetStateChanges",
@@ -408,38 +379,9 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
             var oldState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this._GetStateChanges_lastValues;
             var setLastValues = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
-            var oldAndNewKeys = (0, _General.RemoveDuplicates)(Object.keys(newState).concat(Object.keys(oldState)));
-            var changedKeys = oldAndNewKeys.filter(function (key) {
-                return !Object.is(newState[key], oldState[key]);
-            });
-            var result = [];
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
-
-            try {
-                for (var _iterator2 = changedKeys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var key = _step2.value;
-
-                    result.push({ key: key, oldVal: oldState[key], newVal: newState[key] });
-                }
-            } catch (err) {
-                _didIteratorError2 = true;
-                _iteratorError2 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                        _iterator2.return();
-                    }
-                } finally {
-                    if (_didIteratorError2) {
-                        throw _iteratorError2;
-                    }
-                }
-            }
-
+            var changes = (0, _FromJSVE.GetPropChanges)(oldState, newState);
             if (setLastValues) this._GetStateChanges_lastValues = Object.assign({}, newState);
-            return result;
+            return changes;
         }
         //forceUpdate(_: ()=>"Do not call this. Call Update() instead.") {
 
@@ -518,13 +460,13 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                     // use a looser comparison (we want a missing prop to be equivalent to null and undefined)
                     var same = true;
                     //for (let key of RemoveDuplicates(Object.keys(this.state).concat(Object.keys(newState)))) {
-                    var _iteratorNormalCompletion3 = true;
-                    var _didIteratorError3 = false;
-                    var _iteratorError3 = undefined;
+                    var _iteratorNormalCompletion = true;
+                    var _didIteratorError = false;
+                    var _iteratorError = undefined;
 
                     try {
-                        for (var _iterator3 = Object.keys(newState)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                            var key = _step3.value;
+                        for (var _iterator = Object.keys(newState)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                            var key = _step.value;
 
                             var valA = this.state[key];
                             var valB = newState[key];
@@ -535,16 +477,16 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                             }
                         }
                     } catch (err) {
-                        _didIteratorError3 = true;
-                        _iteratorError3 = err;
+                        _didIteratorError = true;
+                        _iteratorError = err;
                     } finally {
                         try {
-                            if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                                _iterator3.return();
+                            if (!_iteratorNormalCompletion && _iterator.return) {
+                                _iterator.return();
                             }
                         } finally {
-                            if (_didIteratorError3) {
-                                throw _iteratorError3;
+                            if (_didIteratorError) {
+                                throw _iteratorError;
                             }
                         }
                     }
@@ -573,13 +515,13 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                 funcs[_key - 1] = arguments[_key];
             }
 
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
 
             try {
-                for (var _iterator4 = funcs[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                    var func = _step4.value;
+                for (var _iterator2 = funcs[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var func = _step2.value;
 
                     if (typeof func == "string") func = func.Func(this.Update);
                     // if actual function, add it (else, ignore entry--it must have been a failed conditional)
@@ -590,16 +532,16 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                     }
                 }
             } catch (err) {
-                _didIteratorError4 = true;
-                _iteratorError4 = err;
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
             } finally {
                 try {
-                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                        _iterator4.return();
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
                     }
                 } finally {
-                    if (_didIteratorError4) {
-                        throw _iteratorError4;
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
                     }
                 }
             }
@@ -608,27 +550,27 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
         key: "RemoveChangeListeners",
         value: function RemoveChangeListeners() {
             //this.changeListeners = this.changeListeners || []; // temp fix for odd "is null" issue
-            var _iteratorNormalCompletion5 = true;
-            var _didIteratorError5 = false;
-            var _iteratorError5 = undefined;
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
 
             try {
-                for (var _iterator5 = this.changeListeners[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                    var changeListener = _step5.value;
+                for (var _iterator3 = this.changeListeners[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var changeListener = _step3.value;
 
                     changeListener.host.removeExtraMethod = changeListener.func;
                 }
             } catch (err) {
-                _didIteratorError5 = true;
-                _iteratorError5 = err;
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
             } finally {
                 try {
-                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                        _iterator5.return();
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
                     }
                 } finally {
-                    if (_didIteratorError5) {
-                        throw _iteratorError5;
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
                     }
                 }
             }
@@ -641,28 +583,28 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
             var changeListenersToRemove = this.changeListeners.filter(function (a) {
                 return a.host == host;
             });
-            var _iteratorNormalCompletion6 = true;
-            var _didIteratorError6 = false;
-            var _iteratorError6 = undefined;
+            var _iteratorNormalCompletion4 = true;
+            var _didIteratorError4 = false;
+            var _iteratorError4 = undefined;
 
             try {
-                for (var _iterator6 = changeListenersToRemove[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-                    var listener = _step6.value;
+                for (var _iterator4 = changeListenersToRemove[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                    var listener = _step4.value;
 
                     listener.host.removeExtraMethod = listener.func;
                     this.changeListeners.splice(this.changeListeners.indexOf(listener), 1);
                 }
             } catch (err) {
-                _didIteratorError6 = true;
-                _iteratorError6 = err;
+                _didIteratorError4 = true;
+                _iteratorError4 = err;
             } finally {
                 try {
-                    if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                        _iterator6.return();
+                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                        _iterator4.return();
                     }
                 } finally {
-                    if (_didIteratorError6) {
-                        throw _iteratorError6;
+                    if (_didIteratorError4) {
+                        throw _iteratorError4;
                     }
                 }
             }
@@ -725,15 +667,15 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
             }
             var warnOptions = this.warnOfTransientObjectProps_options || this.constructor["warnOfTransientObjectProps_options"];
             if (window["DEV"] && warnOptions) {
-                var _iteratorNormalCompletion7 = true;
-                var _didIteratorError7 = false;
-                var _iteratorError7 = undefined;
+                var _iteratorNormalCompletion5 = true;
+                var _didIteratorError5 = false;
+                var _iteratorError5 = undefined;
 
                 try {
-                    for (var _iterator7 = Object["entries"](newProps)[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-                        var _step7$value = _slicedToArray(_step7.value, 2),
-                            key = _step7$value[0],
-                            value = _step7$value[1];
+                    for (var _iterator5 = Object["entries"](newProps)[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                        var _step5$value = _slicedToArray(_step5.value, 2),
+                            key = _step5$value[0],
+                            value = _step5$value[1];
 
                         if (warnOptions.ignoreProps && warnOptions.ignoreProps.indexOf(key) != -1) continue;
                         var isObject = value instanceof Object || (typeof value === "undefined" ? "undefined" : _typeof(value)) == "object" && value != null;
@@ -751,16 +693,16 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
                         }
                     } */
                 } catch (err) {
-                    _didIteratorError7 = true;
-                    _iteratorError7 = err;
+                    _didIteratorError5 = true;
+                    _iteratorError5 = err;
                 } finally {
                     try {
-                        if (!_iteratorNormalCompletion7 && _iterator7.return) {
-                            _iterator7.return();
+                        if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                            _iterator5.return();
                         }
                     } finally {
-                        if (_didIteratorError7) {
-                            throw _iteratorError7;
+                        if (_didIteratorError5) {
+                            throw _iteratorError5;
                         }
                     }
                 }
@@ -768,7 +710,7 @@ var BaseComponent = exports.BaseComponent = function (_Component) {
             this.ComponentWillReceiveProps(newProps);
             this.ComponentWillMountOrReceiveProps(newProps, false);
             this.lastRender_source = RenderSource.PropChange;
-            this.lastPropChange_info = { oldProps: this.props, newProps: newProps };
+            this.lastPropChange_info = { oldProps: this.props, newProps: newProps, changes: (0, _FromJSVE.GetPropChanges)(this.props, newProps) };
         }
     }, {
         key: "ComponentDidUpdate",
@@ -992,7 +934,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.RunWithRenderingBatched = exports.basePropFullKeys = undefined;
-exports.RemoveDuplicates = RemoveDuplicates;
 exports.GetDOM = GetDOM;
 exports.FindReact = FindReact;
 exports.GetInnerComp = GetInnerComp;
@@ -1028,37 +969,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-function RemoveDuplicates(items) {
-    var result = [];
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-        for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var item = _step.value;
-
-            if (result.indexOf(item) == -1) {
-                result.push(item);
-            }
-        }
-    } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
-            }
-        } finally {
-            if (_didIteratorError) {
-                throw _iteratorError;
-            }
-        }
-    }
-
-    return result;
-}
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");
 function GetDOM(comp) {
     if (comp == null || comp["mounted"] === false) return null; // mounted is a prop on BaseComponents
@@ -1193,37 +1103,37 @@ function ShallowChanged(objA, objB, options) {
         if (ShallowChanged(objA.Excluding.apply(objA, _toConsumableArray(options.propsToCompareMoreDeeply)), objB.Excluding.apply(objB, _toConsumableArray(options.propsToCompareMoreDeeply)))) {
             return true;
         }
-        var _iteratorNormalCompletion2 = true;
-        var _didIteratorError2 = false;
-        var _iteratorError2 = undefined;
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
 
         try {
-            for (var _iterator2 = options.propsToCompareMoreDeeply[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                var key = _step2.value;
+            for (var _iterator = options.propsToCompareMoreDeeply[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var key = _step.value;
 
                 // for "children", shallow-compare at two levels deeper
                 if (key == "children") {
-                    var _iteratorNormalCompletion3 = true;
-                    var _didIteratorError3 = false;
-                    var _iteratorError3 = undefined;
+                    var _iteratorNormalCompletion2 = true;
+                    var _didIteratorError2 = false;
+                    var _iteratorError2 = undefined;
 
                     try {
-                        for (var _iterator3 = (objA.children || {}).VKeys().concat((objB.children || {}).VKeys())[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                            var childKey = _step3.value;
+                        for (var _iterator2 = (objA.children || {}).VKeys().concat((objB.children || {}).VKeys())[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                            var childKey = _step2.value;
 
                             if (ShallowChanged(objA.children[childKey], objB.children[childKey])) return true;
                         }
                     } catch (err) {
-                        _didIteratorError3 = true;
-                        _iteratorError3 = err;
+                        _didIteratorError2 = true;
+                        _iteratorError2 = err;
                     } finally {
                         try {
-                            if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                                _iterator3.return();
+                            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                _iterator2.return();
                             }
                         } finally {
-                            if (_didIteratorError3) {
-                                throw _iteratorError3;
+                            if (_didIteratorError2) {
+                                throw _iteratorError2;
                             }
                         }
                     }
@@ -1232,16 +1142,16 @@ function ShallowChanged(objA, objB, options) {
                 }
             }
         } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
+            _didIteratorError = true;
+            _iteratorError = err;
         } finally {
             try {
-                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                    _iterator2.return();
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                    _iterator.return();
                 }
             } finally {
-                if (_didIteratorError2) {
-                    throw _iteratorError2;
+                if (_didIteratorError) {
+                    throw _iteratorError;
                 }
             }
         }
@@ -1363,13 +1273,13 @@ function HasSealedProps(target) {
 }
 function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSealed, fixNote) {
     var allowMobXOverriding = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-    var _iteratorNormalCompletion4 = true;
-    var _didIteratorError4 = false;
-    var _iteratorError4 = undefined;
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
 
     try {
-        for (var _iterator4 = Object.getOwnPropertyNames(classWherePropsSealed.prototype)[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-            var methodName = _step4.value;
+        for (var _iterator3 = Object.getOwnPropertyNames(classWherePropsSealed.prototype)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var methodName = _step3.value;
 
             //let method = classWherePropsSealed.prototype[key];
             var method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, methodName).value;
@@ -1386,16 +1296,16 @@ function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSealed, fi
             }
         }
     } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
     } finally {
         try {
-            if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                _iterator4.return();
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                _iterator3.return();
             }
         } finally {
-            if (_didIteratorError4) {
-                throw _iteratorError4;
+            if (_didIteratorError3) {
+                throw _iteratorError3;
             }
         }
     }
@@ -1431,13 +1341,13 @@ function CombineRefs() {
     }
 
     return function (comp) {
-        var _iteratorNormalCompletion5 = true;
-        var _didIteratorError5 = false;
-        var _iteratorError5 = undefined;
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
 
         try {
-            for (var _iterator5 = refs[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                var ref = _step5.value;
+            for (var _iterator4 = refs[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                var ref = _step4.value;
 
                 if (typeof ref == "function") {
                     ref(comp);
@@ -1446,16 +1356,16 @@ function CombineRefs() {
                 }
             }
         } catch (err) {
-            _didIteratorError5 = true;
-            _iteratorError5 = err;
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
         } finally {
             try {
-                if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                    _iterator5.return();
+                if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                    _iterator4.return();
                 }
             } finally {
-                if (_didIteratorError5) {
-                    throw _iteratorError5;
+                if (_didIteratorError4) {
+                    throw _iteratorError4;
                 }
             }
         }
@@ -1541,6 +1451,10 @@ exports.FromJSON = FromJSON;
 exports.AsMultiline = AsMultiline;
 exports.Assert = Assert;
 exports.WrapWithGo = WrapWithGo;
+exports.GetPropChanges = GetPropChanges;
+
+var _General = __webpack_require__(8);
+
 function E(e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12, e13, e14, e15, e16, e17, e18, e19, e20) {
     var result = {};
     var _iteratorNormalCompletion = true;
@@ -1610,9 +1524,92 @@ function WrapWithGo(func) {
     });
     return func;
 }
+function GetPropChanges(oldObj, newObj) {
+    var returnNullIfSame = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    var useJSONCompare = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+    oldObj = oldObj || {}, newObj = newObj || {};
+    var keys = (0, _General.RemoveDuplicates)(Object.keys(oldObj).concat(Object.keys(newObj)));
+    var result = [];
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+        for (var _iterator2 = keys[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var key = _step2.value;
+
+            var newVal_forComparison = useJSONCompare ? ToJSON(newObj[key]) : newObj[key];
+            var oldVal_forComparison = useJSONCompare ? ToJSON(oldObj[key]) : oldObj[key];
+            //if (newVal_forComparison !== oldVal_forComparison) {
+            if (!Object.is(newVal_forComparison, oldVal_forComparison)) {
+                result.push({ key: key, oldVal: oldObj[key], newVal: newObj[key] });
+            }
+        }
+    } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
+            }
+        } finally {
+            if (_didIteratorError2) {
+                throw _iteratorError2;
+            }
+        }
+    }
+
+    if (result.length == 0 && returnNullIfSame) return null;
+    return result;
+}
 
 /***/ }),
 /* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.RemoveDuplicates = RemoveDuplicates;
+function RemoveDuplicates(items) {
+    var result = [];
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var item = _step.value;
+
+            if (result.indexOf(item) == -1) {
+                result.push(item);
+            }
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
+    return result;
+}
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1738,7 +1735,7 @@ function UseCallback(callback, deps) {
 function TODO() {}
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1754,7 +1751,7 @@ exports.ClassBasedStyles = ClassBasedStyles;
 
 var _General = __webpack_require__(4);
 
-var _server = __webpack_require__(10);
+var _server = __webpack_require__(11);
 
 var _server2 = _interopRequireDefault(_server);
 
@@ -1824,13 +1821,13 @@ function ClassBasedStyles(styleComposite) {
 }
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = require("react-dom/server");
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

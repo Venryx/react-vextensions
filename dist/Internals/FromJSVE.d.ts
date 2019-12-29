@@ -7,3 +7,9 @@ export declare type GetFirstParamType<T> = T extends (val: infer Arg1Type) => an
 export declare function WrapWithGo<Func extends (val: any) => any>(func: Func): Func & {
     Go: GetFirstParamType<Func>;
 };
+export declare type PropChange = {
+    key: string;
+    oldVal: any;
+    newVal: any;
+};
+export declare function GetPropChanges(oldObj: any, newObj: any, returnNullIfSame?: boolean, useJSONCompare?: boolean): PropChange[];

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { BaseProps } from "./General";
 import { WarnOfTransientObjectProps_Options } from "./Decorators";
+import { PropChange } from "./Internals/FromJSVE";
 export declare function EnsureClassProtoRenderFunctionIsWrapped(classProto: any): void;
 export declare enum RenderSource {
     Mount = 0,
@@ -37,17 +38,9 @@ export declare class BaseComponent<Props = {}, State = {}, Stash = {}> extends C
     _GetPropChanges_lastValues: {};
     GetPropChanges(newProps?: Readonly<Props & BaseProps> & Readonly<{
         children?: React.ReactNode;
-    }>, oldProps?: {}, setLastValues?: boolean): {
-        key: string;
-        oldVal: any;
-        newVal: any;
-    }[];
+    }>, oldProps?: {}, setLastValues?: boolean): PropChange[];
     _GetStateChanges_lastValues: {};
-    GetStateChanges(newState?: Readonly<State>, oldState?: {}, setLastValues?: boolean): {
-        key: string;
-        oldVal: any;
-        newVal: any;
-    }[];
+    GetStateChanges(newState?: Readonly<State>, oldState?: {}, setLastValues?: boolean): PropChange[];
     forceUpdate(): void;
     Update(postUpdate?: any): void;
     /** Shortcut for "()=>(this.forceUpdate(), this.ComponentWillMountOrReceiveProps(props))". */
@@ -78,6 +71,7 @@ export declare class BaseComponent<Props = {}, State = {}, Stash = {}> extends C
     lastPropChange_info: {
         oldProps: Props;
         newProps: Props;
+        changes: PropChange[];
     };
     ComponentWillReceiveProps(newProps: any[]): void;
     UNSAFE_componentWillReceiveProps(newProps: any): void;

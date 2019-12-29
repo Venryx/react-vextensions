@@ -1,3 +1,5 @@
+import {RemoveDuplicates} from "./General";
+
 export function E<E1,E2,E3,E4,E5,E6,E7,E8,E9,E10,E11,E12,E13,E14,E15,E16,E17,E18,E19,E20>(
 	e1?:E1,e2?:E2,e3?:E3,e4?:E4,e5?:E5,e6?:E6,e7?:E7,e8?:E8,e9?:E9,e10?:E10,
 	e11?:E11,e12?:E12,e13?:E13,e14?:E14,e15?:E15,e16?:E16,e17?:E17,e18?:E18,e19?:E19,e20?:E20,
@@ -54,4 +56,21 @@ export function WrapWithGo<Func extends(val)=>any>(func: Func): Func & {Go: GetF
 		set: func,
 	});
 	return func as any;
+}
+
+export type PropChange = {key: string, oldVal: any, newVal: any};
+export function GetPropChanges(oldObj, newObj, returnNullIfSame = false, useJSONCompare = false): PropChange[] {
+	oldObj = oldObj || {}, newObj = newObj || {};
+	let keys = RemoveDuplicates(Object.keys(oldObj).concat(Object.keys(newObj)));
+	let result = [];
+	for (let key of keys) {
+		let newVal_forComparison = useJSONCompare ? ToJSON(newObj[key]) : newObj[key];
+		let oldVal_forComparison = useJSONCompare ? ToJSON(oldObj[key]) : oldObj[key];
+		//if (newVal_forComparison !== oldVal_forComparison) {
+		if (!Object.is(newVal_forComparison, oldVal_forComparison)) {
+			result.push({key, oldVal: oldObj[key], newVal: newObj[key]});
+		}
+	}
+	if (result.length == 0 && returnNullIfSame) return null;
+	return result;
 }

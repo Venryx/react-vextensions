@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { BaseProps, GetDOM, HasSealedProps, RemoveDuplicates, Sealed, EnsureSealedPropsArentOverriden, ShallowEquals } from "./General";
+import { BaseProps, GetDOM, HasSealedProps, Sealed, EnsureSealedPropsArentOverriden, ShallowEquals } from "./General";
 import {WarnOfTransientObjectProps_Options} from "./Decorators";
-import {E, ToJSON, Assert} from "./Internals/FromJSVE";
+import {E, ToJSON, Assert, GetPropChanges, PropChange} from "./Internals/FromJSVE";
 
 // projects using mobx need this, so they can use a custom decorator to apply our "Comp.render" patch prior to mobx-react's patch (mobx-react's needs to be last/outermost)
 export function EnsureClassProtoRenderFunctionIsWrapped(classProto: any) {
@@ -142,28 +142,16 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 	//private GetPropChanges_lastValues = {};
 	_GetPropChanges_lastValues = {};
 	GetPropChanges(newProps = this.props, oldProps = this._GetPropChanges_lastValues, setLastValues = true) {
-		let oldAndNewKeys = RemoveDuplicates(Object.keys(newProps).concat(Object.keys(oldProps)));
-		let changedKeys = oldAndNewKeys.filter(key=>!Object.is(newProps[key], oldProps[key]));
-
-		let result = [] as {key: string, oldVal: any, newVal: any}[];
-		for (let key of changedKeys) {
-			result.push({key, oldVal: oldProps[key], newVal: newProps[key]});
-		}
+		let changes = GetPropChanges(oldProps, newProps);
 		if (setLastValues) this._GetPropChanges_lastValues = {...newProps as any};
-		return result;
+		return changes;
 	}
 	//private GetStateChanges_lastValues = {};
 	_GetStateChanges_lastValues = {};
 	GetStateChanges(newState = this.state, oldState = this._GetStateChanges_lastValues, setLastValues = true) {
-		let oldAndNewKeys = RemoveDuplicates(Object.keys(newState).concat(Object.keys(oldState)));
-		let changedKeys = oldAndNewKeys.filter(key=>!Object.is(newState[key], oldState[key]));
-
-		let result = [] as {key: string, oldVal: any, newVal: any}[];
-		for (let key of changedKeys) {
-			result.push({key, oldVal: oldState[key], newVal: newState[key]});
-		}
+		let changes = GetPropChanges(oldState, newState);
 		if (setLastValues) this._GetStateChanges_lastValues = {...newState as any};
-		return result;
+		return changes;
 	}
 
 	//forceUpdate(_: ()=>"Do not call this. Call Update() instead.") {
@@ -318,7 +306,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 	}
 	
 	warnOfTransientObjectProps_options: WarnOfTransientObjectProps_Options = null;
-	lastPropChange_info = null as {oldProps: Props, newProps: Props};
+	lastPropChange_info = null as {oldProps: Props, newProps: Props, changes: PropChange[]};
 	ComponentWillReceiveProps(newProps: any[]): void {};
 	@Sealed UNSAFE_componentWillReceiveProps(newProps) {
 		if (this.autoRemoveChangeListeners) {
@@ -348,7 +336,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		this.ComponentWillReceiveProps(newProps);
 		this.ComponentWillMountOrReceiveProps(newProps, false);
 		this.lastRender_source = RenderSource.PropChange;
-		this.lastPropChange_info = {oldProps: this.props, newProps};
+		this.lastPropChange_info = {oldProps: this.props, newProps, changes: GetPropChanges(this.props, newProps)};
 	}
 	ComponentDidUpdate(...args: any[]): void {};
 	@Sealed componentDidUpdate(...args) {

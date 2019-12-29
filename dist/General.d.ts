@@ -1,6 +1,5 @@
 import React, { Ref } from "react";
 import { Component } from "react";
-export declare function RemoveDuplicates(items: any): any[];
 export declare function GetDOM(comp: Component<any, any>): Element;
 export declare function FindReact(dom: any, traverseUp?: number): any;
 export declare function GetInnerComp(wrapperComp: React.Component<any, any>): any;

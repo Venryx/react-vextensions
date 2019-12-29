@@ -5,16 +5,6 @@ import {BaseComponent} from "./BaseComponent";
 import classNames from "classnames";
 import {E, AsMultiline, WrapWithGo} from "./Internals/FromJSVE";
 
-export function RemoveDuplicates(items: any) {
-	var result = [];
-	for (let item of items) {
-		if (result.indexOf(item) == -1) {
-			result.push(item);
-		}
-	}
-	return result;
-}
-
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");
 
 export function GetDOM(comp: Component<any, any>) {
