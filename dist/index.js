@@ -941,6 +941,7 @@ exports.BasicStyles = BasicStyles;
 exports.ApplyBasicStyles = ApplyBasicStyles;
 exports.ShallowEquals = ShallowEquals;
 exports.ShallowChanged = ShallowChanged;
+exports.RunWhenReadyForGlobalElements = RunWhenReadyForGlobalElements;
 exports.AddGlobalElement = AddGlobalElement;
 exports.AddGlobalStyle = AddGlobalStyle;
 exports.HasSealedProps = HasSealedProps;
@@ -1161,16 +1162,33 @@ function ShallowChanged(objA, objB, options) {
     return !ShallowEquals(objA, objB, options && options.propsToIgnore ? { propsToIgnore: options.propsToIgnore } : null);
 }
 //require("./GlobalStyles");
-var loaded = false;
+//let loaded = false;
 var globalElementHolder = void 0;
+//export const onReadyForGlobalElementsListeners = [] as (() => any)[];
+/*export function OnWindowLoaded() {
+    onReadyForGlobalElementsListeners.forEach(a => a());
+}
+//window.addEventListener("load", OnWindowLoaded);
+if (document.readyState == "loading") {
+    document.addEventListener("DOMContentLoaded", OnWindowLoaded);
+} else {
+    OnWindowLoaded();
+}*/
+function RunWhenReadyForGlobalElements(listener) {
+    if (document.readyState == "loading") {
+        //window.addEventListener("load", listener);
+        document.addEventListener("DOMContentLoaded", listener);
+    } else {
+        listener();
+    }
+}
 function AddGlobalElement(html) {
     var asMultiline = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
     if (asMultiline) {
         html = (0, _FromJSVE.AsMultiline)(html, 0);
     }
-    var proceed = function proceed() {
-        loaded = true;
+    RunWhenReadyForGlobalElements(function () {
         if (globalElementHolder == null) {
             globalElementHolder = document.querySelector("#hidden_early");
             if (globalElementHolder == null) {
@@ -1186,12 +1204,7 @@ function AddGlobalElement(html) {
         var element = document.createElement(nodeType);
         globalElementHolder.appendChild(element);
         element.outerHTML = html;
-    };
-    if (loaded) {
-        proceed();
-    } else {
-        window.addEventListener("load", proceed);
-    }
+    });
 }
 ;
 function AddGlobalStyle(str) {

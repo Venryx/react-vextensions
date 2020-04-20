@@ -12,7 +12,7 @@ export function GetDOM(comp: Component<any, any>) {
 	return ReactDOM.findDOMNode(comp) as Element;
 }
 export function FindReact(dom, traverseUp = 0) {
-	const key = Object.keys(dom).find(key=>key.startsWith("__reactInternalInstance$"));
+	const key = Object.keys(dom).find(key => key.startsWith("__reactInternalInstance$"));
 	const domFiber = dom[key];
 	if (domFiber == null) return null;
 
@@ -26,7 +26,7 @@ export function FindReact(dom, traverseUp = 0) {
 	}
 
 	// react 16+
-	const GetCompFiber = fiber=>{
+	const GetCompFiber = fiber => {
 		//return fiber._debugOwner; // this also works, but is __DEV__ only
 		let parentFiber = fiber.return;
 		while (typeof parentFiber.type == "string") {
@@ -51,7 +51,7 @@ export function GetInnerComp(wrapperComp: React.Component<any, any>) {
 
 export type numberOrSuch = number | string;
 export interface BaseProps {
-	m?: numberOrSuch; ml?: numberOrSuch; mr?: numberOrSuch; mt?: numberOrSuch; mb? : numberOrSuch;
+	m?: numberOrSuch; ml?: numberOrSuch; mr?: numberOrSuch; mt?: numberOrSuch; mb?: numberOrSuch;
 	mlr?: numberOrSuch | "margin left-right"; mtb?: numberOrSuch | "margin top-bottom";
 	p?: numberOrSuch; pl?: numberOrSuch; pr?: numberOrSuch; pt?: numberOrSuch; pb?: numberOrSuch;
 	plr?: numberOrSuch | "padding left-right"; ptb?: numberOrSuch | "padding top-bottom";
@@ -108,7 +108,7 @@ export function BasicStyles(props) {
 }
 export function ApplyBasicStyles(target: React.ComponentClass<any>) {
 	let oldRender = target.prototype.render;
-	target.prototype.render = function() {
+	target.prototype.render = function () {
 		let props = this.props;
 		// unfreeze props
 		/* if (Object.isFrozen(props)) this.props = E(props);
@@ -126,7 +126,7 @@ export function ApplyBasicStyles(target: React.ComponentClass<any>) {
 		}
 		result.props.style = E(result.props.style, BasicStyles(props));
 		RemoveBasePropKeys(result.props);
-		
+
 		return result;
 	}
 }
@@ -184,15 +184,34 @@ export function ShallowChanged(objA, objB, options?: {propsToIgnore?: string[], 
 
 //require("./GlobalStyles");
 
-let loaded = false;
+//let loaded = false;
 let globalElementHolder: HTMLDivElement;
+
+//export const onReadyForGlobalElementsListeners = [] as (() => any)[];
+/*export function OnWindowLoaded() {
+	onReadyForGlobalElementsListeners.forEach(a => a());
+}
+//window.addEventListener("load", OnWindowLoaded);
+if (document.readyState == "loading") {
+	document.addEventListener("DOMContentLoaded", OnWindowLoaded);
+} else {
+	OnWindowLoaded();
+}*/
+
+export function RunWhenReadyForGlobalElements(listener: ()=>any) {
+	if (document.readyState == "loading") {
+		//window.addEventListener("load", listener);
+		document.addEventListener("DOMContentLoaded", listener);
+	} else {
+		listener();
+	}
+}
+
 export function AddGlobalElement(html: string, asMultiline = true) {
 	if (asMultiline) {
 		html = AsMultiline(html, 0);
 	}
-	let proceed = ()=> {
-		loaded = true;
-
+	RunWhenReadyForGlobalElements(()=> {
 		if (globalElementHolder == null) {
 			globalElementHolder = document.querySelector("#hidden_early");
 			if (globalElementHolder == null) {
@@ -209,12 +228,7 @@ export function AddGlobalElement(html: string, asMultiline = true) {
 		let element = document.createElement(nodeType);
 		globalElementHolder.appendChild(element);
 		element.outerHTML = html;
-	};
-	if (loaded) {
-		proceed();
-	} else {
-		window.addEventListener("load", proceed);
-	}
+	});
 };
 export function AddGlobalStyle(str: string, asMultiline = true) {
 	if (asMultiline) {
@@ -252,7 +266,7 @@ export function AddGlobalStyle(str: string, asMultiline = true) {
 }*/
 
 /** As an alternative to adding this decorator to your class, consider just adding the line "EnsureSealedPropsArentOverriden(this, MyClass);" into its constructor. */
-export function HasSealedProps(target: new(..._)=>any) {
+export function HasSealedProps(target: new (..._) => any) {
 	/*let oldConstructor = target.constructor;
 	target.constructor = function() {
 		for (let key in target["prototype"]) {
@@ -278,7 +292,7 @@ export function HasSealedProps(target: new(..._)=>any) {
 	}
 	WrapperClass.prototype = target.prototype;
 	return WrapperClass as any;*/
-	  
+
 	return (class WrapperClass extends target {
 		constructor(...args) {
 			super(...args);
@@ -286,14 +300,14 @@ export function HasSealedProps(target: new(..._)=>any) {
 		}
 	}) as any;
 }
-export function EnsureSealedPropsArentOverriden(compInstance: any, classWherePropsSealed: new(..._)=>any, fixNote?: (methodName: string)=>string, allowMobXOverriding = false) {
+export function EnsureSealedPropsArentOverriden(compInstance: any, classWherePropsSealed: new (..._) => any, fixNote?: (methodName: string) => string, allowMobXOverriding = false) {
 	for (let methodName of Object.getOwnPropertyNames(classWherePropsSealed.prototype)) {
 		//let method = classWherePropsSealed.prototype[key];
 		let method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, methodName).value;
 		if (method instanceof Function && method.sealed && compInstance[methodName] != method) {
 			if (allowMobXOverriding) {
 				let classProto = compInstance.constructor.prototype;
-				let mobxMixinsKey = Object.getOwnPropertySymbols(classProto).find(a=>a.toString() == "Symbol(patchMixins)");
+				let mobxMixinsKey = Object.getOwnPropertySymbols(classProto).find(a => a.toString() == "Symbol(patchMixins)");
 				let mobxMixins = classProto[mobxMixinsKey];
 				if (mobxMixins && mobxMixins[methodName] != null) continue;
 			}
@@ -322,18 +336,18 @@ export function FilterOutUnrecognizedProps(props: Object, elementType: string, a
 
 	// filter out any keys which don't exist in React's special-props or the tester
 	const filteredProps = {};
-	Object.keys(props).filter(propName=> 
-		 (propName in testerElement) || (propName.toLowerCase() in testerElement) || reactSpecialProps.indexOf(propName) != -1 || (allowDataProps && propName.startsWith("data-"))
-	).forEach(propName=>filteredProps[propName] = props[propName]);
+	Object.keys(props).filter(propName =>
+		(propName in testerElement) || (propName.toLowerCase() in testerElement) || reactSpecialProps.indexOf(propName) != -1 || (allowDataProps && propName.startsWith("data-"))
+	).forEach(propName => filteredProps[propName] = props[propName]);
 	return filteredProps;
 }
 
-export const RunWithRenderingBatched = WrapWithGo((func: Function)=>{
+export const RunWithRenderingBatched = WrapWithGo((func: Function) => {
 	ReactDOM.unstable_batchedUpdates(func as any);
 });
 
 export function CombineRefs(...refs: Ref<any>[]) {
-	return (comp: Component | Element)=> {
+	return (comp: Component | Element) => {
 		for (let ref of refs) {
 			if (typeof ref == "function") {
 				ref(comp);

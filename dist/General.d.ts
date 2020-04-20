@@ -54,6 +54,7 @@ export declare function ShallowChanged(objA: any, objB: any, options?: {
     propsToIgnore?: string[];
     propsToCompareMoreDeeply?: string[];
 }): boolean;
+export declare function RunWhenReadyForGlobalElements(listener: () => any): void;
 export declare function AddGlobalElement(html: string, asMultiline?: boolean): void;
 export declare function AddGlobalStyle(str: string, asMultiline?: boolean): void;
 /** As an alternative to adding this decorator to your class, consider just adding the line "EnsureSealedPropsArentOverriden(this, MyClass);" into its constructor. */
