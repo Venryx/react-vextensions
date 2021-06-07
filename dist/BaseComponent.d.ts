@@ -34,7 +34,7 @@ export declare class BaseComponent<Props = {}, State = {}, Stash = {}> extends C
     refs: any;
     readonly DOM: Element;
     readonly DOM_HTML: HTMLElement;
-    readonly FlattenedChildren: any[];
+    readonly FlattenedChildren: any;
     _GetPropChanges_lastValues: {};
     GetPropChanges(newProps?: Readonly<Props & BaseProps> & Readonly<{
         children?: React.ReactNode;
