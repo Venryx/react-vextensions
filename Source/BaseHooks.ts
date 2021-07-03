@@ -33,8 +33,8 @@ export function Wrap<Func>(options: Partial<WrapOptions>, renderFunc: Func): Fun
 export function Wrap(...args) {
 	let options: WrapOptions, renderFunc: Function;
 	if (args.length == 1) [renderFunc] = args;
-	if (args.length == 2) [options, renderFunc] = args;
-	options = E(new WrapOptions(), options);
+	else /*if (args.length == 2)*/ [options, renderFunc] = args;
+	options = E(new WrapOptions(), options!);
 
 	let result = function() {
 		inRenderFunc = true;

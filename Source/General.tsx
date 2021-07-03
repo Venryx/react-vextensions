@@ -12,8 +12,8 @@ export function GetDOM(comp: Component<any, any>) {
 	return ReactDOM.findDOMNode(comp) as Element;
 }
 export function FindReact(dom, traverseUp = 0) {
-	const key = Object.keys(dom).find(key => key.startsWith("__reactInternalInstance$"));
-	const domFiber = dom[key];
+	const key = Object.keys(dom).find(key=>key.startsWith("__reactInternalInstance$"));
+	const domFiber = dom[key!];
 	if (domFiber == null) return null;
 
 	// react <16
@@ -140,7 +140,7 @@ export function ApplyBasicStyles(target: React.ComponentClass<any>) {
 	}
 }*/
 
-export function ShallowEquals(objA, objB, options?: {propsToIgnore?: string[]}) {
+export function ShallowEquals(objA, objB, options?: {propsToIgnore?: string[]}|null) {
 	if (objA === objB) return true;
 
 	const keysA = Object.keys(objA || {});
@@ -179,7 +179,7 @@ export function ShallowChanged(objA, objB, options?: {propsToIgnore?: string[], 
 		}
 		return false;
 	}
-	return !ShallowEquals(objA, objB, options && options.propsToIgnore ? {propsToIgnore: options.propsToIgnore} : null);
+	return !ShallowEquals(objA, objB, options?.propsToIgnore ? {propsToIgnore: options.propsToIgnore} : null);
 }
 
 //require("./GlobalStyles");
@@ -212,19 +212,19 @@ export function AddGlobalElement(html: string, asMultiline = true) {
 		html = AsMultiline(html, 0);
 	}
 	RunWhenReadyForGlobalElements(()=> {
-		if (globalElementHolder == null) {
-			globalElementHolder = document.querySelector("#hidden_early");
-			if (globalElementHolder == null) {
-				globalElementHolder = document.createElement("div");
-				globalElementHolder.id = "hidden_early";
-				Object.assign(globalElementHolder.style, {position: "absolute", left: -1000, top: -1000, width: 1000, height: 1000, overflow: "hidden"});
-				document.body.prepend(globalElementHolder);
-			}
-		}
+		globalElementHolder = globalElementHolder ?? document.querySelector("#hidden_early") ?? (()=>{
+			const newHolder = document.createElement("div");
+			newHolder.id = "hidden_early";
+			Object.assign(newHolder.style, {position: "absolute", left: -1000, top: -1000, width: 1000, height: 1000, overflow: "hidden"});
+			document.body.prepend(newHolder);
+			return newHolder;
+		})();
 
 		//let nodeType = html.trim().substring(1, html.trim().IndexOfAny(" ", ">"));
 		//let nodeType = html.match(`<([a-zA-Z-]+)`)[1];
-		let nodeType = html.match(`<([^ >]+)`)[1];
+		const match = html.match(`<([^ >]+)`);
+		if (match == null) throw new Error(`Invalid html: ${html}`);
+		let nodeType = match[1];
 		let element = document.createElement(nodeType);
 		globalElementHolder.appendChild(element);
 		element.outerHTML = html;
@@ -303,11 +303,12 @@ export function HasSealedProps(target: new (..._) => any) {
 export function EnsureSealedPropsArentOverriden(compInstance: any, classWherePropsSealed: new (..._) => any, fixNote?: (methodName: string) => string, allowMobXOverriding = false) {
 	for (let methodName of Object.getOwnPropertyNames(classWherePropsSealed.prototype)) {
 		//let method = classWherePropsSealed.prototype[key];
-		let method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, methodName).value;
+		let method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, methodName)!.value;
 		if (method instanceof Function && method.sealed && compInstance[methodName] != method) {
 			if (allowMobXOverriding) {
 				let classProto = compInstance.constructor.prototype;
-				let mobxMixinsKey = Object.getOwnPropertySymbols(classProto).find(a => a.toString() == "Symbol(patchMixins)");
+				let mobxMixinsKey = Object.getOwnPropertySymbols(classProto).find(a=>a.toString() == "Symbol(patchMixins)");
+				if (mobxMixinsKey == null) throw new Error(`Could not find mobx-mixins key on: ${compInstance.constructor.name}`);
 				let mobxMixins = classProto[mobxMixinsKey];
 				if (mobxMixins && mobxMixins[methodName] != null) continue;
 			}
@@ -352,7 +353,7 @@ export function CombineRefs(...refs: Ref<any>[]) {
 			if (typeof ref == "function") {
 				ref(comp);
 			} else {
-				ref["current" as any] = comp; // not sure if correct
+				ref!["current" as any] = comp; // not sure if correct
 			}
 		}
 	};

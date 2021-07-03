@@ -38,7 +38,7 @@ export enum RenderSource {
 //@HasSealedProps // instead of using this decorator, we just include the "EnsureSealedPropsArentOverriden(this, BaseComponent);" line directly (to reduce nesting / depth of class-prototype chain)	
 export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
 	static constructorExtensionFunc: (instance: BaseComponent, props: any)=>void;
-	static componentCurrentlyRendering: BaseComponent<any>;
+	static componentCurrentlyRendering: BaseComponent<any>|null;
 
 	// debug info (statics are updated by all instances)
 	static renderCount = 0;
@@ -233,7 +233,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		Component.prototype.setState.call(this, newState, callback);
 	}
 
-	changeListeners = [];
+	changeListeners = [] as {host: any, func: Function}[];
 	AddChangeListeners(host, ...funcs) {
 		if (host == null) return; // maybe temp
 
@@ -305,8 +305,8 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		this.mounted = false;
 	}
 	
-	warnOfTransientObjectProps_options: WarnOfTransientObjectProps_Options = null;
-	lastPropChange_info = null as {oldProps: Props, newProps: Props, changes: PropChange[]};
+	warnOfTransientObjectProps_options: WarnOfTransientObjectProps_Options|undefined;
+	lastPropChange_info: {oldProps: Props, newProps: Props, changes: PropChange[]}|undefined;
 	ComponentWillReceiveProps(newProps: any[]): void {};
 	@Sealed UNSAFE_componentWillReceiveProps(newProps) {
 		if (this.autoRemoveChangeListeners) {
@@ -315,7 +315,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		
 		let warnOptions = this.warnOfTransientObjectProps_options || this.constructor["warnOfTransientObjectProps_options"] as WarnOfTransientObjectProps_Options;
 		if (window["DEV"] && warnOptions) {
-			for (let [key, value] of Object["entries"](newProps)) {
+			for (let [key, value] of Object.entries(newProps) as [string, any][]) {
 				if (warnOptions.ignoreProps && warnOptions.ignoreProps.indexOf(key) != -1) continue;
 				let isObject = value instanceof Object || (typeof value == "object" && value != null);
 				if (isObject && value != this.props[key] && value.memoized == null) {
@@ -430,7 +430,7 @@ export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>
 }*/
 
 // Note: We can't auto-apply the actual Connect decorator, because here can only be the *base* for the user-component, not *wrap* it (which is needed for the react-redux "Connected(Comp)" component)
-export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Stash>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State, initialStash: Stash = null) {
+export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Stash>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State, initialStash: Stash|null = null) {
 	//return class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
 	class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
 		constructor(props) {
@@ -446,7 +446,7 @@ export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Sta
 	return BaseComponentEnhanced as (new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>) & {renderCount: number, lastRenderTime: number}; // add class statics back in
 }
 
-export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props = {} as any, initialState: State = null, initialStash: Stash = null) {
+export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props = {} as any, initialState: State|null = null, initialStash: Stash|null = null) {
 	// return class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
 	class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
 		static defaultProps = defaultProps;

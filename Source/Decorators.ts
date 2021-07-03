@@ -2,8 +2,8 @@ import {E, Assert} from "./Internals/FromJSVE";
 import {ShallowChanged} from ".";
 
 export class SimpleShouldUpdate_Options {
-	propsToIgnore = null as string[];
-	stateToIgnore = null as string[];
+	propsToIgnore?: string[];
+	stateToIgnore?: string[];
 	useShouldUpdateProp = false;
 }
 export function SimpleShouldUpdate(target: Function);
@@ -35,7 +35,7 @@ export function SimpleShouldUpdate(...args) {
 }
 
 export class WarnOfTransientObjectProps_Options {
-	ignoreProps: string[] = null;
+	ignoreProps?: string[];
 	warnForNonFunctions = false;
 }
 export function WarnOfTransientObjectProps(target: Function);

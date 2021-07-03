@@ -12,7 +12,9 @@ export const pseudoStyleTypes = ["hover"] as PseudoStyleTypes[];
 export function ConvertStyleObjectToCSSString(styleObj) {
 	let str = ReactDOMServer.renderToString(React.createElement("div", {style: styleObj})) as string;
 	let styleStrMatch = str.match(/style="(.+?)" data-reactroot/);
-	if (styleStrMatch == null) return null;
+	if (styleStrMatch == null) {
+		throw new Error(`Failed to convert style-object to string: ${styleObj}`);
+	}
 	
 	let styleStr = styleStrMatch[1] + ";"; // add final semicolon; new versions of React leave it out for some reason
 	return styleStr;
@@ -43,7 +45,7 @@ export function ClassBasedStyle(style: CSSProperties, pseudoStyleType?: PseudoSt
 
 /** Searches styleComposite for pseudo-selectors (eg: ":hover"), and extracts each one into a class-based-style, then returns those class-names as a space-separated string. */
 export function ClassBasedStyles(styleComposite) {
-	let classNames = [];
+	let classNames = [] as string[];
 	for (let type of pseudoStyleTypes) {
 		if (styleComposite[`:${type}`]) {
 			classNames.push(ClassBasedStyle(styleComposite[`:${type}`], type))

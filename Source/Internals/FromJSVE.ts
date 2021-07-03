@@ -15,7 +15,7 @@ export function E<E1,E2,E3,E4,E5,E6,E7,E8,E9,E10,E11,E12,E13,E14,E15,E16,E17,E18
 export function ToJSON(obj) { return JSON.stringify(obj); }
 export function FromJSON(json) { return JSON.parse(json); }
 
-export function AsMultiline(str: string, desiredIndent: number = null) {
+export function AsMultiline(str: string, desiredIndent?: number) {
 	let result = str.substring(str.indexOf("\n") + 1, str.lastIndexOf("\n"));
 	if (desiredIndent != null) {
 		let firstLineIndent = (result.match(/^\t+/) || [""])[0].length;
@@ -29,26 +29,29 @@ export function AsMultiline(str: string, desiredIndent: number = null) {
 	return result;
 };
 
-export function Assert(condition, messageOrMessageFunc?: string | Function): condition is true {
-	if (condition) return;
+export function Assert(condition, messageOrMessageFunc?: string | Function | null, triggerDebugger = true): asserts condition {
+	if (condition) return undefined as any;
 
 	var message = (messageOrMessageFunc as any) instanceof Function ? (messageOrMessageFunc as any)() : messageOrMessageFunc;
 
 	//JSVE.logFunc(`Assert failed) ${message}\n\nStackTrace) ${GetStackTraceStr()}`);
-	console.error("Assert failed) " + message);
+	//console.error("Assert failed) " + message);
 
-	let skipError = false; // add flag which you can use to skip the error, when paused in debugger
-	debugger;
-	if (!skipError) throw new Error("Assert failed) " + message);
+	const skipError = false; // add flag which you can use to skip the error, when paused in debugger
+	if (triggerDebugger) {
+		debugger;
+	}
+	if (!skipError) throw new Error(`Assert failed) ${message}`);
+	return undefined as any;
 }
 
-/* export function Excluding(obj, ...propNames) {
+/*export function Excluding(obj, ...propNames) {
 	var result = E(obj);
 	for (let propName of propNames) {
 		 delete result[propName];
 	}
 	return result;
-} */
+}*/
 
 export type GetFirstParamType<T> = T extends (val: infer Arg1Type)=>any ? Arg1Type : never;
 export function WrapWithGo<Func extends(val)=>any>(func: Func): Func & {Go: GetFirstParamType<Func>} {
@@ -59,15 +62,19 @@ export function WrapWithGo<Func extends(val)=>any>(func: Func): Func & {Go: GetF
 }
 
 export type PropChange = {key: string, oldVal: any, newVal: any};
-export function GetPropChanges(oldObj, newObj, returnNullIfSame = false, useJSONCompare = false): PropChange[] {
+// START: type-helper variants
+export function GetPropChanges(oldObj, newObj): PropChange[];
+export function GetPropChanges(oldObj, newObj, returnNullIfSame: false, useJSONCompare?: boolean): PropChange[];
+// END
+export function GetPropChanges(oldObj, newObj, returnNullIfSame?: boolean, useJSONCompare?: boolean): PropChange[]|null;
+export function GetPropChanges(oldObj, newObj, returnNullIfSame = false, useJSONCompare = false): PropChange[]|null {
 	oldObj = oldObj || {}, newObj = newObj || {};
-	let keys = RemoveDuplicates(Object.keys(oldObj).concat(Object.keys(newObj)));
-	let result = [];
-	for (let key of keys) {
-		let newVal_forComparison = useJSONCompare ? ToJSON(newObj[key]) : newObj[key];
-		let oldVal_forComparison = useJSONCompare ? ToJSON(oldObj[key]) : oldObj[key];
-		//if (newVal_forComparison !== oldVal_forComparison) {
-		if (!Object.is(newVal_forComparison, oldVal_forComparison)) {
+	const keys = RemoveDuplicates(Object.keys(oldObj).concat(Object.keys(newObj)));
+	const result: PropChange[] = [];
+	for (const key of keys) {
+		const newVal_forComparison = useJSONCompare ? ToJSON(newObj[key]) : newObj[key];
+		const oldVal_forComparison = useJSONCompare ? ToJSON(oldObj[key]) : oldObj[key];
+		if (newVal_forComparison !== oldVal_forComparison) {
 			result.push({key, oldVal: oldObj[key], newVal: newObj[key]});
 		}
 	}
