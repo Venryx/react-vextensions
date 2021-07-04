@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { BaseProps } from "./General";
 import { WarnOfTransientObjectProps_Options } from "./Decorators";
 import { PropChange } from "./Internals/FromJSVE";
+import { n } from "./Internals/@Types.js";
 export declare function EnsureClassProtoRenderFunctionIsWrapped(classProto: any): void;
 export declare enum RenderSource {
     Mount = 0,
