@@ -11,7 +11,7 @@ export declare enum RenderSource {
 }
 export declare class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
     static constructorExtensionFunc: (instance: BaseComponent, props: any) => void;
-    static componentCurrentlyRendering: BaseComponent<any> | null;
+    static componentCurrentlyRendering: BaseComponent<any> | n;
     static renderCount: number;
     static lastRenderTime: number;
     renderCount: number;
@@ -46,7 +46,7 @@ export declare class BaseComponent<Props = {}, State = {}, Stash = {}> extends C
     /** Shortcut for "()=>(this.forceUpdate(), this.ComponentWillMountOrReceiveProps(props))". */
     UpdateAndReceive(props: any): () => void;
     setState(): "Do not call this. Call SetState() instead.";
-    SetState(newState: Partial<State>, callback?: () => any, cancelIfStateSame?: boolean, jsonCompare?: boolean): never[] | undefined;
+    SetState(newState: Partial<State>, callback?: (() => any) | n, cancelIfStateSame?: boolean, jsonCompare?: boolean): never[] | undefined;
     changeListeners: {
         host: any;
         func: Function;
@@ -85,11 +85,11 @@ export declare class BaseComponent<Props = {}, State = {}, Stash = {}> extends C
     PreRender(): void;
     PostRender(source?: RenderSource): void;
 }
-export declare function BaseComponentWithConnector<PassedProps, ConnectProps, State, Stash>(connector: (state?: any, props?: PassedProps) => ConnectProps, initialState: State, initialStash?: Stash | null): (new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State>) & {
+export declare function BaseComponentWithConnector<PassedProps, ConnectProps, State, Stash>(connector: (state?: any, props?: PassedProps) => ConnectProps, initialState: State, initialStash?: Stash | n): (new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State>) & {
     renderCount: number;
     lastRenderTime: number;
 };
-export declare function BaseComponentPlus<Props, State, Stash>(defaultProps?: Props, initialState?: State | null, initialStash?: Stash | null): (new (..._: any[]) => BaseComponent<Props, State, Stash>) & {
+export declare function BaseComponentPlus<Props, State, Stash>(defaultProps?: Props, initialState?: State | n, initialStash?: Stash | n): (new (..._: any[]) => BaseComponent<Props, State, Stash>) & {
     renderCount: number;
     lastRenderTime: number;
 };

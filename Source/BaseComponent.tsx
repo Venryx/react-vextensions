@@ -38,7 +38,7 @@ export enum RenderSource {
 //@HasSealedProps // instead of using this decorator, we just include the "EnsureSealedPropsArentOverriden(this, BaseComponent);" line directly (to reduce nesting / depth of class-prototype chain)	
 export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
 	static constructorExtensionFunc: (instance: BaseComponent, props: any)=>void;
-	static componentCurrentlyRendering: BaseComponent<any>|null;
+	static componentCurrentlyRendering: BaseComponent<any>|n;
 
 	// debug info (statics are updated by all instances)
 	static renderCount = 0;
@@ -197,7 +197,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		throw new Error("Do not call this. Call SetState() instead.");
 	}*/
 	setState(): "Do not call this. Call SetState() instead." { return null as any; }
-	SetState(newState: Partial<State>, callback?: ()=>any, cancelIfStateSame = true, jsonCompare = false) {
+	SetState(newState: Partial<State>, callback?: (()=>any)|n, cancelIfStateSame = true, jsonCompare = false) {
 		if (cancelIfStateSame) {
 			if (jsonCompare) {
 				// we only care about new-state's keys -- setState() leaves unmentioned keys untouched
@@ -430,7 +430,7 @@ export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>
 }*/
 
 // Note: We can't auto-apply the actual Connect decorator, because here can only be the *base* for the user-component, not *wrap* it (which is needed for the react-redux "Connected(Comp)" component)
-export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Stash>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State, initialStash: Stash|null = null) {
+export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Stash>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State, initialStash: Stash|n = null) {
 	//return class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
 	class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
 		constructor(props) {
@@ -446,7 +446,7 @@ export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Sta
 	return BaseComponentEnhanced as (new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>) & {renderCount: number, lastRenderTime: number}; // add class statics back in
 }
 
-export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props = {} as any, initialState: State|null = null, initialStash: Stash|null = null) {
+export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props = {} as any, initialState: State|n = null, initialStash: Stash|n = null) {
 	// return class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
 	class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
 		static defaultProps = defaultProps;

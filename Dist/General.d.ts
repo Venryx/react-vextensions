@@ -1,8 +1,8 @@
 import React, { Ref } from "react";
 import { Component } from "react";
-export declare function GetDOM(comp: Component<any, any>): Element | null;
+export declare function GetDOM(comp: Component<any, any> | n): Element | null;
 export declare function FindReact(dom: any, traverseUp?: number): any;
-export declare function GetInnerComp(wrapperComp: React.Component<any, any>): any;
+export declare function GetInnerComp(wrapperComp: React.Component<any, any> | n): any;
 export declare type numberOrSuch = number | string;
 export interface BaseProps {
     m?: numberOrSuch;
@@ -49,7 +49,7 @@ export declare function BasicStyles(props: any): any;
 export declare function ApplyBasicStyles(target: React.ComponentClass<any>): void;
 export declare function ShallowEquals(objA: any, objB: any, options?: {
     propsToIgnore?: string[];
-} | null): boolean;
+} | n): boolean;
 export declare function ShallowChanged(objA: any, objB: any, options?: {
     propsToIgnore?: string[];
     propsToCompareMoreDeeply?: string[];

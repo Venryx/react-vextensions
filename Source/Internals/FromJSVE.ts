@@ -66,8 +66,8 @@ export type PropChange = {key: string, oldVal: any, newVal: any};
 export function GetPropChanges(oldObj, newObj): PropChange[];
 export function GetPropChanges(oldObj, newObj, returnNullIfSame: false, useJSONCompare?: boolean): PropChange[];
 // END
-export function GetPropChanges(oldObj, newObj, returnNullIfSame?: boolean, useJSONCompare?: boolean): PropChange[]|null;
-export function GetPropChanges(oldObj, newObj, returnNullIfSame = false, useJSONCompare = false): PropChange[]|null {
+export function GetPropChanges(oldObj, newObj, returnNullIfSame?: boolean, useJSONCompare?: boolean): PropChange[]|n;
+export function GetPropChanges(oldObj, newObj, returnNullIfSame = false, useJSONCompare = false): PropChange[]|n {
 	oldObj = oldObj || {}, newObj = newObj || {};
 	const keys = RemoveDuplicates(Object.keys(oldObj).concat(Object.keys(newObj)));
 	const result: PropChange[] = [];

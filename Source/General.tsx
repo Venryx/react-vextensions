@@ -7,7 +7,7 @@ import {E, AsMultiline, WrapWithGo} from "./Internals/FromJSVE";
 
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");
 
-export function GetDOM(comp: Component<any, any>) {
+export function GetDOM(comp: Component<any, any>|n) {
 	if (comp == null || comp["mounted"] === false) return null; // mounted is a prop on BaseComponents
 	return ReactDOM.findDOMNode(comp) as Element;
 }
@@ -41,7 +41,7 @@ export function FindReact(dom, traverseUp = 0) {
 	return compFiber.stateNode;
 }
 // needed for wrapper-components that don't provide way of accessing inner-component
-export function GetInnerComp(wrapperComp: React.Component<any, any>) {
+export function GetInnerComp(wrapperComp: React.Component<any, any>|n) {
 	// in old react-redux versions, if you use `connect([...], {withRef: true})`, a function will be available at wrapper.getWrappedInstance(); use that if available
 	if (wrapperComp && wrapperComp["getWrappedInstance"]) return wrapperComp["getWrappedInstance"]();
 	const dom = GetDOM(wrapperComp);
@@ -140,7 +140,7 @@ export function ApplyBasicStyles(target: React.ComponentClass<any>) {
 	}
 }*/
 
-export function ShallowEquals(objA, objB, options?: {propsToIgnore?: string[]}|null) {
+export function ShallowEquals(objA, objB, options?: {propsToIgnore?: string[]}|n) {
 	if (objA === objB) return true;
 
 	const keysA = Object.keys(objA || {});
