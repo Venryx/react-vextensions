@@ -8,7 +8,10 @@ export function GetDOM(comp) {
     return ReactDOM.findDOMNode(comp);
 }
 export function FindReact(dom, traverseUp = 0) {
-    const key = Object.keys(dom).find(key => key.startsWith("__reactInternalInstance$"));
+    const key = Object.keys(dom).find(key => {
+        return key.startsWith("__reactFiber$") // react 17+
+            || key.startsWith("__reactInternalInstance$"); // react <17
+    });
     const domFiber = dom[key];
     if (domFiber == null)
         return null;

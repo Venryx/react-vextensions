@@ -11,8 +11,12 @@ export function GetDOM(comp: Component<any, any>|n) {
 	if (comp == null || comp["mounted"] === false) return null; // mounted is a prop on BaseComponents
 	return ReactDOM.findDOMNode(comp) as Element;
 }
+
 export function FindReact(dom, traverseUp = 0) {
-	const key = Object.keys(dom).find(key=>key.startsWith("__reactInternalInstance$"));
+	const key = Object.keys(dom).find(key=>{
+		return key.startsWith("__reactFiber$") // react 17+
+			|| key.startsWith("__reactInternalInstance$"); // react <17
+	});
 	const domFiber = dom[key!];
 	if (domFiber == null) return null;
 
@@ -40,6 +44,7 @@ export function FindReact(dom, traverseUp = 0) {
 	}
 	return compFiber.stateNode;
 }
+
 // needed for wrapper-components that don't provide way of accessing inner-component
 export function GetInnerComp(wrapperComp: React.Component<any, any>|n) {
 	// in old react-redux versions, if you use `connect([...], {withRef: true})`, a function will be available at wrapper.getWrappedInstance(); use that if available
