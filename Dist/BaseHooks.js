@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { useCallback } from "react";
-import { E } from "./Internals/FromJSVE";
+import { E } from "./Internals/FromJSVE.js";
 // wrapper for function-components
 // ==========
 export class WrapOptions {

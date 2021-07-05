@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { BaseProps, GetDOM, HasSealedProps, Sealed, EnsureSealedPropsArentOverriden, ShallowEquals } from "./General";
-import {WarnOfTransientObjectProps_Options} from "./Decorators";
-import {E, ToJSON, Assert, GetPropChanges, PropChange} from "./Internals/FromJSVE";
+import { BaseProps, GetDOM, HasSealedProps, Sealed, EnsureSealedPropsArentOverriden, ShallowEquals } from "./General.js";
+import {WarnOfTransientObjectProps_Options} from "./Decorators.js";
+import {E, ToJSON, Assert, GetPropChanges, PropChange} from "./Internals/FromJSVE.js";
 import {n} from "./Internals/@Types.js";
 
 // projects using mobx need this, so they can use a custom decorator to apply our "Comp.render" patch prior to mobx-react's patch (mobx-react's needs to be last/outermost)

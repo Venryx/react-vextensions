@@ -1,8 +1,8 @@
 import { CSSProperties } from "react";
-import { AddGlobalStyle } from "./General";
+import { AddGlobalStyle } from "./General.js";
 import ReactDOMServer from "react-dom/server";
 import React from "react";
-import {ToJSON} from "./Internals/FromJSVE";
+import {ToJSON} from "./Internals/FromJSVE.js";
 
 let classBasedStyleKeys = {};
 

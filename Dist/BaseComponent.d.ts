@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { BaseProps } from "./General";
-import { WarnOfTransientObjectProps_Options } from "./Decorators";
-import { PropChange } from "./Internals/FromJSVE";
+import { BaseProps } from "./General.js";
+import { WarnOfTransientObjectProps_Options } from "./Decorators.js";
+import { PropChange } from "./Internals/FromJSVE.js";
 import { n } from "./Internals/@Types.js";
 export declare function EnsureClassProtoRenderFunctionIsWrapped(classProto: any): void;
 export declare enum RenderSource {

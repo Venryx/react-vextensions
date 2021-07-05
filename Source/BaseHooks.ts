@@ -1,6 +1,6 @@
 import React, {ForwardRefExoticComponent, RefAttributes, Dispatch, SetStateAction, forwardRef, Ref, DependencyList} from "react";
 import {useCallback} from "react";
-import {E} from "./Internals/FromJSVE";
+import {E} from "./Internals/FromJSVE.js";
 
 // BaseHooks.ts is the replacement for BaseComponent.ts, made up of "hooks" for React "function classes" (rather than being the base-class for user components)
 

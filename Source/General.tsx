@@ -1,9 +1,8 @@
 import React, {Ref} from "react";
 import {Component} from "react";
 import ReactDOM from "react-dom";
-import {BaseComponent} from "./BaseComponent";
 import classNames from "classnames";
-import {E, AsMultiline, WrapWithGo} from "./Internals/FromJSVE";
+import {E, AsMultiline, WrapWithGo} from "./Internals/FromJSVE.js";
 import {n} from "./Internals/@Types.js";
 
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");

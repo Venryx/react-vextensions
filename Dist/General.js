@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import classNames from "classnames";
-import { E, AsMultiline, WrapWithGo } from "./Internals/FromJSVE";
+import { E, AsMultiline, WrapWithGo } from "./Internals/FromJSVE.js";
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");
 export function GetDOM(comp) {
     if (comp == null || comp["mounted"] === false)

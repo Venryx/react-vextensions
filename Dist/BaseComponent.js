@@ -5,8 +5,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import React, { Component } from "react";
-import { GetDOM, Sealed, EnsureSealedPropsArentOverriden } from "./General";
-import { E, ToJSON, Assert, GetPropChanges } from "./Internals/FromJSVE";
+import { GetDOM, Sealed, EnsureSealedPropsArentOverriden } from "./General.js";
+import { E, ToJSON, Assert, GetPropChanges } from "./Internals/FromJSVE.js";
 // projects using mobx need this, so they can use a custom decorator to apply our "Comp.render" patch prior to mobx-react's patch (mobx-react's needs to be last/outermost)
 export function EnsureClassProtoRenderFunctionIsWrapped(classProto) {
     // wrap the derived-class' render function, to include some extra code
