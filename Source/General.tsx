@@ -204,6 +204,9 @@ if (document.readyState == "loading") {
 }*/
 
 export function RunWhenReadyForGlobalElements(listener: ()=>any) {
+	// if running in NodeJS, quick-return
+	if (typeof document == "undefined") return;
+
 	if (document.readyState == "loading") {
 		//window.addEventListener("load", listener);
 		document.addEventListener("DOMContentLoaded", listener);
