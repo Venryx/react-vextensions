@@ -57,7 +57,7 @@ export class BaseComponent extends Component {
         //initialState: Partial<State>;
         //state = {} as State; // redefined here, so we can set the initial-state to {} (instead of undefined)
         this.stash = {};
-        this.debug = {};
+        this.debug = { self: this };
         // helper for debugging
         //private GetPropChanges_lastValues = {};
         this._GetPropChanges_lastValues = {};

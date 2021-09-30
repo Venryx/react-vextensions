@@ -112,7 +112,7 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 		Object.assign(this.stash, newStashData);
 	}
 
-	debug = {} as any;
+	debug = {self: this} as any;
 	Debug(newDebugData: any, replaceData = false) {
 		if (replaceData) Object.keys(this.debug).forEach(key=> { delete this.debug[key]; });
 		Object.assign(this.debug, newDebugData);
