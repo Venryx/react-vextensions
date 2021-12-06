@@ -316,9 +316,11 @@ export function EnsureSealedPropsArentOverriden(compInstance: any, classWherePro
 			if (allowMobXOverriding) {
 				let classProto = compInstance.constructor.prototype;
 				let mobxMixinsKey = Object.getOwnPropertySymbols(classProto).find(a=>a.toString() == "Symbol(patchMixins)");
-				if (mobxMixinsKey == null) throw new Error(`Could not find mobx-mixins key on: ${compInstance.constructor.name}`);
-				let mobxMixins = classProto[mobxMixinsKey];
-				if (mobxMixins && mobxMixins[methodName] != null) continue;
+				// if mobx-mixings-key is present, and mixin is found for this method, then "continue" -- such that the method's differing does not trigger an error (this is normal, for mobx-react comps)
+				if (mobxMixinsKey != null) {
+					let mobxMixins = classProto[mobxMixinsKey];
+					if (mobxMixins && mobxMixins[methodName] != null) continue;
+				}
 			}
 
 			throw new Error(`Cannot override sealed method "${methodName}".${fixNote ? fixNote(methodName) : ""}`);
