@@ -29,12 +29,12 @@ export function cssHelper(compInstance, cloneInputsForHooks = true) {
     let keyCallIndex = 0;
     let liveKey;
     const key = (...classNames) => {
-        var _a, _b, _c, _d;
         let classNames_final = classNames;
         const callIndex = keyCallIndex++;
-        const keyHooks = []
-            .concat((_b = (_a = compClassHookSets.get(CompClass_Any)) === null || _a === void 0 ? void 0 : _a.key) !== null && _b !== void 0 ? _b : [])
-            .concat((_d = (_c = compClassHookSets.get(compClass)) === null || _c === void 0 ? void 0 : _c.key) !== null && _d !== void 0 ? _d : []);
+        const keyHooks = [];
+        for (const hookSet of GetHookSetsForCompClass(compClass)) {
+            keyHooks.push(...hookSet.key);
+        }
         if (cloneInputsForHooks && keyHooks.length)
             classNames_final = classNames_final.slice();
         for (const hook of keyHooks) {
@@ -51,7 +51,6 @@ export function cssHelper(compInstance, cloneInputsForHooks = true) {
     };
     let cssCallIndex = 0;
     const css = ((...args) => {
-        var _a, _b, _c, _d;
         let keyFromArg, styles;
         if (typeof args[0] == "string" && args[0].length > 0)
             [keyFromArg, ...styles] = args;
@@ -62,9 +61,10 @@ export function cssHelper(compInstance, cloneInputsForHooks = true) {
         if (liveKey != null && keyFromArg != null)
             console.warn("Live-key was set using key(...), but the subsequent css(...) call supplied its own key, discarding the live-key.");
         let styles_final = styles;
-        const cssHooks = []
-            .concat((_b = (_a = compClassHookSets.get(CompClass_Any)) === null || _a === void 0 ? void 0 : _a.css) !== null && _b !== void 0 ? _b : [])
-            .concat((_d = (_c = compClassHookSets.get(compClass)) === null || _c === void 0 ? void 0 : _c.css) !== null && _d !== void 0 ? _d : []);
+        const cssHooks = [];
+        for (const hookSet of GetHookSetsForCompClass(compClass)) {
+            cssHooks.push(...hookSet.css);
+        }
         if (cloneInputsForHooks && cssHooks.length)
             styles_final = styles_final.slice();
         for (const hook of cssHooks) {
@@ -89,6 +89,28 @@ export function cssHelper(compInstance, cloneInputsForHooks = true) {
 export class CompClass_Any extends Component {
 }
 export const compClassHookSets = new WeakMap();
+export const compClassHookSets_byName = new Map();
+export function GetCompClassHookSet(compClassOrName) {
+    if (typeof compClassOrName == "string") {
+        if (!compClassHookSets_byName.has(compClassOrName)) {
+            compClassHookSets_byName.set(compClassOrName, new CompClassHookSet());
+        }
+        return compClassHookSets_byName.get(compClassOrName);
+    }
+    else {
+        if (!compClassHookSets.has(compClassOrName)) {
+            compClassHookSets.set(compClassOrName, new CompClassHookSet());
+        }
+        return compClassHookSets.get(compClassOrName);
+    }
+}
+export function GetHookSetsForCompClass(compClass) {
+    var _a, _b, _c;
+    return []
+        .concat((_a = compClassHookSets.get(CompClass_Any)) !== null && _a !== void 0 ? _a : [])
+        .concat((_b = compClassHookSets.get(compClass)) !== null && _b !== void 0 ? _b : [])
+        .concat((_c = compClassHookSets_byName.get(compClass.name)) !== null && _c !== void 0 ? _c : []);
+}
 export class CompClassHookSet {
     constructor() {
         this.key = [];
@@ -105,11 +127,8 @@ export class CompClassHookSet {
  * })
  * ```
  */
-export function addHook_key(compClass, hook) {
-    if (!compClassHookSets.has(compClass)) {
-        compClassHookSets.set(compClass, new CompClassHookSet());
-    }
-    compClassHookSets.get(compClass).key.push(hook);
+export function addHook_key(compClassOrName, hook) {
+    GetCompClassHookSet(compClassOrName).key.push(hook);
 }
 export class KeyHook_Context {
     constructor(data) { Object.assign(this, data); }
@@ -124,11 +143,8 @@ export class KeyHook_Context {
  * })
  * ```
  */
-export function addHook_css(compClass, hook) {
-    if (!compClassHookSets.has(compClass)) {
-        compClassHookSets.set(compClass, new CompClassHookSet());
-    }
-    compClassHookSets.get(compClass).css.push(hook);
+export function addHook_css(compClassOrName, hook) {
+    GetCompClassHookSet(compClassOrName).css.push(hook);
 }
 export class CSSHook_Context {
     constructor(data) { Object.assign(this, data); }

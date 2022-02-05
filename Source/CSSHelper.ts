@@ -35,9 +35,10 @@ export function cssHelper(compInstance: React.ReactInstance, cloneInputsForHooks
 		let classNames_final = classNames;
 		const callIndex = keyCallIndex++;
 
-		const keyHooks = ([] as KeyHook[])
-			.concat(compClassHookSets.get(CompClass_Any)?.key ?? [])
-			.concat(compClassHookSets.get(compClass)?.key ?? []);
+		const keyHooks = [] as KeyHook[];
+		for (const hookSet of GetHookSetsForCompClass(compClass)) {
+			keyHooks.push(...hookSet.key);
+		}
 		if (cloneInputsForHooks && keyHooks.length) classNames_final = classNames_final.slice();
 		for (const hook of keyHooks) {
 			const ctx = new KeyHook_Context({
@@ -67,9 +68,10 @@ export function cssHelper(compInstance: React.ReactInstance, cloneInputsForHooks
 		if (liveKey != null && keyFromArg != null) console.warn("Live-key was set using key(...), but the subsequent css(...) call supplied its own key, discarding the live-key.");
 		let styles_final = styles;
 
-		const cssHooks = ([] as CSSHook[])
-			.concat(compClassHookSets.get(CompClass_Any)?.css ?? [])
-			.concat(compClassHookSets.get(compClass)?.css ?? []);
+		const cssHooks = [] as CSSHook[];
+		for (const hookSet of GetHookSetsForCompClass(compClass)) {
+			cssHooks.push(...hookSet.css);
+		}
 		if (cloneInputsForHooks && cssHooks.length) styles_final = styles_final.slice();
 		for (const hook of cssHooks) {
 			const ctx = new CSSHook_Context({
@@ -109,6 +111,26 @@ export type CompClass = new(..._)=>React.Component;
 /** Pass this into the addHook functions to have your hook run for any component-class. */
 export class CompClass_Any extends Component {}
 export const compClassHookSets = new WeakMap<CompClass, CompClassHookSet>();
+export const compClassHookSets_byName = new Map<string, CompClassHookSet>();
+export function GetCompClassHookSet(compClassOrName: CompClass | string) {
+	if (typeof compClassOrName == "string") {
+		if (!compClassHookSets_byName.has(compClassOrName)) {
+			compClassHookSets_byName.set(compClassOrName, new CompClassHookSet());
+		}
+		return compClassHookSets_byName.get(compClassOrName)!;
+	} else { 
+		if (!compClassHookSets.has(compClassOrName)) {
+			compClassHookSets.set(compClassOrName, new CompClassHookSet());
+		}
+		return compClassHookSets.get(compClassOrName)!;
+	}
+}
+export function GetHookSetsForCompClass(compClass: CompClass) {
+	return ([] as CompClassHookSet[])
+		.concat(compClassHookSets.get(CompClass_Any) ?? [])
+		.concat(compClassHookSets.get(compClass) ?? [])
+		.concat(compClassHookSets_byName.get(compClass.name) ?? []);
+}
 export class CompClassHookSet {
 	key: KeyHook[] = [];
 	css: CSSHook[] = [];
@@ -124,11 +146,8 @@ export class CompClassHookSet {
  * })
  * ```
  */
-export function addHook_key(compClass: CompClass, hook: KeyHook) {
-	if (!compClassHookSets.has(compClass)) {
-		compClassHookSets.set(compClass, new CompClassHookSet());
-	}
-	compClassHookSets.get(compClass)!.key.push(hook);
+export function addHook_key(compClassOrName: CompClass | string, hook: KeyHook) {
+	GetCompClassHookSet(compClassOrName).key.push(hook);
 }
 export type KeyHook = (ctx: KeyHook_Context)=>void;
 export class KeyHook_Context {
@@ -149,11 +168,8 @@ export class KeyHook_Context {
  * })
  * ```
  */
-export function addHook_css(compClass: CompClass, hook: CSSHook) {
-	if (!compClassHookSets.has(compClass)) {
-		compClassHookSets.set(compClass, new CompClassHookSet());
-	}
-	compClassHookSets.get(compClass)!.css.push(hook);
+export function addHook_css(compClassOrName: CompClass | string, hook: CSSHook) {
+	GetCompClassHookSet(compClassOrName).css.push(hook);
 }
 export type CSSHook = (ctx: CSSHook_Context)=>void;
 export class CSSHook_Context {

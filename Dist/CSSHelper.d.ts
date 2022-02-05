@@ -38,6 +38,9 @@ export declare type CompClass = new (..._: any[]) => React.Component;
 export declare class CompClass_Any extends Component {
 }
 export declare const compClassHookSets: WeakMap<CompClass, CompClassHookSet>;
+export declare const compClassHookSets_byName: Map<string, CompClassHookSet>;
+export declare function GetCompClassHookSet(compClassOrName: CompClass | string): CompClassHookSet;
+export declare function GetHookSetsForCompClass(compClass: CompClass): CompClassHookSet[];
 export declare class CompClassHookSet {
     key: KeyHook[];
     css: CSSHook[];
@@ -52,7 +55,7 @@ export declare class CompClassHookSet {
  * })
  * ```
  */
-export declare function addHook_key(compClass: CompClass, hook: KeyHook): void;
+export declare function addHook_key(compClassOrName: CompClass | string, hook: KeyHook): void;
 export declare type KeyHook = (ctx: KeyHook_Context) => void;
 export declare class KeyHook_Context {
     constructor(data?: Partial<KeyHook_Context>);
@@ -71,7 +74,7 @@ export declare class KeyHook_Context {
  * })
  * ```
  */
-export declare function addHook_css(compClass: CompClass, hook: CSSHook): void;
+export declare function addHook_css(compClassOrName: CompClass | string, hook: CSSHook): void;
 export declare type CSSHook = (ctx: CSSHook_Context) => void;
 export declare class CSSHook_Context {
     constructor(data?: Partial<CSSHook_Context>);
