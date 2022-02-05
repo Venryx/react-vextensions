@@ -2,7 +2,8 @@
 Todo items
 ==========
 1) Add system that hoists static style props into a css-class (in a <style> element). ("static" style props are those not wrapped in `dyn(...)`)
-2) Extract this system into a separate package. (at some point)
+2) Add full support for {..., ":hover": {...}} substructures. (atm, css() accepts that key, but the only thing able to apply it is the ClassBasedStyle() function)
+3) Extract this system into a separate package. (at some point)
 */
 
 import React, {Component} from "react";
@@ -93,7 +94,11 @@ export function cssHelper(compInstance: React.ReactInstance, cloneInputsForHooks
 }
 
 // Style is a "loosened" CSSProperties, which accepts "null" for any style-prop that accepts "undefined"
-export type Style = ConvertType_ConvertFields_UndefToUndefOrNull<React.CSSProperties>;
+export type Style = ConvertType_ConvertFields_UndefToUndefOrNull<React.CSSProperties>
+	& {
+		// pseudo-styles (currently applied through use of ClassBasedStyle() function)
+		":hover"?: Style
+	};
 export type ConvertType_ConvertFields_UndefToUndefOrNull<T extends object> = {
 	[K in keyof T]: ConvertType_UndefToUndefOrNull<T[K]>;
 }

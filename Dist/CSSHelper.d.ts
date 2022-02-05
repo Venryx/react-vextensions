@@ -25,7 +25,9 @@ export declare function cssHelper(compInstance: React.ReactInstance, cloneInputs
     };
     dyn: <T>(val: T) => T;
 };
-export declare type Style = ConvertType_ConvertFields_UndefToUndefOrNull<React.CSSProperties>;
+export declare type Style = ConvertType_ConvertFields_UndefToUndefOrNull<React.CSSProperties> & {
+    ":hover"?: Style;
+};
 export declare type ConvertType_ConvertFields_UndefToUndefOrNull<T extends object> = {
     [K in keyof T]: ConvertType_UndefToUndefOrNull<T[K]>;
 };
