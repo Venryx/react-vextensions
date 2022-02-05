@@ -1,0 +1,161 @@
+/*
+Todo items
+==========
+1) Add system that hoists static style props into a css-class (in a <style> element). ("static" style props are those not wrapped in `dyn(...)`)
+2) Extract this system into a separate package. (at some point)
+*/
+
+import React, {Component} from "react";
+
+/**
+ * Example usage:
+ * ```
+ * const {key, css, dyn} = cssHelper(this);
+ * return (
+ * 	<nav className={key("root", "clickThrough")} style={css({
+ * 		position: "absolute", zIndex: dyn(manager.zIndexes.subNavBar), top: 0, width: "100%", textAlign: "center",
+ * 	})}>
+ * 		<div className={key("sub1")} style={css(
+ * 			{display: "inline-block", background: "rgba(0,0,0,.7)", boxShadow: dyn(manager.colors.navBarBoxShadow.css())},
+ * 			dyn(fullWidth ? {width: "100%"} : {borderRadius: "0 0 10px 10px"}),
+ * 		)}>
+ * 			{children}
+ * 		</div>
+ * 	</nav>
+ * );
+ * ```
+ */
+export function cssHelper(compInstance: React.ReactInstance, cloneInputsForHooks = true) {
+	const compClass = compInstance.constructor as CompClass;
+
+	let keyCallIndex = 0;
+	let liveKey: string | null;
+	const key = (...classNames: any[])=>{
+		let classNames_final = classNames;
+		const callIndex = keyCallIndex++;
+
+		const keyHooks = ([] as KeyHook[])
+			.concat(compClassHookSets.get(CompClass_Any)?.key ?? [])
+			.concat(compClassHookSets.get(compClass)?.key ?? []);
+		if (cloneInputsForHooks && keyHooks.length) classNames_final = classNames_final.slice();
+		for (const hook of keyHooks) {
+			const ctx = new KeyHook_Context({
+				self: compInstance,
+				callIndex,
+				classNames_orig: classNames,
+				classNames: classNames_final,
+			});
+			hook(ctx);
+		}
+
+		liveKey = classNames_final[0];
+		return classNames_final.filter(a=>a).join(" ");
+	};
+
+	let cssCallIndex = 0;
+	const css = <{
+		(key: string, ...styles: StyleOrFalsy[]): React.CSSProperties;
+		(...styles: StyleOrFalsy[]): React.CSSProperties;
+	}>((...args)=>{
+		let keyFromArg: string|undefined, styles: StyleOrFalsy[];
+		if (typeof args[0] == "string" && args[0].length > 0) [keyFromArg, ...styles] = args;
+		else styles = args;
+		const callIndex = cssCallIndex++;
+
+		const key_final = keyFromArg ?? liveKey;
+		if (liveKey != null && keyFromArg != null) console.warn("Live-key was set using key(...), but the subsequent css(...) call supplied its own key, discarding the live-key.");
+		let styles_final = styles;
+
+		const cssHooks = ([] as CSSHook[])
+			.concat(compClassHookSets.get(CompClass_Any)?.css ?? [])
+			.concat(compClassHookSets.get(compClass)?.css ?? []);
+		if (cloneInputsForHooks && cssHooks.length) styles_final = styles_final.slice();
+		for (const hook of cssHooks) {
+			const ctx = new CSSHook_Context({
+				self: compInstance,
+				key: key_final,
+				callIndex,
+				styleArgs_orig: styles,
+				styleArgs: styles_final,
+			});
+			hook(ctx);
+		}
+
+		liveKey = null;
+		return Object.assign({}, ...styles_final) as React.CSSProperties;
+	});
+
+	const dyn = <T>(val: T)=>{
+		return val;
+	};
+
+	return {key, css, dyn};
+}
+
+// Style is a "loosened" CSSProperties, which accepts "null" for any style-prop that accepts "undefined"
+export type Style = ConvertType_ConvertFields_UndefToUndefOrNull<React.CSSProperties>;
+export type ConvertType_ConvertFields_UndefToUndefOrNull<T extends object> = {
+	[K in keyof T]: ConvertType_UndefToUndefOrNull<T[K]>;
+}
+export type ConvertType_UndefToUndefOrNull<T> = T extends undefined ? (undefined | null) : T;
+
+export type StyleOrFalsy = Style | "" | 0 | false | null | undefined;
+export type CompClass = new(..._)=>React.Component;
+/** Pass this into the addHook functions to have your hook run for any component-class. */
+export class CompClass_Any extends Component {}
+export const compClassHookSets = new WeakMap<CompClass, CompClassHookSet>();
+export class CompClassHookSet {
+	key: KeyHook[] = [];
+	css: CSSHook[] = [];
+}
+
+/**
+ * Example usage:
+ * ```
+ * addHook_key(CompFromLib, ctx=>{
+ * 	if (ctx.classNames[0] == "root") {
+ * 		ctx.classNames.push("selectable");
+ * 	}
+ * })
+ * ```
+ */
+export function addHook_key(compClass: CompClass, hook: KeyHook) {
+	if (!compClassHookSets.has(compClass)) {
+		compClassHookSets.set(compClass, new CompClassHookSet());
+	}
+	compClassHookSets.get(compClass)!.key.push(hook);
+}
+export type KeyHook = (ctx: KeyHook_Context)=>void;
+export class KeyHook_Context {
+	constructor(data?: Partial<KeyHook_Context>) { Object.assign(this, data); }
+	self: React.ReactInstance;
+	callIndex: number;
+	classNames_orig: any[];
+	classNames: any[];
+}
+
+/**
+ * Example usage:
+ * ```
+ * addHook_css(CompFromLib, ctx=>{
+ * 	if (ctx.key == "sub1") {
+ * 		ctx.styleArgs.push({color: ctx.self.props.useDarkTheme ? "black" : "white"});
+ * 	}
+ * })
+ * ```
+ */
+export function addHook_css(compClass: CompClass, hook: CSSHook) {
+	if (!compClassHookSets.has(compClass)) {
+		compClassHookSets.set(compClass, new CompClassHookSet());
+	}
+	compClassHookSets.get(compClass)!.css.push(hook);
+}
+export type CSSHook = (ctx: CSSHook_Context)=>void;
+export class CSSHook_Context {
+	constructor(data?: Partial<CSSHook_Context>) { Object.assign(this, data); }
+	self: React.ReactInstance;
+	key: string | null;
+	callIndex: number;
+	styleArgs_orig: StyleOrFalsy[];
+	styleArgs: StyleOrFalsy[];
+}
