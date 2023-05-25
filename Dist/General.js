@@ -56,8 +56,8 @@ export var basePropFullKeys = {
     sel: null,
     ct: null, // clickthrough
 };
-export const basePropKeys = Object.keys(basePropFullKeys);
-//export const basePropKeysSet = new Set(Object.keys(basePropFullKeys));
+//export const basePropKeys = Object.keys(basePropFullKeys);
+export const basePropKeys = new Set(Object.keys(basePropFullKeys));
 export function BasicStyles(props) {
     const result = {};
     ExpandBasicStylesOnX(result, props);
@@ -87,13 +87,8 @@ export function ExpandBasicStylesOnX(styleObj, props) {
         }
     }
 }
-function RemoveBasePropKeys(restObj) {
-    for (const key of basePropKeys) {
-        delete restObj[key];
-    }
-}
 function DoNothing() { }
-export function ApplyBasicStyles(target, removeBasePropKeys = false) {
+export function ApplyBasicStyles(target, removeBasePropKeys = true) {
     let oldRender = target.prototype.render;
     target.prototype.render = function () {
         let props = this.props;
@@ -123,9 +118,11 @@ export function ApplyBasicStyles(target, removeBasePropKeys = false) {
             result.props.style = {};
         }
         ExpandBasicStylesOnX(result.props.style, props);
-        if (removeBasePropKeys) { // optimization
-            unfreezeProps();
-            RemoveBasePropKeys(result.props);
+        if (removeBasePropKeys) {
+            for (const key of basePropKeys) {
+                unfreezeProps();
+                delete result.props[key];
+            }
         }
         return result;
     };

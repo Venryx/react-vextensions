@@ -41,7 +41,7 @@ export declare var basePropFullKeys: {
     sel: null;
     ct: null;
 };
-export declare const basePropKeys: string[];
+export declare const basePropKeys: Set<string>;
 export declare function BasicStyles(props: any): any;
 export declare function ExpandBasicStylesOnX(styleObj: any, props: any): void;
 export declare function ApplyBasicStyles(target: React.ComponentClass<any>, removeBasePropKeys?: boolean): void;
