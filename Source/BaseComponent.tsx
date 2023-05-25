@@ -37,7 +37,7 @@ export enum RenderSource {
 	Update, // from this.Update()
 }
 //@HasSealedProps // instead of using this decorator, we just include the "EnsureSealedPropsArentOverriden(this, BaseComponent);" line directly (to reduce nesting / depth of class-prototype chain)	
-export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component<Props & BaseProps, State> {
+export class BaseComponent<Props extends object = {}, State extends object = {}, Stash extends object = {}> extends Component<Props & BaseProps, State> {
 	static constructorExtensionFunc: (instance: BaseComponent, props: any)=>void;
 	static componentCurrentlyRendering: BaseComponent<any>|n;
 
@@ -104,9 +104,9 @@ export class BaseComponent<Props = {}, State = {}, Stash = {}> extends Component
 	//state = {} as State; // redefined here, so we can set the initial-state to {} (instead of undefined)
 
 	stash = {} as Stash;
-	get PropsState() { return E(this.props, this.state); }
-	get PropsStash() { return E(this.props, this.stash); }
-	get PropsStateStash() { return E(this.props, this.state, this.stash); }
+	get PropsState() { return {...this.props, ...this.state}; }
+	get PropsStash() { return {...this.props, ...this.stash}; }
+	get PropsStateStash() { return {...this.props, ...this.state, ...this.stash}; }
 	Stash(newStashData: Stash, replaceData = false) {
 		if (replaceData) Object.keys(this.stash).forEach(key=> { delete this.stash[key]; });
 		Object.assign(this.stash, newStashData);
@@ -431,7 +431,7 @@ export function BaseComponentWithConnector_Off<PassedProps, ConnectProps, State>
 }*/
 
 // Note: We can't auto-apply the actual Connect decorator, because here can only be the *base* for the user-component, not *wrap* it (which is needed for the react-redux "Connected(Comp)" component)
-export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Stash>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State, initialStash: Stash|n = null) {
+export function BaseComponentWithConnector<PassedProps extends object, ConnectProps extends object, State extends object, Stash extends object>(connector: (state?, props?: PassedProps)=>ConnectProps, initialState: State, initialStash: Stash|n = null) {
 	//return class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
 	class BaseComponentEnhanced extends BaseComponent<PassedProps & Partial<ConnectProps>, State, Stash> {
 		constructor(props) {
@@ -447,7 +447,7 @@ export function BaseComponentWithConnector<PassedProps, ConnectProps, State, Sta
 	return BaseComponentEnhanced as (new(..._)=>BaseComponent<PassedProps & Partial<ConnectProps>, State>) & {renderCount: number, lastRenderTime: number}; // add class statics back in
 }
 
-export function BaseComponentPlus<Props, State, Stash>(defaultProps: Props = {} as any, initialState: State|n = null, initialStash: Stash|n = null) {
+export function BaseComponentPlus<Props extends object, State extends object, Stash extends object>(defaultProps: Props = {} as any, initialState: State|n = null, initialStash: Stash|n = null) {
 	// return class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
 	class BaseComponentPlus extends BaseComponent<Props, State, Stash> {
 		static defaultProps = defaultProps;

@@ -60,6 +60,10 @@ export declare function AddGlobalElement(html: string, asMultiline?: boolean): v
 export declare function AddGlobalStyle(str: string, asMultiline?: boolean): void;
 /** As an alternative to adding this decorator to your class, consider just adding the line "EnsureSealedPropsArentOverriden(this, MyClass);" into its constructor. */
 export declare function HasSealedProps(target: new (..._: any[]) => any): any;
+export declare const sealedMethodsForClasses: Map<Function, {
+    name: string;
+    method: Function;
+}[]>;
 export declare function EnsureSealedPropsArentOverriden(compInstance: any, classWherePropsSealed: new (..._: any[]) => any, fixNote?: (methodName: string) => string, allowMobXOverriding?: boolean): void;
 export declare function Sealed(target: Object, key: string): void;
 export declare function FilterOutUnrecognizedProps(props: Object, elementType: string, allowDataProps?: boolean): {};

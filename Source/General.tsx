@@ -116,20 +116,20 @@ export function ApplyBasicStyles(target: React.ComponentClass<any>) {
 	target.prototype.render = function () {
 		let props = this.props;
 		// unfreeze props
-		/* if (Object.isFrozen(props)) this.props = E(props);
-		if (props.style && Object.isFrozen(props.style)) props.style = E(props.style); */
+		/* if (Object.isFrozen(props)) this.props = {...props};
+		if (props.style && Object.isFrozen(props.style)) props.style = {...props.style}; */
 
 		let result = oldRender.call(this) as JSX.Element;
 		// unfreeze result
-		if (Object.isFrozen(result)) result = E(result);
-		if (Object.isFrozen(result.props)) result.props = E(result.props);
-		//if (result.props.style && Object.isFrozen(result.props.style)) result.props.style = E(result.props.style);
+		if (Object.isFrozen(result)) result = {...result};
+		if (Object.isFrozen(result.props)) result.props = {...result.props};
+		//if (result.props.style && Object.isFrozen(result.props.style)) result.props.style = {...result.props.style};
 
 		let className = classNames({selectable: props.sel, clickThrough: props.ct}, result.props.className);
 		if (className) {
 			result.props.className = className;
 		}
-		result.props.style = E(result.props.style, BasicStyles(props));
+		result.props.style = {...result.props.style, ...BasicStyles(props)};
 		RemoveBasePropKeys(result.props);
 
 		return result;
@@ -308,22 +308,29 @@ export function HasSealedProps(target: new (..._) => any) {
 		}
 	}) as any;
 }
+export const sealedMethodsForClasses = new Map<Function, {name: string, method: Function}[]>();
 export function EnsureSealedPropsArentOverriden(compInstance: any, classWherePropsSealed: new (..._) => any, fixNote?: (methodName: string) => string, allowMobXOverriding = false) {
-	for (let methodName of Object.getOwnPropertyNames(classWherePropsSealed.prototype)) {
-		//let method = classWherePropsSealed.prototype[key];
-		let method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, methodName)!.value;
-		if (method instanceof Function && method.sealed && compInstance[methodName] != method) {
+	// cache list of sealed-methods; can save ~100ms over ~20_000ms map-load duration
+	if (!sealedMethodsForClasses.has(classWherePropsSealed)) {
+		const sealedMethods = Object.entries(Object.getOwnPropertyDescriptors(classWherePropsSealed.prototype))
+			.filter(([key, desc])=>desc.value instanceof Function && desc.value["sealed"])
+			.map(([key, desc])=>({name: key, method: desc.value}));
+		sealedMethodsForClasses.set(classWherePropsSealed, sealedMethods);
+	}
+	
+	for (const entry of sealedMethodsForClasses.get(classWherePropsSealed) ?? []) {
+		if (compInstance[entry.name] != entry.method) {
 			if (allowMobXOverriding) {
 				let classProto = compInstance.constructor.prototype;
 				let mobxMixinsKey = Object.getOwnPropertySymbols(classProto).find(a=>a.toString() == "Symbol(patchMixins)");
 				// if mobx-mixings-key is present, and mixin is found for this method, then "continue" -- such that the method's differing does not trigger an error (this is normal, for mobx-react comps)
 				if (mobxMixinsKey != null) {
 					let mobxMixins = classProto[mobxMixinsKey];
-					if (mobxMixins && mobxMixins[methodName] != null) continue;
+					if (mobxMixins && mobxMixins[entry.name] != null) continue;
 				}
 			}
 
-			throw new Error(`Cannot override sealed method "${methodName}".${fixNote ? fixNote(methodName) : ""}`);
+			throw new Error(`Cannot override sealed method "${entry.name}".${fixNote ? fixNote(entry.name) : ""}`);
 		}
 	}
 }

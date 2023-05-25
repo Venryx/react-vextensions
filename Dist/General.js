@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import classNames from "classnames";
-import { E, AsMultiline, WrapWithGo } from "./Internals/FromJSVE.js";
+import { AsMultiline, WrapWithGo } from "./Internals/FromJSVE.js";
 //var ReactInstanceMap = require("react/lib/ReactInstanceMap");
 export function GetDOM(comp) {
     if (comp == null || comp["mounted"] === false)
@@ -94,20 +94,20 @@ export function ApplyBasicStyles(target) {
     target.prototype.render = function () {
         let props = this.props;
         // unfreeze props
-        /* if (Object.isFrozen(props)) this.props = E(props);
-        if (props.style && Object.isFrozen(props.style)) props.style = E(props.style); */
+        /* if (Object.isFrozen(props)) this.props = {...props};
+        if (props.style && Object.isFrozen(props.style)) props.style = {...props.style}; */
         let result = oldRender.call(this);
         // unfreeze result
         if (Object.isFrozen(result))
-            result = E(result);
+            result = Object.assign({}, result);
         if (Object.isFrozen(result.props))
-            result.props = E(result.props);
-        //if (result.props.style && Object.isFrozen(result.props.style)) result.props.style = E(result.props.style);
+            result.props = Object.assign({}, result.props);
+        //if (result.props.style && Object.isFrozen(result.props.style)) result.props.style = {...result.props.style};
         let className = classNames({ selectable: props.sel, clickThrough: props.ct }, result.props.className);
         if (className) {
             result.props.className = className;
         }
-        result.props.style = E(result.props.style, BasicStyles(props));
+        result.props.style = Object.assign(Object.assign({}, result.props.style), BasicStyles(props));
         RemoveBasePropKeys(result.props);
         return result;
     };
@@ -280,22 +280,29 @@ export function HasSealedProps(target) {
         }
     });
 }
+export const sealedMethodsForClasses = new Map();
 export function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSealed, fixNote, allowMobXOverriding = false) {
-    for (let methodName of Object.getOwnPropertyNames(classWherePropsSealed.prototype)) {
-        //let method = classWherePropsSealed.prototype[key];
-        let method = Object.getOwnPropertyDescriptor(classWherePropsSealed.prototype, methodName).value;
-        if (method instanceof Function && method.sealed && compInstance[methodName] != method) {
+    var _a;
+    // cache list of sealed-methods; can save ~100ms over ~20_000ms map-load duration
+    if (!sealedMethodsForClasses.has(classWherePropsSealed)) {
+        const sealedMethods = Object.entries(Object.getOwnPropertyDescriptors(classWherePropsSealed.prototype))
+            .filter(([key, desc]) => desc.value instanceof Function && desc.value["sealed"])
+            .map(([key, desc]) => ({ name: key, method: desc.value }));
+        sealedMethodsForClasses.set(classWherePropsSealed, sealedMethods);
+    }
+    for (const entry of (_a = sealedMethodsForClasses.get(classWherePropsSealed)) !== null && _a !== void 0 ? _a : []) {
+        if (compInstance[entry.name] != entry.method) {
             if (allowMobXOverriding) {
                 let classProto = compInstance.constructor.prototype;
                 let mobxMixinsKey = Object.getOwnPropertySymbols(classProto).find(a => a.toString() == "Symbol(patchMixins)");
                 // if mobx-mixings-key is present, and mixin is found for this method, then "continue" -- such that the method's differing does not trigger an error (this is normal, for mobx-react comps)
                 if (mobxMixinsKey != null) {
                     let mobxMixins = classProto[mobxMixinsKey];
-                    if (mobxMixins && mobxMixins[methodName] != null)
+                    if (mobxMixins && mobxMixins[entry.name] != null)
                         continue;
                 }
             }
-            throw new Error(`Cannot override sealed method "${methodName}".${fixNote ? fixNote(methodName) : ""}`);
+            throw new Error(`Cannot override sealed method "${entry.name}".${fixNote ? fixNote(entry.name) : ""}`);
         }
     }
 }

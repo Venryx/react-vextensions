@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import React, { Component } from "react";
 import { GetDOM, Sealed, EnsureSealedPropsArentOverriden } from "./General.js";
-import { E, ToJSON, Assert, GetPropChanges } from "./Internals/FromJSVE.js";
+import { ToJSON, Assert, GetPropChanges } from "./Internals/FromJSVE.js";
 // projects using mobx need this, so they can use a custom decorator to apply our "Comp.render" patch prior to mobx-react's patch (mobx-react's needs to be last/outermost)
 export function EnsureClassProtoRenderFunctionIsWrapped(classProto) {
     // wrap the derived-class' render function, to include some extra code
@@ -101,9 +101,9 @@ export class BaseComponent extends Component {
             }
         };*/
     }
-    get PropsState() { return E(this.props, this.state); }
-    get PropsStash() { return E(this.props, this.stash); }
-    get PropsStateStash() { return E(this.props, this.state, this.stash); }
+    get PropsState() { return Object.assign(Object.assign({}, this.props), this.state); }
+    get PropsStash() { return Object.assign(Object.assign({}, this.props), this.stash); }
+    get PropsStateStash() { return Object.assign(Object.assign(Object.assign({}, this.props), this.state), this.stash); }
     Stash(newStashData, replaceData = false) {
         if (replaceData)
             Object.keys(this.stash).forEach(key => { delete this.stash[key]; });
