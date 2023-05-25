@@ -62,11 +62,6 @@ export interface BaseProps {
 	plr?: numberOrSuch | "padding left-right"; ptb?: numberOrSuch | "padding top-bottom";
 	sel?: boolean; ct?: boolean;
 
-	//tabLabel?: string; active?: boolean;
-
-	page?; match?;
-	//firebase?: FirebaseDatabase;
-
 	// removed, because ReactJS does not recognize "Ref" as special prop like "ref" is 
 	//Ref?: (comp: any)=>any;
 }
@@ -77,41 +72,43 @@ export var basePropFullKeys = {
 	plr: null, ptb: null,
 	sel: null, // selectable
 	ct: null, // clickthrough
-
-	//tabLabel: null, active: null,
-
-	page: null, match: null,
-	firebase: null,
 };
-function RemoveBasePropKeys(restObj) {
-	for (let key in basePropFullKeys)
-		delete restObj[key];
-}
+export const basePropKeys = Object.keys(basePropFullKeys);
+//export const basePropKeysSet = new Set(Object.keys(basePropFullKeys));
+
 export function BasicStyles(props) {
-	var result: any = {};
-
-	for (let key in props) {
-		if (basePropFullKeys[key] != null) {
-			let fullKey = basePropFullKeys[key];
-			result[fullKey] = props[key];
-		} else if (key == "mlr") {
-			result.marginLeft = props[key];
-			result.marginRight = props[key];
-		} else if (key == "mtb") {
-			result.marginTop = props[key];
-			result.marginBottom = props[key];
-		} else if (key == "plr") {
-			result.paddingLeft = props[key];
-			result.paddingRight = props[key];
-		} else if (key == "ptb") {
-			result.paddingTop = props[key];
-			result.paddingBottom = props[key];
-		}
-	}
-
+	const result: any = {};
+	ExpandBasicStylesOnX(result, props);
 	return result;
 }
-export function ApplyBasicStyles(target: React.ComponentClass<any>) {
+export function ExpandBasicStylesOnX(styleObj, props) {
+	for (const key in props) {
+		const fullKey = basePropFullKeys[key];
+		if (fullKey != null) {
+			styleObj[fullKey] = props[key];
+		} else if (key == "mlr") {
+			styleObj.marginLeft = props[key];
+			styleObj.marginRight = props[key];
+		} else if (key == "mtb") {
+			styleObj.marginTop = props[key];
+			styleObj.marginBottom = props[key];
+		} else if (key == "plr") {
+			styleObj.paddingLeft = props[key];
+			styleObj.paddingRight = props[key];
+		} else if (key == "ptb") {
+			styleObj.paddingTop = props[key];
+			styleObj.paddingBottom = props[key];
+		}
+	}
+}
+function RemoveBasePropKeys(restObj) {
+	for (const key of basePropKeys) {
+		delete restObj[key];
+	}
+}
+
+function DoNothing() {}
+export function ApplyBasicStyles(target: React.ComponentClass<any>, removeBasePropKeys = false) {
 	let oldRender = target.prototype.render;
 	target.prototype.render = function () {
 		let props = this.props;
@@ -120,17 +117,32 @@ export function ApplyBasicStyles(target: React.ComponentClass<any>) {
 		if (props.style && Object.isFrozen(props.style)) props.style = {...props.style}; */
 
 		let result = oldRender.call(this) as JSX.Element;
-		// unfreeze result
-		if (Object.isFrozen(result)) result = {...result};
-		if (Object.isFrozen(result.props)) result.props = {...result.props};
-		//if (result.props.style && Object.isFrozen(result.props.style)) result.props.style = {...result.props.style};
-
-		let className = classNames({selectable: props.sel, clickThrough: props.ct}, result.props.className);
-		if (className) {
-			result.props.className = className;
+		// optimization; only unfreeze props if/when we need to (pre: ~100ms over 20s map-load)
+		let unfreezeProps = ()=>{
+			// unfreeze result, and its props
+			if (Object.isFrozen(result)) result = {...result};
+			if (Object.isFrozen(result.props)) result.props = {...result.props};
+			unfreezeProps = DoNothing; // optimization
+		};
+		
+		if (props.sel || props.ct) {
+			unfreezeProps();
+			let className = classNames({selectable: props.sel, clickThrough: props.ct}, result.props.className);
+			if (className) {
+				result.props.className = className;
+			}
 		}
-		result.props.style = {...result.props.style, ...BasicStyles(props)};
-		RemoveBasePropKeys(result.props);
+
+		//result.props.style = {...result.props.style, ...BasicStyles(props)};
+		if (result.props.style == null) {
+			unfreezeProps();
+			result.props.style = {};
+		}
+		ExpandBasicStylesOnX(result.props.style, props);
+		if (removeBasePropKeys) { // optimization
+			unfreezeProps();
+			RemoveBasePropKeys(result.props);
+		}
 
 		return result;
 	}

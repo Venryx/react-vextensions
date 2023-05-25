@@ -22,8 +22,6 @@ export interface BaseProps {
     ptb?: numberOrSuch | "padding top-bottom";
     sel?: boolean;
     ct?: boolean;
-    page?: any;
-    match?: any;
 }
 export declare var basePropFullKeys: {
     m: string;
@@ -42,12 +40,11 @@ export declare var basePropFullKeys: {
     ptb: null;
     sel: null;
     ct: null;
-    page: null;
-    match: null;
-    firebase: null;
 };
+export declare const basePropKeys: string[];
 export declare function BasicStyles(props: any): any;
-export declare function ApplyBasicStyles(target: React.ComponentClass<any>): void;
+export declare function ExpandBasicStylesOnX(styleObj: any, props: any): void;
+export declare function ApplyBasicStyles(target: React.ComponentClass<any>, removeBasePropKeys?: boolean): void;
 export declare function ShallowEquals(objA: any, objB: any, options?: {
     propsToIgnore?: string[];
 } | n): boolean;
