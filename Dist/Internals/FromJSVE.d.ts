@@ -4,11 +4,11 @@ export declare function ToJSON(obj: any): string;
 export declare function FromJSON(json: any): any;
 export declare function AsMultiline(str: string, desiredIndent?: number): string;
 export declare function Assert(condition: any, messageOrMessageFunc?: string | Function | null, triggerDebugger?: boolean): asserts condition;
-export declare type GetFirstParamType<T> = T extends (val: infer Arg1Type) => any ? Arg1Type : never;
+export type GetFirstParamType<T> = T extends (val: infer Arg1Type) => any ? Arg1Type : never;
 export declare function WrapWithGo<Func extends (val: any) => any>(func: Func): Func & {
     Go: GetFirstParamType<Func>;
 };
-export declare type PropChange = {
+export type PropChange = {
     key: string;
     oldVal: any;
     newVal: any;

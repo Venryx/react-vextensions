@@ -1,11 +1,11 @@
-import React, { Ref } from "react";
+import React, { PropsWithChildren, Ref } from "react";
 import { Component } from "react";
 import { n } from "./Internals/@Types.js";
 export declare function GetDOM(comp: Component<any, any> | n): Element | null;
 export declare function FindReact(dom: any, traverseUp?: number): any;
 export declare function GetInnerComp(wrapperComp: React.Component<any, any> | n): any;
-export declare type numberOrSuch = number | string;
-export interface BaseProps {
+export type numberOrSuch = number | string;
+export interface BaseProps extends PropsWithChildren {
     m?: numberOrSuch;
     ml?: numberOrSuch;
     mr?: numberOrSuch;

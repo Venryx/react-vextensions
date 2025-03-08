@@ -1,4 +1,4 @@
-import React, {Ref} from "react";
+import React, {PropsWithChildren, Ref} from "react";
 import {Component} from "react";
 import ReactDOM from "react-dom";
 import classNames from "classnames";
@@ -55,7 +55,7 @@ export function GetInnerComp(wrapperComp: React.Component<any, any>|n) {
 }
 
 export type numberOrSuch = number | string;
-export interface BaseProps {
+export interface BaseProps extends PropsWithChildren {
 	m?: numberOrSuch; ml?: numberOrSuch; mr?: numberOrSuch; mt?: numberOrSuch; mb?: numberOrSuch;
 	mlr?: numberOrSuch | "margin left-right"; mtb?: numberOrSuch | "margin top-bottom";
 	p?: numberOrSuch; pl?: numberOrSuch; pr?: numberOrSuch; pt?: numberOrSuch; pb?: numberOrSuch;
@@ -111,7 +111,7 @@ export function ApplyBasicStyles(target: React.ComponentClass<any>, removeBasePr
 		/* if (Object.isFrozen(props)) this.props = {...props};
 		if (props.style && Object.isFrozen(props.style)) props.style = {...props.style}; */
 
-		let result = oldRender.call(this) as JSX.Element;
+		let result = oldRender.call(this) as React.JSX.Element;
 		// optimization; only unfreeze props if/when we need to (pre: ~100ms over 20s map-load)
 		let unfreezeProps = ()=>{
 			// unfreeze result, and its props

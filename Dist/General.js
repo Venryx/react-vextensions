@@ -53,7 +53,7 @@ export var basePropFullKeys = {
     mlr: null, mtb: null,
     p: "padding", pl: "paddingLeft", pr: "paddingRight", pt: "paddingTop", pb: "paddingBottom",
     plr: null, ptb: null,
-    sel: null,
+    sel: null, // selectable
     ct: null, // clickthrough
 };
 //export const basePropKeys = Object.keys(basePropFullKeys);

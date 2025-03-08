@@ -1,6 +1,6 @@
 import { CSSProperties } from "react";
-export declare type PseudoStyleTypes = "hover";
-export declare const pseudoStyleTypes: "hover"[];
+export type PseudoStyleTypes = "hover";
+export declare const pseudoStyleTypes: PseudoStyleTypes[];
 export declare function ConvertStyleObjectToCSSString(styleObj: any): string;
 /**
  * Creates a global <style> element with the given style (if not yet created), under a derived-from-style-data class-name. Returns that class-name for components to use.

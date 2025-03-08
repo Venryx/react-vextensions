@@ -25,15 +25,15 @@ export declare function cssHelper(compInstance: React.ReactInstance, cloneInputs
     };
     dyn: <T>(val: T) => T;
 };
-export declare type Style = ConvertType_ConvertFields_UndefToUndefOrNull<React.CSSProperties> & {
+export type Style = ConvertType_ConvertFields_UndefToUndefOrNull<React.CSSProperties> & {
     ":hover"?: Style;
 };
-export declare type ConvertType_ConvertFields_UndefToUndefOrNull<T extends object> = {
+export type ConvertType_ConvertFields_UndefToUndefOrNull<T extends object> = {
     [K in keyof T]: ConvertType_UndefToUndefOrNull<T[K]>;
 };
-export declare type ConvertType_UndefToUndefOrNull<T> = T extends undefined ? (undefined | null) : T;
-export declare type StyleOrFalsy = Style | "" | 0 | false | null | undefined;
-export declare type CompClass = new (..._: any[]) => React.Component;
+export type ConvertType_UndefToUndefOrNull<T> = T extends undefined ? (undefined | null) : T;
+export type StyleOrFalsy = Style | "" | 0 | false | null | undefined;
+export type CompClass = new (..._: any[]) => React.Component;
 /** Pass this into the addHook functions to have your hook run for any component-class. */
 export declare class CompClass_Any extends Component {
 }
@@ -56,7 +56,7 @@ export declare class CompClassHookSet {
  * ```
  */
 export declare function addHook_key(compClassOrName: CompClass | string, hook: KeyHook): void;
-export declare type KeyHook = (ctx: KeyHook_Context) => void;
+export type KeyHook = (ctx: KeyHook_Context) => void;
 export declare class KeyHook_Context {
     constructor(data?: Partial<KeyHook_Context>);
     self: React.ReactInstance;
@@ -75,7 +75,7 @@ export declare class KeyHook_Context {
  * ```
  */
 export declare function addHook_css(compClassOrName: CompClass | string, hook: CSSHook): void;
-export declare type CSSHook = (ctx: CSSHook_Context) => void;
+export type CSSHook = (ctx: CSSHook_Context) => void;
 export declare class CSSHook_Context {
     constructor(data?: Partial<CSSHook_Context>);
     self: React.ReactInstance;

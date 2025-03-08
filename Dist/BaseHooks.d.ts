@@ -1,5 +1,5 @@
-import { ForwardRefExoticComponent, RefAttributes, Dispatch, SetStateAction, Ref, DependencyList } from "react";
-export declare type Handle<T> = T extends ForwardRefExoticComponent<RefAttributes<infer T2>> ? T2 : T extends (props: any, ref: Ref<infer T2>) => JSX.Element ? T2 : never;
+import React, { ForwardRefExoticComponent, RefAttributes, Dispatch, SetStateAction, Ref, DependencyList } from "react";
+export type Handle<T> = T extends ForwardRefExoticComponent<RefAttributes<infer T2>> ? T2 : T extends (props: any, ref: Ref<infer T2>) => React.JSX.Element ? T2 : never;
 export declare class WrapOptions {
     /** If true, render-func is wrapped with React.memo(...) */
     pure: boolean;

@@ -1,13 +1,13 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import { BaseProps } from "./General.js";
 import { WarnOfTransientObjectProps_Options } from "./Decorators.js";
 import { PropChange } from "./Internals/FromJSVE.js";
 import { n } from "./Internals/@Types.js";
 export declare function EnsureClassProtoRenderFunctionIsWrapped(classProto: any): void;
 export declare enum RenderSource {
-    Mount = 0,
-    PropChange = 1,
-    SetState = 2,
+    Mount = 0,// first render, after creation
+    PropChange = 1,// from prop-change, and ancestor re-renders (e.g. ancestor.forceUpdate(), ancestor.setState())
+    SetState = 2,// from this.SetState()
     Update = 3
 }
 export declare class BaseComponent<Props extends object = {}, State extends object = {}, Stash extends object = {}> extends Component<Props & BaseProps, State> {
@@ -19,15 +19,9 @@ export declare class BaseComponent<Props extends object = {}, State extends obje
     lastRenderTime: number;
     constructor(props: any);
     stash: Stash;
-    get PropsState(): Readonly<Props & BaseProps> & Readonly<{
-        children?: React.ReactNode;
-    }> & Readonly<State>;
-    get PropsStash(): Readonly<Props & BaseProps> & Readonly<{
-        children?: React.ReactNode;
-    }> & Stash;
-    get PropsStateStash(): Readonly<Props & BaseProps> & Readonly<{
-        children?: React.ReactNode;
-    }> & Readonly<State> & Stash;
+    get PropsState(): Readonly<Props & BaseProps> & Readonly<State>;
+    get PropsStash(): Readonly<Props & BaseProps> & Stash;
+    get PropsStateStash(): Readonly<Props & BaseProps> & Readonly<State> & Stash;
     Stash(newStashData: Stash, replaceData?: boolean): void;
     debug: any;
     Debug(newDebugData: any, replaceData?: boolean): void;
@@ -37,9 +31,7 @@ export declare class BaseComponent<Props extends object = {}, State extends obje
     get DOM_HTML(): HTMLElement;
     get FlattenedChildren(): any;
     _GetPropChanges_lastValues: {};
-    GetPropChanges(newProps?: Readonly<Props & BaseProps> & Readonly<{
-        children?: React.ReactNode;
-    }>, oldProps?: {}, setLastValues?: boolean): PropChange[];
+    GetPropChanges(newProps?: Readonly<Props & BaseProps>, oldProps?: {}, setLastValues?: boolean): PropChange[];
     _GetStateChanges_lastValues: {};
     GetStateChanges(newState?: Readonly<State>, oldState?: {}, setLastValues?: boolean): PropChange[];
     forceUpdate(): void;
@@ -86,11 +78,11 @@ export declare class BaseComponent<Props extends object = {}, State extends obje
     PreRender(): void;
     PostRender(source?: RenderSource): void;
 }
-export declare function BaseComponentWithConnector<PassedProps extends object, ConnectProps extends object, State extends object, Stash extends object>(connector: (state?: any, props?: PassedProps) => ConnectProps, initialState: State, initialStash?: Stash | n): (new (..._: any[]) => BaseComponent<PassedProps & Partial<ConnectProps>, State>) & {
+export declare function BaseComponentWithConnector<PassedProps extends object, ConnectProps extends object, State extends object, Stash extends object>(connector: (state?: any, props?: PassedProps) => ConnectProps, initialState: State, initialStash?: Stash | n): (new (..._: any) => BaseComponent<PassedProps & Partial<ConnectProps>, State>) & {
     renderCount: number;
     lastRenderTime: number;
 };
-export declare function BaseComponentPlus<Props extends object, State extends object, Stash extends object>(defaultProps?: Props, initialState?: State | n, initialStash?: Stash | n): (new (..._: any[]) => BaseComponent<Props, State, Stash>) & {
+export declare function BaseComponentPlus<Props extends object, State extends object, Stash extends object>(defaultProps?: Props, initialState?: State | n, initialStash?: Stash | n): (new (..._: any) => BaseComponent<Props, State, Stash>) & {
     renderCount: number;
     lastRenderTime: number;
 };

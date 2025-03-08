@@ -9,7 +9,7 @@ import {E} from "./Internals/FromJSVE.js";
 
 export type Handle<T> =
 	T extends ForwardRefExoticComponent<RefAttributes<infer T2>> ? T2 : // capture result of forwardRef
-	T extends (props: any, ref: Ref<infer T2>)=>JSX.Element ? T2 : // more generic capture (eg. works with Wrap)
+	T extends (props: any, ref: Ref<infer T2>)=>React.JSX.Element ? T2 : // more generic capture (eg. works with Wrap)
 	never;
 
 // wrapper for function-components

@@ -1,7 +1,7 @@
 {
   "name": "react-vextensions",
   "description": "Extensions for ReactJS, by Venryx.",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "author": "Venryx (https://venryx.com)",
   "main": "Dist/index.js",
   "typings": "Dist/index.d.ts",
@@ -19,14 +19,14 @@
     "dist": "tsc"
   },
   "peerDependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@types/react": "^17.0.9",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "typescript": "^4.3.5"
+    "@types/react": "^19.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.8.2"
   },
   "dependencies": {
     "classnames": "^2.2.5"
