@@ -296,6 +296,11 @@ export function HasSealedProps(target) {
     });
 }
 export const sealedMethodsForClasses = new Map();
+export let sealedProps_differenceInterceptor;
+/** By setting an interceptor, you can tell react-vextensions that certain deviant values of a sealed prop are acceptable. (eg. a patched version of componentDidMount from a library like mobx-react) */
+export function sealedProps_differenceInterceptor_set(interceptor) {
+    sealedProps_differenceInterceptor = interceptor;
+}
 export function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSealed, fixNote, allowMobXOverriding = false) {
     var _a;
     // cache list of sealed-methods; can save ~100ms over ~20_000ms map-load duration
@@ -306,19 +311,26 @@ export function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSea
         sealedMethodsForClasses.set(classWherePropsSealed, sealedMethods);
     }
     for (const entry of (_a = sealedMethodsForClasses.get(classWherePropsSealed)) !== null && _a !== void 0 ? _a : []) {
+        let entryResult = "allow";
         if (compInstance[entry.name] != entry.method) {
+            entryResult = new Error(`Cannot override sealed method "${entry.name}".${fixNote ? fixNote(entry.name) : ""}`);
             if (allowMobXOverriding) {
                 let classProto = compInstance.constructor.prototype;
                 let mobxMixinsKey = Object.getOwnPropertySymbols(classProto).find(a => a.toString() == "Symbol(patchMixins)");
                 // if mobx-mixings-key is present, and mixin is found for this method, then "continue" -- such that the method's differing does not trigger an error (this is normal, for mobx-react comps)
                 if (mobxMixinsKey != null) {
                     let mobxMixins = classProto[mobxMixinsKey];
-                    if (mobxMixins && mobxMixins[entry.name] != null)
-                        continue;
+                    if (mobxMixins && mobxMixins[entry.name] != null) {
+                        entryResult = "allow";
+                    }
                 }
             }
-            throw new Error(`Cannot override sealed method "${entry.name}".${fixNote ? fixNote(entry.name) : ""}`);
         }
+        if (entryResult != "allow" && sealedProps_differenceInterceptor) {
+            entryResult = sealedProps_differenceInterceptor(classWherePropsSealed, entry, compInstance);
+        }
+        if (entryResult instanceof Error)
+            throw entryResult;
     }
 }
 export function Sealed(target, key) {

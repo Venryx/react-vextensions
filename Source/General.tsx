@@ -317,7 +317,17 @@ export function HasSealedProps(target: new (..._) => any) {
 		}
 	}) as any;
 }
-export const sealedMethodsForClasses = new Map<Function, {name: string, method: Function}[]>();
+export type SealedEntry = {name: string, method: Function};
+export const sealedMethodsForClasses = new Map<Function, SealedEntry[]>();
+
+export type SealedPropHandlingResult = "allow" | Error | "noChange";
+export type DifferenceInterceptor = (classWherePropsSealed: new (..._) => any, sealedEntry: SealedEntry, compInstance: any)=>SealedPropHandlingResult;
+export let sealedProps_differenceInterceptor: DifferenceInterceptor;
+/** By setting an interceptor, you can tell react-vextensions that certain deviant values of a sealed prop are acceptable. (eg. a patched version of componentDidMount from a library like mobx-react) */
+export function sealedProps_differenceInterceptor_set(interceptor: DifferenceInterceptor) {
+	sealedProps_differenceInterceptor = interceptor;
+}
+
 export function EnsureSealedPropsArentOverriden(compInstance: any, classWherePropsSealed: new (..._) => any, fixNote?: (methodName: string) => string, allowMobXOverriding = false) {
 	// cache list of sealed-methods; can save ~100ms over ~20_000ms map-load duration
 	if (!sealedMethodsForClasses.has(classWherePropsSealed)) {
@@ -328,19 +338,28 @@ export function EnsureSealedPropsArentOverriden(compInstance: any, classWherePro
 	}
 	
 	for (const entry of sealedMethodsForClasses.get(classWherePropsSealed) ?? []) {
+		let entryResult: SealedPropHandlingResult = "allow";
 		if (compInstance[entry.name] != entry.method) {
+			entryResult = new Error(`Cannot override sealed method "${entry.name}".${fixNote ? fixNote(entry.name) : ""}`);
+			
 			if (allowMobXOverriding) {
 				let classProto = compInstance.constructor.prototype;
 				let mobxMixinsKey = Object.getOwnPropertySymbols(classProto).find(a=>a.toString() == "Symbol(patchMixins)");
 				// if mobx-mixings-key is present, and mixin is found for this method, then "continue" -- such that the method's differing does not trigger an error (this is normal, for mobx-react comps)
 				if (mobxMixinsKey != null) {
 					let mobxMixins = classProto[mobxMixinsKey];
-					if (mobxMixins && mobxMixins[entry.name] != null) continue;
+					if (mobxMixins && mobxMixins[entry.name] != null) {
+						entryResult = "allow";
+					}
 				}
 			}
-
-			throw new Error(`Cannot override sealed method "${entry.name}".${fixNote ? fixNote(entry.name) : ""}`);
 		}
+
+		if (entryResult != "allow" && sealedProps_differenceInterceptor) {
+			entryResult = sealedProps_differenceInterceptor(classWherePropsSealed, entry, compInstance);
+		}
+
+		if (entryResult instanceof Error) throw entryResult;
 	}
 }
 

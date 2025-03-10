@@ -57,10 +57,16 @@ export declare function AddGlobalElement(html: string, asMultiline?: boolean): v
 export declare function AddGlobalStyle(str: string, asMultiline?: boolean): void;
 /** As an alternative to adding this decorator to your class, consider just adding the line "EnsureSealedPropsArentOverriden(this, MyClass);" into its constructor. */
 export declare function HasSealedProps(target: new (..._: any[]) => any): any;
-export declare const sealedMethodsForClasses: Map<Function, {
+export type SealedEntry = {
     name: string;
     method: Function;
-}[]>;
+};
+export declare const sealedMethodsForClasses: Map<Function, SealedEntry[]>;
+export type SealedPropHandlingResult = "allow" | Error | "noChange";
+export type DifferenceInterceptor = (classWherePropsSealed: new (..._: any[]) => any, sealedEntry: SealedEntry, compInstance: any) => SealedPropHandlingResult;
+export declare let sealedProps_differenceInterceptor: DifferenceInterceptor;
+/** By setting an interceptor, you can tell react-vextensions that certain deviant values of a sealed prop are acceptable. (eg. a patched version of componentDidMount from a library like mobx-react) */
+export declare function sealedProps_differenceInterceptor_set(interceptor: DifferenceInterceptor): void;
 export declare function EnsureSealedPropsArentOverriden(compInstance: any, classWherePropsSealed: new (..._: any[]) => any, fixNote?: (methodName: string) => string, allowMobXOverriding?: boolean): void;
 export declare function Sealed(target: Object, key: string): void;
 export declare function FilterOutUnrecognizedProps(props: Object, elementType: string, allowDataProps?: boolean): {};
