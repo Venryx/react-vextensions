@@ -327,7 +327,10 @@ export function EnsureSealedPropsArentOverriden(compInstance, classWherePropsSea
             }
         }
         if (entryResult != "allow" && sealedProps_differenceInterceptor) {
-            entryResult = sealedProps_differenceInterceptor(classWherePropsSealed, entry, compInstance);
+            let newEntryResult = sealedProps_differenceInterceptor(classWherePropsSealed, entry, compInstance);
+            if (newEntryResult != "noChange") {
+                entryResult = newEntryResult;
+            }
         }
         if (entryResult instanceof Error)
             throw entryResult;
