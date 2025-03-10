@@ -11,7 +11,8 @@ export const pseudoStyleTypes = ["hover"] as PseudoStyleTypes[];
 
 export function ConvertStyleObjectToCSSString(styleObj) {
 	let str = ReactDOMServer.renderToString(React.createElement("div", {style: styleObj})) as string;
-	let styleStrMatch = str.match(/style="(.+?)" data-reactroot/);
+	let styleStrMatch = str.match(/style="(.+?)"><\/div>/) // react 19
+		?? str.match(/style="(.+?)" data-reactroot/); // react 17
 	if (styleStrMatch == null) {
 		throw new Error(`Failed to convert style-object to string: ${styleObj}`);
 	}

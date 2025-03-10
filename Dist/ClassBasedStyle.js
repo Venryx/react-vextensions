@@ -5,8 +5,10 @@ import { ToJSON } from "./Internals/FromJSVE.js";
 let classBasedStyleKeys = {};
 export const pseudoStyleTypes = ["hover"];
 export function ConvertStyleObjectToCSSString(styleObj) {
+    var _a;
     let str = ReactDOMServer.renderToString(React.createElement("div", { style: styleObj }));
-    let styleStrMatch = str.match(/style="(.+?)" data-reactroot/);
+    let styleStrMatch = (_a = str.match(/style="(.+?)"><\/div>/) // react 19
+    ) !== null && _a !== void 0 ? _a : str.match(/style="(.+?)" data-reactroot/); // react 17
     if (styleStrMatch == null) {
         throw new Error(`Failed to convert style-object to string: ${styleObj}`);
     }
