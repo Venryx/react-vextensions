@@ -344,13 +344,17 @@ export function EnsureSealedPropsArentOverriden(compInstance: any, classWherePro
 			
 			if (allowMobXOverriding) {
 				let classProto = compInstance.constructor.prototype;
+
+				// There are multiple ways one could use to detect if the given func is provided by mobx/mobx-react.
+				// For now, we rely on mobx-react calling `patch(prototype, "componentWillUnmount", ...)` on the class prototype, alongside its replacement of render() and componentDidMount()
+				// So if we find that `componentWillUnmount` was patched in that way, then we consider all three of these methods to be mobx-react-provided.
+
+				const funcsMobxReactAffects = ["render", "componentDidMount", "componentWillUnmount"];
 				let mobxMixinsKey = Object.getOwnPropertySymbols(classProto).find(a=>a.toString() == "Symbol(patchMixins)");
-				// if mobx-mixings-key is present, and mixin is found for this method, then "continue" -- such that the method's differing does not trigger an error (this is normal, for mobx-react comps)
-				if (mobxMixinsKey != null) {
-					let mobxMixins = classProto[mobxMixinsKey];
-					if (mobxMixins && mobxMixins[entry.name] != null) {
-						entryResult = "allow";
-					}
+				// if this method is one mobx-react affects, and all such methods exist on class-proto, and class-proto has a mobx-mixins-key, and that mobx-mixins shows that `componentWillUnmount` method was patched...
+				if (funcsMobxReactAffects.includes(entry.name) && funcsMobxReactAffects.every(a=>classProto[a]) && mobxMixinsKey && classProto[mobxMixinsKey]?.componentWillUnmount != null) {
+					// ...then "continue" -- such that the method's differing does not trigger an error (this is normal, for mobx-react comps)
+					entryResult = "allow";
 				}
 			}
 		}
